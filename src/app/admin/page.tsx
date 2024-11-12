@@ -20,6 +20,18 @@ import {
   Part,
   TempCar,
 } from "@/lib/definitions";
+import { TestComponent } from "@/components/graphTest";
+import CustomerSplit from "@/components/graphs/CustomerSplit";
+import RevenueSplit from "@/components/graphs/RevenueSplit";
+import DisplayCard from "@/components/DisplayCard";
+import { Check, Wrench } from "lucide-react";
+import { TimeAverage } from "@/components/graphs/TimeAverage";
+import { CurrentCars } from "@/components/graphs/CurrentCars";
+import { NightStock } from "@/components/graphs/NightStock";
+import { InsuranceCases } from "@/components/graphs/InsuranceCases";
+import { CurrentCarsPie } from "@/components/graphs/CurrentCarsPie";
+import { InsuranceCasesBar } from "@/components/graphs/InsuranceCasesBar";
+import { NightStockNew } from "@/components/graphs/NightStockNew";
 
 type Props = {};
 
@@ -103,6 +115,38 @@ export default function Admin({}: Props) {
           <div>
             <div className="font-semibold text-3xl">Hello {name}! </div>
             <div className="font-medium">T3, Mira Road</div>
+          </div>
+          <div className="flex flex-row mt-10 justify-evenly  items-center h-fit mb-10">
+            <div className="w-1/4">
+              <CustomerSplit />
+            </div>
+            <div className="w-1/4">
+              <RevenueSplit />
+            </div>
+            <div className="w-1/4">
+              <TimeAverage />
+            </div>
+            {/* <div className="w-1/4 flex-row space-y-2">
+              <DisplayCard
+                icon={<Check />}
+                desc={"Cars Completed"}
+                value={352}
+              />
+              <DisplayCard
+                icon={<Wrench />}
+                desc={"Cars In Progress"}
+                value={26}
+              />
+            </div> */}
+          </div>
+          <div className="flex justify-center items-center w-full space-x-5 mb-10">
+            <div className="w-[60%]">
+              <InsuranceCasesBar />
+            </div>
+            <div className="flex flex-col space-y-5 justify-center items-center">
+              <NightStockNew />
+              <CurrentCarsPie />
+            </div>
           </div>
         </>
       )}

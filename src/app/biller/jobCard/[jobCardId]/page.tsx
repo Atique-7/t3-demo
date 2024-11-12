@@ -257,7 +257,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
     console.log("JOB CARD OBJ = ", jobCard);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -288,7 +289,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -320,32 +322,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     await saveCurrentPartsAndLbour(5);
 
     // await fetch(`http://localhost:3000${pathname}/invoice`, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     jobCard,
-    //     car,
-    //     currentParts,
-    //     currentLabour,
-    //     currentJobCardStatus,
-    //     invoiceCounter,
-    //   }),
-    // }).then((result: any) => {
-    //   result.json().then((invoiceDetails: any) => {
-    //     openInNewTab(invoiceDetails.invoiceUrl);
-    //   });
-    //   setButtonLoading((prev) => false);
-    //   setCurrentJobCardStatus(5);
-
-    //   if (!isInvoiceCounterIncreased) {
-    //     setInvoiceCounter((prev) => prev + 1);
-    //   }
-
-    //   setIsInvoiceCounterIncreased(true);
-
-    //   toast("Tax Invoice Generated \u2705");
-    // });
-
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,

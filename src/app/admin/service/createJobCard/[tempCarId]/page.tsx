@@ -13,7 +13,7 @@ import AddDiagnosis from "@/components/AddDiagnosis";
 import { Checkbox } from "@/components/ui/checkbox";
 import { objToStringArr } from "@/lib/helper";
 import { toast } from "sonner";
-import loader from "../../../../../public/assets/t3-loader.gif";
+import loader from "../../../../../../public/assets/t3-loader.gif";
 import Image from "next/image";
 
 type Props = {};

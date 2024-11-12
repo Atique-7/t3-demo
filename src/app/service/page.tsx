@@ -26,7 +26,7 @@ import { convertStringsToArray, purposeOfVisits } from "@/lib/helper";
 
 type Props = {};
 
-export default function Service({ }: Props) {
+export default function Service({}: Props) {
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -53,20 +53,32 @@ export default function Service({ }: Props) {
 
       setUser(parsedToken);
 
-      let foundObjs = purposeOfVisits.filter(
-        (pov) =>
-          pov.code == parsedToken.labels[2] || pov.code == parsedToken.labels[3]
-      );
+      let foundObjs;
+
+      if (parsedToken.labels[0] == "admin") {
+        foundObjs = purposeOfVisits;
+      } else {
+        foundObjs = purposeOfVisits.filter(
+          (pov) =>
+            pov.code == parsedToken.labels[2] ||
+            pov.code == parsedToken.labels[3]
+        );
+      }
+
+      // let foundObjs = purposeOfVisits.filter(
+      //   (pov) =>
+      //     pov.code == parsedToken.labels[2] || pov.code == parsedToken.labels[3]
+      // );
 
       foundObjs.map((pov) => povArr.push(pov.description));
 
-      console.log(povArr);
+      console.log("HELLOO", povArr);
 
       setServicePOV(povArr);
 
       setName(parsedToken.name);
       setEmail(parsedToken.email);
-      console.log(email)
+      console.log(email);
     };
 
     const getTempCars = async () => {
@@ -74,22 +86,30 @@ export default function Service({ }: Props) {
       const token = getCookie("user");
       const parsedToken = JSON.parse(String(token));
       console.log("TEMP CARS - ", allTempCars);
-    
-      const toCreateCars = allTempCars.documents.filter((car: TempCar) => {
-        if(car.purposeOfVisitAndAdvisors){
-          console.log("THIS ONE IS VALID",car.carNumber);
-          const purpose = convertStringsToArray(car.purposeOfVisitAndAdvisors);
-          console.log("fwefe",purpose)
-          console.log(parsedToken.email);
-          const cars = purpose.filter((item: any) => {
-            return povArr.includes(item.description) && (parsedToken.email === item.advisorEmail)
+
+      if (parsedToken.labels[0] == "admin") {
+        setTempCars(allTempCars.documents);
+      } else {
+        const toCreateCars = allTempCars.documents.filter((car: TempCar) => {
+          if (car.purposeOfVisitAndAdvisors) {
+            console.log("THIS ONE IS VALID", car.carNumber);
+            const purpose = convertStringsToArray(
+              car.purposeOfVisitAndAdvisors
+            );
+            console.log("fwefe", purpose);
+            console.log(parsedToken.email);
+            const cars = purpose.filter((item: any) => {
+              return (
+                povArr.includes(item.description) &&
+                parsedToken.email === item.advisorEmail
+              );
+            });
+            return cars.length > 0; // Return true if any matching item is found
           }
-          );
-          return cars.length > 0;  // Return true if any matching item is found
-        }
-      });
-      console.log("JNOJOJ",toCreateCars);
-      setTempCars(toCreateCars);
+        });
+        console.log("JNOJOJ", toCreateCars);
+        setTempCars(toCreateCars);
+      }
     };
 
     const getJobCards = async () => {

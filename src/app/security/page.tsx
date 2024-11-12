@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { deleteCookie, getCookie } from "cookies-next";
@@ -17,7 +17,8 @@ import { TempCar } from "@/lib/definitions";
 type Props = {};
 
 export default function Security({}: Props) {
-  const router = useRouter();
+  const pathname = usePathname();
+  console.log("This is the pathname - ", pathname);
 
   const [name, setName] = useState("");
   const [numberOfCarsInProgress, setNumberOfCarsInProgress] = useState(0);
@@ -54,7 +55,7 @@ export default function Security({}: Props) {
         <>
           <Link
             className="absolute z-10 bottom-10 right-10 bg-red-500 p-4 rounded-xl"
-            href="/security/addCar"
+            href={`${pathname}/addCar`}
           >
             <Plus size={40} color="white" />
           </Link>

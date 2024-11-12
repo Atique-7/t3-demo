@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Divide } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { convertStringsToArray, getButtonText, jobCardStatusKey } from "../lib/helper";
 
@@ -294,6 +294,19 @@ export const labourColumns: ColumnDef<Labour>[] = [
   },
 ];
 
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SearchSelect } from "@/components/SearchSelect";
+import { listAllUsers } from "./appwrite";
+
+
 export const tempCarsColumns: ColumnDef<TempCar>[] = [
   {
     accessorKey: "carNumber",
@@ -330,24 +343,45 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
     id: "actions",
     cell: ({ row }) => {
       const pathname = usePathname();
-
       const tempCar = row.original;
-
       const token = getCookie("user");
-
       const parsedToken = JSON.parse(String(token));
-
       const userAccess = parsedToken.labels[0];
-
+      
       const advisorEmail = parsedToken.email;
-
       const purposeOfVisitAndAdvisors = convertStringsToArray(tempCar.purposeOfVisitAndAdvisors);
-
       const advisorInfo = purposeOfVisitAndAdvisors.find(
         (pov: any) => pov.advisorEmail === advisorEmail
       );
 
       let currentCounter = getCookie("currentCounter");
+
+      const [selectedAdvisor, setSelectedAdvisor] = useState(advisorEmail);
+      const [allAdvisors, setAllAdvisors] = useState({});
+      
+      useEffect(() => {
+        const fetchUsers = async () => {
+          const users = await listAllUsers();
+          //const advisorsMap: { [key: string]: { name: string; email: string }[] } = {};
+          const advisorsMap = [{}];
+          users.forEach((user: any) => {
+            const { advisorRoleId } = user.prefs;
+            console.log(typeof advisorRoleId)
+            console.log(typeof advisorInfo.purposeOfVisitCode)
+            if(advisorRoleId === String(advisorInfo.purposeOfVisitCode)) {
+              console.log("HIT HIT")
+              advisorsMap.push([{ name: user.name, email: user.email }]);
+            }
+        });
+          setAllAdvisors(advisorsMap);
+        };
+        fetchUsers();
+      }, []);
+      
+
+      const handleSave = () => {
+        console.log(allAdvisors)
+      };
 
       switch (userAccess) {
         case "security":
@@ -369,6 +403,59 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
               >
                 {advisorInfo.open === false ? "Create" : "View"}
               </Link>
+              {/* <Link
+                href={`${
+                  advisorInfo.open === false
+                    ? `${pathname}/createJobCard/${tempCar.$id}?currentCounter=${currentCounter}`
+                    : `${pathname}/viewJobCard/${tempCar.jobCardId}`
+                }`}
+                className={`flex justify-center items-center rounded-md w-fit px-3 py-2 border border-gray-200 ${
+                  "bg-red-500 text-white hover:bg-red-400"
+                }`}
+              >
+                Change Advisor
+              </Link> */}
+
+              { userAccess === "admin" &&
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="border bordre-red-500 text-red-500">
+                    Change Advisor
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Change Advisor</DialogTitle>
+                    <DialogDescription>Select a new advisor from the list below</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <Label htmlFor="advisorSelect" className="text-right">
+                      Advisor
+                    </Label>
+                    <Select
+                        value={selectedAdvisor}
+                        onValueChange={(value) => setSelectedAdvisor(value)}
+                      >
+                        <SelectTrigger id="advisorSelect" className="col-span-3">
+                          <SelectValue placeholder="Select an advisor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* {allAdvisors.map((advisor: any) => (
+                            <SelectItem key={advisor.email} value={advisor.email}>
+                              {advisor.name}
+                            </SelectItem>
+                          ))} */}
+                        </SelectContent>
+                      </Select>
+                  </div>
+                  <DialogFooter>
+                    <Button className="bg-red-500 text-white" onClick={handleSave}>
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              }
             </div>
           );
 

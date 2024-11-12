@@ -22,7 +22,6 @@ import Image from "next/image";
 import loader from "../../public/assets/t3-loader.gif";
 import { toast } from "sonner";
 
-import { MoveRight } from "lucide-react";
 import {
   carMakeModels,
   carMakes,
@@ -32,7 +31,7 @@ import {
   purposeOfVisits,
   serviceAdvisors
 } from "@/lib/helper";
-import { functions } from "@/lib/appwrite";
+
 import { useRouter } from "next/navigation";
 import { SearchSelect } from "./SearchSelect";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -47,7 +46,6 @@ export default function AddCarCards({ }: Props) {
   const [carNumber, setCarNumber] = useState("");
   const [carMake, setCarMake] = useState("");
   const [carModel, setCarModel] = useState("");
-  const purposeOfVisit = "hey";
 
   // Storing purposeOfVisitCode (number) and advisorEmail (string)
   const [purposeOfVisitSelections, setPurposeOfVisitSelections] = useState<

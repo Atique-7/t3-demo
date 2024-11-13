@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { listAllUsers } from "./lib/appwrite";
+import { setCookie } from "cookies-next";
 
 export async function middleware(request: NextRequest) {
   //   console.log("THIS IS THE REQUEST -", request);
@@ -17,6 +19,7 @@ export async function middleware(request: NextRequest) {
     const parsedToken = JSON.parse(token);
     const userAccess = parsedToken.labels[0];
     console.log("LABEL FROM TOKEN - ", userAccess);
+    
 
     switch (userAccess) {
       case "parts":
@@ -33,6 +36,7 @@ export async function middleware(request: NextRequest) {
         redirectURL = "/service";
         break;
       case "admin":
+        
         redirectURL = "/admin";
         break;
 

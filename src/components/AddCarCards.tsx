@@ -15,12 +15,13 @@ import {
   createTempCar,
   searchCarHistory,
   searchTempCar,
+  client,
+  listAllUsers
 } from "@/lib/appwrite";
 import Image from "next/image";
 import loader from "../../public/assets/t3-loader.gif";
 import { toast } from "sonner";
 
-import { MoveRight } from "lucide-react";
 import {
   carMakeModels,
   carMakes,
@@ -30,6 +31,7 @@ import {
   purposeOfVisits,
   serviceAdvisors
 } from "@/lib/helper";
+
 import { useRouter } from "next/navigation";
 import { SearchSelect } from "./SearchSelect";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,7 +46,6 @@ export default function AddCarCards({ }: Props) {
   const [carNumber, setCarNumber] = useState("");
   const [carMake, setCarMake] = useState("");
   const [carModel, setCarModel] = useState("");
-  const purposeOfVisit = "hey";
 
   // Storing purposeOfVisitCode (number) and advisorEmail (string)
   const [purposeOfVisitSelections, setPurposeOfVisitSelections] = useState<
@@ -59,6 +60,8 @@ export default function AddCarCards({ }: Props) {
   // For controlling visibility of dropdowns for each purposeOfVisitCode
   const [dropdownVisible, setDropdownVisible] = useState<{ [key: number]: boolean }>({});
 
+  const [advisorsByPurpose, setAdvisorsByPurpose] = useState<{ [key: number]: { name: string; email: string }[] }>({});
+
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const [isCorrectCarNumber, setIsCorrectCarNumber] = useState(false);
@@ -69,6 +72,30 @@ export default function AddCarCards({ }: Props) {
     []
   );
 
+  // Fetch users and set up advisors based on advisorRoleId
+  useEffect(() => {
+    const fetchAdvisors = async () => {
+      const users = await listAllUsers();
+      
+      const advisorsMap: { [key: number]: { name: string; email: string }[] } = {};
+
+      users.forEach((user: any) => {
+        const { advisorRoleId } = user.prefs;
+        if(advisorRoleId) {
+          if (advisorRoleId in advisorsMap) {
+            advisorsMap[advisorRoleId].push({ name: user.name, email: user.email });
+          } else {
+            advisorsMap[advisorRoleId] = [{ name: user.name, email: user.email }];
+          }
+        }
+      });
+
+      setAdvisorsByPurpose(advisorsMap);
+    };
+
+    fetchAdvisors();
+  }, []);
+
   function checkIndianCarNumber(inputText: string) {
     const indianCarNumberRegex =
       /^([A-Z]{2}\d{2}[A-Z]{1,2}\d{4})|(\d{2}BH\d{4}[A-Z]{2})$/;
@@ -78,6 +105,7 @@ export default function AddCarCards({ }: Props) {
 
   // Handling checkbox change for Purpose of Visit
   const handleCheckboxChange = (code: number) => {
+    console.log(advisorsByPurpose);
     setDropdownVisible((prev) => ({
       ...prev,
       [code]: !prev[code],  // Toggle the dropdown for the selected purposeOfVisitCode
@@ -322,13 +350,18 @@ export default function AddCarCards({ }: Props) {
                         <SelectValue placeholder="Select Service Advisor" />
                       </SelectTrigger>
                       <SelectContent>
-                        {serviceAdvisors
+                        {/* {serviceAdvisors
                           .find((item) => item.purposeOfVisitCode === pov.code)
                           ?.advisors.map((advisor, index) => (
                             <SelectItem key={index} value={advisor.email}>
                               {advisor.name}
                             </SelectItem>
-                          ))}
+                          ))} */}
+                          {advisorsByPurpose[pov.code]?.map((advisor, index) => (
+                        <SelectItem key={index} value={advisor.email}>
+                          {advisor.name}
+                        </SelectItem>
+                      ))}
                       </SelectContent>
                     </Select>
                   )}

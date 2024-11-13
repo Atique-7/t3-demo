@@ -92,15 +92,12 @@ export default function Service({}: Props) {
       } else {
         const toCreateCars = allTempCars.documents.filter((car: TempCar) => {
           if (car.purposeOfVisitAndAdvisors) {
-            console.log("THIS ONE IS VALID", car.carNumber);
             const purpose = convertStringsToArray(
               car.purposeOfVisitAndAdvisors
             );
-            console.log("fwefe", purpose);
-            console.log(parsedToken.email);
             const cars = purpose.filter((item: any) => {
               return (
-                povArr.includes(item.description) &&
+                // povArr.includes(item.description) &&
                 parsedToken.email === item.advisorEmail
               );
             });

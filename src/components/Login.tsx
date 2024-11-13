@@ -7,7 +7,7 @@ import { setCookie, deleteCookie } from "cookies-next";
 // import { loginUser, listSessions, logoutUser } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
 import PrimaryButton from "./PrimaryButton";
-import { loginUser, logoutUser } from "@/lib/appwrite";
+import { listAllUsers, loginUser, logoutUser } from "@/lib/appwrite";
 
 // import { checkUserAccess } from "@/helpers/auth";
 
@@ -30,6 +30,12 @@ function Login({}: Props) {
     console.log("COOKIE SET", userDetails);
 
     const userAccess = userDetails.labels[0];
+
+    if(userAccess === "service") {
+      const allUsers = await listAllUsers();
+      console.log("lkkkkkkk",allUsers)
+      setCookie("users", allUsers);
+    }
     let redirectURL = "/";
 
     switch (userAccess) {

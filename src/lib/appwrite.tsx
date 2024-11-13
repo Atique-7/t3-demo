@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Query, ID, Storage } from "appwrite";
+import { Client, Account, Databases, Query, ID, Storage, Functions} from "appwrite";
 import { getCookie } from "cookies-next";
 import ImageKit from "imagekit";
 import {
@@ -26,6 +26,7 @@ export let client: any;
 export let account: any;
 export let databases: any;
 export let storage: any;
+export let functions: any;
 
 client = new Client();
 client.setEndpoint(config.endpoint).setProject(config.projectId);
@@ -34,6 +35,7 @@ client.setEndpoint(config.endpoint).setProject(config.projectId);
 account = new Account(client);
 databases = new Databases(client);
 storage = new Storage(client);
+functions = new Functions(client);
 
 export const imagekit = new ImageKit({
   publicKey: "public_YxeQGi/zYRicR5GdhQu7UwOMAYg=",
@@ -55,6 +57,13 @@ export const loginUser = async (email: any, password: any) => {
     return null;
   }
 };
+
+export const listAllUsers = async () => {
+  const response = await functions.createExecution('6731d19d00250e7e0b6f');
+  const obj = JSON.parse(response.responseBody);
+  const users = obj.users.users;
+  return users;
+}
 
 export const listSessions = async () => {
   try {

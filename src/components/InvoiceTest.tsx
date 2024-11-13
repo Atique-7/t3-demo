@@ -197,6 +197,7 @@ export const InvoicePDF = ({
   invoiceType,
   invoiceNumber,
   purposeOfVisitAndAdvisors,
+  isInsurance,
 }: any) => {
   // console.log("THIS IS PRINTING FROM INVOICE PDF");
 
@@ -216,6 +217,9 @@ export const InvoicePDF = ({
     // totalTaxableValue = totalTaxableValue + (work.subTotal - (work.discountAmt || 0));
     totalTax = totalTax + work.totalTax;
   });
+
+  partsTotal = roundToTwoDecimals(partsTotal);
+  labourTotal = roundToTwoDecimals(labourTotal);
 
   return (
     <Document>

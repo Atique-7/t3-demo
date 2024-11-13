@@ -1,4 +1,8 @@
-import { getAllTaxInvoicesAfterDateTime, getJobCardById } from "@/lib/appwrite";
+import {
+  getAllInvoices,
+  getAllTaxInvoicesAfterDateTime,
+  getJobCardById,
+} from "@/lib/appwrite";
 import { Invoice } from "@/lib/definitions";
 import { stringToObj } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,9 +12,11 @@ export async function POST(request: NextRequest) {
   try {
     const dateTimeStamp = await request.json();
 
-    const result = await getAllTaxInvoicesAfterDateTime(dateTimeStamp.last_sync_time);
+    const result = await getAllInvoices();
 
-    const newInvoices = result.documents;
+    const newInvoices = result.documents.slice(0, 5);
+
+    console.log("THESE ARE THE NEW INVOICES ROUTREEEEEEE", newInvoices);
 
     const updatedNewInvoices = await Promise.all(
       newInvoices.map(async (invoice: Invoice, index: number) => {
@@ -26,7 +32,6 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(updatedNewInvoices, { status: 201 });
-    
   } catch (error) {
     console.log("Failed");
     console.log(error);

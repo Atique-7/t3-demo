@@ -24,6 +24,7 @@ import {
   invoiceTypes,
   objToStringArr,
   policyProviders,
+  policyProvidersDict,
   purposeOfVisits,
   stringToObj,
 } from "@/lib/helper";
@@ -87,6 +88,9 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
   const [policyProvider, setPolicyProvider] = useState<string>();
   const [policyNumber, setPolicyNumber] = useState<string>();
+  const [policyProviderGST, setPolicyProviderAddressGST] = useState<string>();
+  const [policyProviderAddress, setPolicyProviderAddress] = useState<string>();
+
   const [isInsuranceDetails, setIsInsuranceDetails] = useState(false);
 
   const [isEdited, setIsEdited] = useState(false);
@@ -257,8 +261,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
     console.log("JOB CARD OBJ = ", jobCard);
 
-    // await fetch(`http://localhost:3000${pathname}/invoice`, {
-    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    await fetch(`http://localhost:3000${pathname}/invoice`, {
+      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -289,8 +293,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 
-    // await fetch(`http://localhost:3000${pathname}/invoice`, {
-    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    await fetch(`http://localhost:3000${pathname}/invoice`, {
+      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -350,8 +354,14 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   };
 
   const saveInsuranceDetails = async () => {
+    const foundObj = policyProvidersDict.find(
+      (a) => a.insurer == policyProvider
+    );
+
     const insuranceDetails = JSON.stringify({
       policyProvider: policyProvider,
+      policyProviderAddress: foundObj?.address,
+      policyProviderGST: foundObj?.GST,
       policyNumber: policyNumber,
     });
 

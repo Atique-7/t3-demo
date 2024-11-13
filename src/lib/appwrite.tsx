@@ -6,6 +6,7 @@ import {
   convertToStrings,
   purposeOfVisits,
 } from "./helper";
+import { Part } from "./definitions";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -408,7 +409,7 @@ export const getAllParts = async () => {
     let result = await databases.listDocuments(
       config.databaseId,
       config.partsCollectionId,
-      []
+      [Query.limit(999999)]
     );
     return result;
   } catch (error: any) {
@@ -604,10 +605,10 @@ export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: any) => {
       config.invoicesCollectionId,
       [
         // Query.orderAsc("$createdAt"),
-        Query.and([
-          Query.greaterThan("$createdAt", dateTimeStamp),
-          Query.equal("invoiceType", "Tax Invoice"),
-        ]),
+        // Query.and([
+        // Query.greaterThan("$createdAt", "2024-11-13T8:25:36.305+00:00"),
+        // Query.equal("invoiceType", "Quote"),
+        // ]),
 
         Query.limit(9999),
       ]
@@ -616,7 +617,36 @@ export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: any) => {
     return result;
   } catch (error: any) {
     console.log(error.message);
-    console.log("JIJFOIDEFI")
+    console.log("JIJFOIDEFI");
     return null;
   }
+};
+
+export const inputPartsAppwrite = async (partsArr: any[]) => {
+  // console.log("The Parts are -", partsArr);
+
+  partsArr.map(async (part, index) => {
+    try {
+      let partsResult = await databases.createDocument(
+        config.databaseId,
+        config.partsCollectionId,
+        ID.unique(),
+        {
+          partName: String(part.partName),
+          partNumber: String(part.partNumber),
+          hsn: String(part.hsn),
+          category: String(part.category),
+          mrp: Number(part.mrp),
+          gst: Number(part.gst),
+          cgst: Number(part.cgst),
+          sgst: Number(part.sgst),
+        }
+      );
+      console.log("The created part is - ", partsResult);
+      // return carsResult;
+    } catch (error: any) {
+      console.log(error.message);
+      // return null;
+    }
+  });
 };

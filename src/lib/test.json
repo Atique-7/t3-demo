@@ -1,184 +1,569 @@
-{
-  "invoiceUrl": "https://ik.imagekit.io/ztq7tvia1/pdfs/6718a5e0001dd2fca88d_tax_invoice_Gfd6scp.pdf",
-  "jobCardId": "6718a5e0001dd2fca88d",
-  "carNumber": "JH05CE3205",
-  "invoiceType": "Tax Invoice",
-  "invoiceNumber": 30,
-  "jobCardDetails": {
-    "carId": "6718a4a1002ccf42585d",
-    "diagnosis": ["One", "Two", "three"],
-    "sendToPartsManager": true,
-    "carNumber": "JH05CE3205",
-    "jobCardStatus": 6,
-    "customerName": "Omkar",
-    "customerPhone": "9470302380",
-    "parts": [
-      {
-        "partId": "66f6cfb3003a88961d11",
-        "partName": "part3",
-        "partNumber": "97872",
-        "mrp": 340,
-        "gst": 18,
-        "hsn": "345675678",
-        "cgst": 9,
-        "sgst": 9,
-        "quantity": 5,
-        "subTotal": 1700,
-        "cgstAmt": 134.64,
-        "sgstAmt": 134.64,
-        "totalTax": 269.28,
-        "amount": 1765.28,
-        "discountPercentage": 12,
-        "discountAmt": 204
-      },
-      {
-        "partId": "66f6cf79002ba78532bd",
-        "partName": "part1",
-        "partNumber": "23127",
-        "mrp": 300,
-        "gst": 18,
-        "hsn": "80087",
-        "cgst": 9,
-        "sgst": 9,
-        "quantity": 4,
-        "subTotal": 1200,
-        "cgstAmt": 102.6,
-        "sgstAmt": 102.6,
-        "totalTax": 205.2,
-        "amount": 1345.2,
-        "discountPercentage": 5,
-        "discountAmt": 60
-      }
-    ],
-    "labour": [
-      {
-        "labourId": "66fa5eb1002f8b60f8b0",
-        "labourName": "labour2",
-        "labourCode": "88237",
-        "mrp": 100,
-        "gst": 12,
-        "hsn": "92863540856415",
-        "cgst": 6,
-        "sgst": 6,
-        "quantity": 4,
-        "subTotal": 400,
-        "cgstAmt": 22.32,
-        "sgstAmt": 22.32,
-        "totalTax": 44.64,
-        "amount": 416.64,
-        "discountPercentage": 7,
-        "discountAmt": 28
-      },
-      {
-        "labourId": "66fa5ec8003652cfc8ff",
-        "labourName": "labour3",
-        "labourCode": "68542854",
-        "mrp": 450,
-        "gst": 12,
-        "hsn": "78659967495",
-        "cgst": 6,
-        "sgst": 6,
-        "quantity": 3,
-        "subTotal": 1350,
-        "cgstAmt": 75.33,
-        "sgstAmt": 75.33,
-        "totalTax": 150.66,
-        "amount": 1406.16,
-        "discountPercentage": 7,
-        "discountAmt": 94.5
-      },
-      {
-        "labourId": "66fa5e670002de100299",
-        "labourName": "labour1",
-        "labourCode": "2187",
-        "mrp": 350,
-        "gst": 18,
-        "hsn": "00000874",
-        "cgst": 9,
-        "sgst": 9,
-        "quantity": 3,
-        "subTotal": 1050,
-        "cgstAmt": 87.89,
-        "sgstAmt": 87.89,
-        "totalTax": 175.78,
-        "amount": 1152.28,
-        "discountPercentage": 7,
-        "discountAmt": 73.5
-      }
-    ],
-    "partsTotalPreTax": 2708,
-    "partsTotalPostTax": 3422,
-    "labourTotalPreTax": 0,
-    "labourTotalPostTax": 0,
-    "jobCardNumber": 6,
-    "images": [
-      "{\"imageType\":\"Fuel\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/BEB3wL5_MJvDPh0RD.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/BEB3wL5_MJvDPh0RD.jpg\"}",
-      "{\"imageType\":\"Odometer\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/RUV31yI_JFKWPdP8s5.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/RUV31yI_JFKWPdP8s5.jpg\"}"
-    ],
-    "carFuel": "987987",
-    "carOdometer": "4897698476",
-    "customerAddress": "ahfgbiwhbwyheb",
-    "insuranceDetails": null,
-    "subTotal": 5700,
-    "discountAmt": 460,
-    "amount": 6085.56,
-    "taxes": [
-      [
-        {
-          "taxType": "GOODS",
-          "taxRate": 9,
-          "taxName": "CGST",
-          "taxAmt": 237.24
-        },
-        {
-          "taxType": "GOODS",
-          "taxRate": 9,
-          "taxName": "SGST",
-          "taxAmt": 237.24
-        },
-        {
-          "taxType": "SERVICES",
-          "taxRate": 6,
-          "taxName": "CGST",
-          "taxAmt": 87.89
-        },
-        {
-          "taxType": "SERVICES",
-          "taxRate": 6,
-          "taxName": "SGST",
-          "taxAmt": 87.89
-        },
-        {
-          "taxType": "SERVICES",
-          "taxRate": 9,
-          "taxName": "CGST",
-          "taxAmt": 97.65
-        },
-        {
-          "taxType": "SERVICES",
-          "taxRate": 9,
-          "taxName": "SGST",
-          "taxAmt": 97.65
-        }
-      ]
-    ],
-    "jobCardPDF": null,
-    "gatePassPDF": "https://ik.imagekit.io/ztq7tvia1/pdfs/6718a5e0001dd2fca88d_gatePass_hY9iDOF.pdf",
-    "$id": "6718a5e0001dd2fca88d",
-    "$createdAt": "2024-10-23T07:29:37.242+00:00",
-    "$updatedAt": "2024-10-26T08:10:40.583+00:00",
-    "$permissions": [
-      "read(\"user:67053c8e000e258df809\")",
-      "update(\"user:67053c8e000e258df809\")",
-      "delete(\"user:67053c8e000e258df809\")"
-    ],
+[
+  {
+    "invoiceUrl": "https://ik.imagekit.io/ztq7tvia1/pdfs/67348314000ed8b48108_quote_vzKOn5f.pdf",
+    "jobCardId": "67348314000ed8b48108",
+    "carNumber": "MH23AB3456",
+    "invoiceType": "Quote",
+    "invoiceNumber": 53,
+    "$id": "673484050024453a6480",
+    "$createdAt": "2024-11-13T10:48:41.391+00:00",
+    "$updatedAt": "2024-11-13T10:48:41.391+00:00",
+    "$permissions": [],
     "$databaseId": "66b10c670021dc021477",
-    "$collectionId": "66e80a830013e7a81f31"
+    "$collectionId": "6710ba53003b4b25a23d",
+    "jobCardDetails": {
+      "carId": "673482a70011a44e8e77",
+      "diagnosis": ["teyjute", "ytukyuk"],
+      "sendToPartsManager": true,
+      "carNumber": "MH23AB3456",
+      "jobCardStatus": 3,
+      "customerName": "Omkar",
+      "customerPhone": "9470302380",
+      "parts": [
+        {
+          "partId": "673479650015a52cbe5a",
+          "partName": "04152-YZZA6  OIL FILTER  ALTIS ETIOS",
+          "partNumber": "04152-YZZA6",
+          "mrp": 704,
+          "gst": 18,
+          "hsn": "8421",
+          "cgst": 18,
+          "sgst": 18,
+          "quantity": 2,
+          "subTotal": 1408,
+          "cgstAmt": 223.03,
+          "sgstAmt": 223.03,
+          "totalTax": 446.06,
+          "amount": 1685.1,
+          "discountPercentage": 12,
+          "discountAmt": 168.96
+        },
+        {
+          "partId": "673479650014b3e7e964",
+          "partName": "01550M0625A  BOLT 10MM MGP",
+          "partNumber": "01550M0625A",
+          "mrp": 8,
+          "gst": 28,
+          "hsn": "7318",
+          "cgst": 28,
+          "sgst": 28,
+          "quantity": 7,
+          "subTotal": 56,
+          "cgstAmt": 13.8,
+          "sgstAmt": 13.8,
+          "totalTax": 27.6,
+          "amount": 76.88,
+          "discountPercentage": 12,
+          "discountAmt": 6.72
+        },
+        {
+          "partId": "673479650015170c4438",
+          "partName": "03066GAM00421N  FAN BELT O.PK SCORPIO",
+          "partNumber": "03066GAM00421N",
+          "mrp": 1645,
+          "gst": 18,
+          "hsn": "8421",
+          "cgst": 18,
+          "sgst": 18,
+          "quantity": 1,
+          "subTotal": 1645,
+          "cgstAmt": 284.26,
+          "sgstAmt": 284.26,
+          "totalTax": 568.52,
+          "amount": 2147.72,
+          "discountPercentage": 4,
+          "discountAmt": 65.8
+        }
+      ],
+      "labour": [],
+      "partsTotalPreTax": null,
+      "partsTotalPostTax": null,
+      "labourTotalPreTax": null,
+      "labourTotalPostTax": null,
+      "jobCardNumber": 24,
+      "images": [
+        "{\"imageType\":\"Fuel\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/e8M2SSk_-B1Zb8Q00.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/e8M2SSk_-B1Zb8Q00.jpg\"}",
+        "{\"imageType\":\"Odometer\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/ANZLTa4_1uUbTZO-i.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/ANZLTa4_1uUbTZO-i.jpg\"}"
+      ],
+      "carFuel": "qweqr",
+      "carOdometer": "567895",
+      "customerAddress": "HELLO",
+      "insuranceDetails": null,
+      "subTotal": 3109,
+      "discountAmt": 241.48,
+      "amount": 3909.7,
+      "taxes": [
+        {
+          "taxType": "GOODS",
+          "taxRate": 18,
+          "taxName": "CGST",
+          "taxAmt": 507.28999999999996
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 18,
+          "taxName": "SGST",
+          "taxAmt": 507.28999999999996
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "CGST",
+          "taxAmt": 13.8
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "SGST",
+          "taxAmt": 13.8
+        }
+      ],
+      "jobCardPDF": null,
+      "gatePassPDF": null,
+      "purposeOfVisit": "Running Repair",
+      "serviceAdvisorID": null,
+      "$id": "67348314000ed8b48108",
+      "$createdAt": "2024-11-13T10:44:39.974+00:00",
+      "$updatedAt": "2024-11-13T10:48:38.198+00:00",
+      "$permissions": [
+        "read(\"user:67053c8e000e258df809\")",
+        "update(\"user:67053c8e000e258df809\")",
+        "delete(\"user:67053c8e000e258df809\")"
+      ],
+      "$databaseId": "66b10c670021dc021477",
+      "$collectionId": "66e80a830013e7a81f31"
+    }
   },
-  "$id": "671ca0df001a4b2ac805",
-  "$createdAt": "2024-10-26T07:57:19.896+00:00",
-  "$updatedAt": "2024-10-26T07:57:19.896+00:00",
-  "$permissions": [],
-  "$databaseId": "66b10c670021dc021477",
-  "$collectionId": "6710ba53003b4b25a23d"
-}
+  {
+    "invoiceUrl": "https://ik.imagekit.io/ztq7tvia1/pdfs/673482f1003cca44403b_quote_e7IEQgS.pdf",
+    "jobCardId": "673482f1003cca44403b",
+    "carNumber": "MH02AB4567",
+    "invoiceType": "Quote",
+    "invoiceNumber": 52,
+    "$id": "673483d70019be7fbf49",
+    "$createdAt": "2024-11-13T10:47:55.233+00:00",
+    "$updatedAt": "2024-11-13T10:47:55.233+00:00",
+    "$permissions": [],
+    "$databaseId": "66b10c670021dc021477",
+    "$collectionId": "6710ba53003b4b25a23d",
+    "jobCardDetails": {
+      "carId": "673482bf0006fe8fbd28",
+      "diagnosis": ["erthyrthj", "tdfgjyhtdgj", "dtyjtykm"],
+      "sendToPartsManager": true,
+      "carNumber": "MH02AB4567",
+      "jobCardStatus": 3,
+      "customerName": "Omkar",
+      "customerPhone": "9470302380",
+      "parts": [
+        {
+          "partId": "67347965001460db75cf",
+          "partName": "0108ZAW00340N  MOULDING QUATER PANEL ARCH RH XUV500",
+          "partNumber": "0108ZAW00340N",
+          "mrp": 604,
+          "gst": 28,
+          "hsn": "8708",
+          "cgst": 28,
+          "sgst": 28,
+          "quantity": 3,
+          "subTotal": 1812,
+          "cgstAmt": 471.84,
+          "sgstAmt": 471.84,
+          "totalTax": 943.68,
+          "amount": 2628.84,
+          "discountPercentage": 7,
+          "discountAmt": 126.84
+        },
+        {
+          "partId": "673479650015de8d1ff1",
+          "partName": "04465-YZZT5  BRAKE PAD SET FORTUNER NEW",
+          "partNumber": "04465-YZZT5",
+          "mrp": 6745,
+          "gst": 28,
+          "hsn": "8708",
+          "cgst": 28,
+          "sgst": 28,
+          "quantity": 5,
+          "subTotal": 33725,
+          "cgstAmt": 8970.85,
+          "sgstAmt": 8970.85,
+          "totalTax": 17941.7,
+          "amount": 49980.45,
+          "discountPercentage": 5,
+          "discountAmt": 1686.25
+        }
+      ],
+      "labour": [],
+      "partsTotalPreTax": null,
+      "partsTotalPostTax": null,
+      "labourTotalPreTax": null,
+      "labourTotalPostTax": null,
+      "jobCardNumber": 23,
+      "images": [
+        "{\"imageType\":\"Fuel\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/tUPJMEA_FqxbqaQb0.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/tUPJMEA_FqxbqaQb0.jpg\"}",
+        "{\"imageType\":\"Odometer\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/bYmq3e0_lzuC3GK6M.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/bYmq3e0_lzuC3GK6M.jpg\"}"
+      ],
+      "carFuel": "987987",
+      "carOdometer": "5367345678",
+      "customerAddress": "TWEASTT",
+      "insuranceDetails": null,
+      "subTotal": 35537,
+      "discountAmt": 1813.09,
+      "amount": 52609.29,
+      "taxes": [
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "CGST",
+          "taxAmt": 9442.69
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "SGST",
+          "taxAmt": 9442.69
+        }
+      ],
+      "jobCardPDF": null,
+      "gatePassPDF": null,
+      "purposeOfVisit": "Running Repair",
+      "serviceAdvisorID": null,
+      "$id": "673482f1003cca44403b",
+      "$createdAt": "2024-11-13T10:44:05.725+00:00",
+      "$updatedAt": "2024-11-13T10:47:51.916+00:00",
+      "$permissions": [
+        "read(\"user:67053c8e000e258df809\")",
+        "update(\"user:67053c8e000e258df809\")",
+        "delete(\"user:67053c8e000e258df809\")"
+      ],
+      "$databaseId": "66b10c670021dc021477",
+      "$collectionId": "66e80a830013e7a81f31"
+    }
+  },
+  {
+    "invoiceUrl": "https://ik.imagekit.io/ztq7tvia1/pdfs/67348267001f91f4054c_quote_JHUzjtH.pdf",
+    "jobCardId": "67348267001f91f4054c",
+    "carNumber": "JH05BL2691",
+    "invoiceType": "Quote",
+    "invoiceNumber": 51,
+    "$id": "673483a3000bc5e2c7f8",
+    "$createdAt": "2024-11-13T10:47:03.020+00:00",
+    "$updatedAt": "2024-11-13T10:47:03.020+00:00",
+    "$permissions": [],
+    "$databaseId": "66b10c670021dc021477",
+    "$collectionId": "6710ba53003b4b25a23d",
+    "jobCardDetails": {
+      "carId": "67330a0d001d1d68ed23",
+      "diagnosis": ["57689", "789", "789"],
+      "sendToPartsManager": true,
+      "carNumber": "JH05BL2691",
+      "jobCardStatus": 3,
+      "customerName": "Omkar",
+      "customerPhone": "9470302380",
+      "parts": [
+        {
+          "partId": "67347965001460db75cf",
+          "partName": "0108ZAW00340N  MOULDING QUATER PANEL ARCH RH XUV500",
+          "partNumber": "0108ZAW00340N",
+          "mrp": 604,
+          "gst": 28,
+          "hsn": "8708",
+          "cgst": 28,
+          "sgst": 28,
+          "quantity": 4,
+          "subTotal": 2416,
+          "cgstAmt": 575.01,
+          "sgstAmt": 575.01,
+          "totalTax": 1150.02,
+          "amount": 3203.62,
+          "discountPercentage": 15,
+          "discountAmt": 362.4
+        },
+        {
+          "partId": "673479650015ac7a4f4a",
+          "partName": "0418 594636  TAPPET COVER GASKET BMW",
+          "partNumber": "0418 594636",
+          "mrp": 4086,
+          "gst": 18,
+          "hsn": "8708",
+          "cgst": 18,
+          "sgst": 18,
+          "quantity": 2,
+          "subTotal": 8172,
+          "cgstAmt": 1250.32,
+          "sgstAmt": 1250.32,
+          "totalTax": 2500.64,
+          "amount": 9446.84,
+          "discountPercentage": 15,
+          "discountAmt": 1225.8
+        }
+      ],
+      "labour": [],
+      "partsTotalPreTax": null,
+      "partsTotalPostTax": null,
+      "labourTotalPreTax": null,
+      "labourTotalPostTax": null,
+      "jobCardNumber": 22,
+      "images": [
+        "{\"imageType\":\"Fuel\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/v4IvNlg_kan1xfI9l0.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/v4IvNlg_kan1xfI9l0.jpg\"}",
+        "{\"imageType\":\"Odometer\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/DpygJiO__LX5Tv0fl.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/DpygJiO__LX5Tv0fl.jpg\"}"
+      ],
+      "carFuel": "60%",
+      "carOdometer": "536745678",
+      "customerAddress": "659578907",
+      "insuranceDetails": null,
+      "subTotal": 10588,
+      "discountAmt": 1588.2,
+      "amount": 12650.46,
+      "taxes": [
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "CGST",
+          "taxAmt": 575.01
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "SGST",
+          "taxAmt": 575.01
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 18,
+          "taxName": "CGST",
+          "taxAmt": 1250.32
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 18,
+          "taxName": "SGST",
+          "taxAmt": 1250.32
+        }
+      ],
+      "jobCardPDF": null,
+      "gatePassPDF": null,
+      "purposeOfVisit": "Running Repair",
+      "serviceAdvisorID": null,
+      "$id": "67348267001f91f4054c",
+      "$createdAt": "2024-11-13T10:41:47.274+00:00",
+      "$updatedAt": "2024-11-13T10:46:59.820+00:00",
+      "$permissions": [
+        "read(\"user:67053c8e000e258df809\")",
+        "update(\"user:67053c8e000e258df809\")",
+        "delete(\"user:67053c8e000e258df809\")"
+      ],
+      "$databaseId": "66b10c670021dc021477",
+      "$collectionId": "66e80a830013e7a81f31"
+    }
+  },
+  {
+    "invoiceUrl": "https://ik.imagekit.io/ztq7tvia1/pdfs/6734823f002a17353377_quote_mYa1DOO.pdf",
+    "jobCardId": "6734823f002a17353377",
+    "carNumber": "MH23AB2345",
+    "invoiceType": "Quote",
+    "invoiceNumber": 50,
+    "$id": "6734836100063603c66c",
+    "$createdAt": "2024-11-13T10:45:56.940+00:00",
+    "$updatedAt": "2024-11-13T10:45:56.940+00:00",
+    "$permissions": [],
+    "$databaseId": "66b10c670021dc021477",
+    "$collectionId": "6710ba53003b4b25a23d",
+    "jobCardDetails": {
+      "carId": "673481da002564f3b74c",
+      "diagnosis": ["one", "two"],
+      "sendToPartsManager": true,
+      "carNumber": "MH23AB2345",
+      "jobCardStatus": 3,
+      "customerName": "Omkar",
+      "customerPhone": "9470302380",
+      "parts": [
+        {
+          "partId": "673479650015de8d1ff1",
+          "partName": "04465-YZZT5  BRAKE PAD SET FORTUNER NEW",
+          "partNumber": "04465-YZZT5",
+          "mrp": 6745,
+          "gst": 28,
+          "hsn": "8708",
+          "cgst": 28,
+          "sgst": 28,
+          "quantity": 4,
+          "subTotal": 26980,
+          "cgstAmt": 6798.96,
+          "sgstAmt": 6798.96,
+          "totalTax": 13597.92,
+          "amount": 37879.92,
+          "discountPercentage": 10,
+          "discountAmt": 2698
+        },
+        {
+          "partId": "673479650014b4b407c6",
+          "partName": "01550M0616A BOLT 10MM MGP",
+          "partNumber": "01550M0616A",
+          "mrp": 8,
+          "gst": 28,
+          "hsn": "7318",
+          "cgst": 28,
+          "sgst": 28,
+          "quantity": 9,
+          "subTotal": 72,
+          "cgstAmt": 18.14,
+          "sgstAmt": 18.14,
+          "totalTax": 36.28,
+          "amount": 101.08,
+          "discountPercentage": 10,
+          "discountAmt": 7.2
+        }
+      ],
+      "labour": [],
+      "partsTotalPreTax": null,
+      "partsTotalPostTax": null,
+      "labourTotalPreTax": null,
+      "labourTotalPostTax": null,
+      "jobCardNumber": 21,
+      "images": [
+        "{\"imageType\":\"Fuel\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/6kf6Lnu_66B2AzCdK6.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/6kf6Lnu_66B2AzCdK6.jpg\"}",
+        "{\"imageType\":\"Odometer\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/3pccPma_nlGqGF-Br.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/3pccPma_nlGqGF-Br.jpg\"}"
+      ],
+      "carFuel": "60%",
+      "carOdometer": "3425634",
+      "customerAddress": "HELLO",
+      "insuranceDetails": null,
+      "subTotal": 27052,
+      "discountAmt": 2705.2,
+      "amount": 37981,
+      "taxes": [
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "CGST",
+          "taxAmt": 6817.1
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 28,
+          "taxName": "SGST",
+          "taxAmt": 6817.1
+        }
+      ],
+      "jobCardPDF": null,
+      "gatePassPDF": null,
+      "purposeOfVisit": "Running Repair",
+      "serviceAdvisorID": null,
+      "$id": "6734823f002a17353377",
+      "$createdAt": "2024-11-13T10:41:07.429+00:00",
+      "$updatedAt": "2024-11-13T10:45:52.345+00:00",
+      "$permissions": [
+        "read(\"user:67053c8e000e258df809\")",
+        "update(\"user:67053c8e000e258df809\")",
+        "delete(\"user:67053c8e000e258df809\")"
+      ],
+      "$databaseId": "66b10c670021dc021477",
+      "$collectionId": "66e80a830013e7a81f31"
+    }
+  },
+  {
+    "invoiceUrl": "https://ik.imagekit.io/ztq7tvia1/pdfs/67347d53003236be35fa_quote_i2LLMAb.pdf",
+    "jobCardId": "67347d53003236be35fa",
+    "carNumber": "MH23AB1234",
+    "invoiceType": "Quote",
+    "invoiceNumber": 49,
+    "$id": "67347e9c002115bd0797",
+    "$createdAt": "2024-11-13T10:25:36.305+00:00",
+    "$updatedAt": "2024-11-13T10:25:36.305+00:00",
+    "$permissions": [],
+    "$databaseId": "66b10c670021dc021477",
+    "$collectionId": "6710ba53003b4b25a23d",
+    "jobCardDetails": {
+      "carId": "67347cdc000cd6a1fa02",
+      "diagnosis": ["one", "two", "three"],
+      "sendToPartsManager": false,
+      "carNumber": "MH23AB1234",
+      "jobCardStatus": 3,
+      "customerName": "Omkar",
+      "customerPhone": "9470302380",
+      "parts": [
+        {
+          "partId": "673479650014664df39c",
+          "partName": "0109BAG01291N  DOOR MIRROR LH SADA  SCORPIO HWK",
+          "partNumber": "0109BAG01291N",
+          "mrp": 2424,
+          "gst": 18,
+          "hsn": "7009",
+          "cgst": 18,
+          "sgst": 18,
+          "quantity": 4,
+          "subTotal": 9696,
+          "cgstAmt": 1535.85,
+          "sgstAmt": 1535.85,
+          "totalTax": 3071.7,
+          "amount": 11604.18,
+          "discountPercentage": 12,
+          "discountAmt": 1163.52
+        },
+        {
+          "partId": "6734796500153d05ab08",
+          "partName": "0311AM0020N  FRONT CRANK OIL SEAL SCORPIO",
+          "partNumber": "0311AM0020N",
+          "mrp": 890,
+          "gst": 18,
+          "hsn": "8708",
+          "cgst": 18,
+          "sgst": 18,
+          "quantity": 3,
+          "subTotal": 2670,
+          "cgstAmt": 446.96,
+          "sgstAmt": 446.96,
+          "totalTax": 893.92,
+          "amount": 3377.02,
+          "discountPercentage": 7,
+          "discountAmt": 186.9
+        }
+      ],
+      "labour": [],
+      "partsTotalPreTax": null,
+      "partsTotalPostTax": null,
+      "labourTotalPreTax": null,
+      "labourTotalPostTax": null,
+      "jobCardNumber": 20,
+      "images": [
+        "{\"imageType\":\"Fuel\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/ZiFiVL1_mG1Mcn46F.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/ZiFiVL1_mG1Mcn46F.jpg\"}",
+        "{\"imageType\":\"Odometer\",\"thumbnailURL\":\"https://ik.imagekit.io/ztq7tvia1/tr:n-ik_ml_thumbnail/kW4mgqA_EIOHLwrHZ8.jpg\",\"imageURL\":\"https://ik.imagekit.io/ztq7tvia1/kW4mgqA_EIOHLwrHZ8.jpg\"}"
+      ],
+      "carFuel": "1234",
+      "carOdometer": "4321",
+      "customerAddress": "TESTTT",
+      "insuranceDetails": null,
+      "subTotal": 12366,
+      "discountAmt": 1350.42,
+      "amount": 14981.2,
+      "taxes": [
+        {
+          "taxType": "GOODS",
+          "taxRate": 18,
+          "taxName": "CGST",
+          "taxAmt": 1982.81
+        },
+        {
+          "taxType": "GOODS",
+          "taxRate": 18,
+          "taxName": "SGST",
+          "taxAmt": 1982.81
+        }
+      ],
+      "jobCardPDF": null,
+      "gatePassPDF": null,
+      "purposeOfVisit": "Running Repair",
+      "serviceAdvisorID": null,
+      "$id": "67347d53003236be35fa",
+      "$createdAt": "2024-11-13T10:20:07.519+00:00",
+      "$updatedAt": "2024-11-13T10:25:30.059+00:00",
+      "$permissions": [
+        "read(\"user:67053c8e000e258df809\")",
+        "update(\"user:67053c8e000e258df809\")",
+        "delete(\"user:67053c8e000e258df809\")"
+      ],
+      "$databaseId": "66b10c670021dc021477",
+      "$collectionId": "66e80a830013e7a81f31"
+    }
+  }
+]

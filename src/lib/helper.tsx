@@ -263,6 +263,166 @@ export const carMakeModels = [
   },
 ];
 
+export const policyProvidersDict = [
+  {
+    insurer: "Acko General Insurance Co. Ltd.",
+    address:
+      "5th floor,B wing, B-501,Lotus Corporate Park,, off western express highway",
+    GST: "27AAOCA9055C1ZJ",
+  },
+  {
+    insurer: "Bajaj Allianz General Insurance",
+    address: "952/954,Appasaheb Marathe Marg,, Nr. Chaitnya Tower",
+    GST: "27AABCB5730G1ZX",
+  },
+  {
+    insurer: "Bharti AXA General Insurance Company Ltd.",
+    address:
+      "Bharti AXA General Insurance Company Ltd 7&8 Floor Times Square 349 and 349/1 of Revenue Village Gundvali Taluka",
+    GST: "27AADCB2008D1ZC",
+  },
+  {
+    insurer: "CHOLAMANDALAM MS GENERAL INSURANCE COMPANY LTD",
+    address: "No.102 A,Gr. Floor,Leena Bussiness Park,, village Marol",
+    GST: "27AABCC6633K1ZJ",
+  },
+  {
+    insurer: "Go Digit General Insurance Ltd.",
+    address:
+      "Tower -1,Elphinstone(West),1201,12th Floor,, India Bull Finance Center, Senapati Bapat Road",
+    GST: "27AACCO4128Q1Z0",
+  },
+  {
+    insurer: "Edelweiss General Insurance Co. Ltd.",
+    address: "5th Floor, Tower 3, Kohinoor City Mall,, Kirol Road, Kurla West",
+    GST: "27AAECE2328J1ZO",
+  },
+  {
+    insurer: "Future Generali General Insurance",
+    address: "Unit  No .801 802,Tower C 247 Embassy Park,LBS Marg",
+    GST: "27AABCF0191R2Z8",
+  },
+  {
+    insurer: "Iffco Tokio General Insurance Co. Ltd.",
+    address: "2ND FLOOR AFL HOUSE,LOK BHARTI COMPLEX",
+    GST: "27AAACI7573H1ZC",
+  },
+  {
+    insurer: "Kotak Mahindra General Insurance Co. Ltd.",
+    address:
+      "A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)",
+    GST: "27AAFCK7016C1ZT",
+  },
+  {
+    insurer: "LIBERTY GENERAL INSURANCE LIMITED",
+    address:
+      "10th Floor,Tower A,Peninsula Busieness Park, Ganpatrao Kadam Marg, Lower Parel",
+    GST: "27AABCL9950A1ZL",
+  },
+  {
+    insurer: "NATIONAL INSURANCE COMPANY LIMITED",
+    address:
+      "Sterling Cinema Building 5th floor . 65, Murzban Street, Mumbai 01 State Maharashtra -27",
+    GST: "27AAACN9967E1Z3",
+  },
+  {
+    insurer: "THE NEW INDIA ASSURANCE CO LTD",
+    address: "New India Centre,12 th floor,17/A, Cooperage Road,Churchgate",
+    GST: "27AAACN4165C3ZP",
+  },
+  {
+    insurer: "The Oriental Insurance Co. Ltd.",
+    address: "",
+    GST: "NaN",
+  },
+  {
+    insurer: "Raheja QBE General Insurance Co. Ltd.",
+    address:
+      "501-502, 5TH FLOOR,FULCRUM WING A,, IA PROJECT ROAD, SAHAR ANDHERI EAST",
+    GST: "27AADCR7145R1ZN",
+  },
+  {
+    insurer: "Reliance General Insurance Co Ltd",
+    address: "Reliance Centre South Wing 4th Floor",
+    GST: "27AABCR6747B1ZG",
+  },
+  {
+    insurer: "SBI General Insurance Co. Ltd.",
+    address:
+      "101,1st Floor,Krishna Baug, A Wing New Maneklal Est, Above Bank Of Baroda S N Mehta Marg",
+    GST: "27AAMCS8857L1ZC",
+  },
+  {
+    insurer: "Shriram General Insurance Co. Ltd.",
+    address:
+      "10TH FLOOR, 1006 , PLOT NO. 19/20,SANTRA PLAZA COMMERCIAL COMPLEX,, PALM BEACH ROAD, SECTOR 19 D VASHI,NAVI MUMBAI, Thane, Maharashtra",
+    GST: "27AAKCS2509K1Z3",
+  },
+  {
+    insurer: "Tata AIG General Insurance Co. Ltd.",
+    address: "15th Floor,Tower A, Peninsula Business Park GK Marg",
+    GST: "27AABCT3518Q1ZW",
+  },
+  {
+    insurer: "United India Insurance Co. Ltd.",
+    address:
+      "UNITED INDIA INSURANCE CO.LTD., MUMBAI RO-I 5TH FLOOR, UNION CO-OPERATIVE INSURANCE BLDG. ABOVE VODAFONE GALLERY, SIR P.M.ROAD, FORT,MUMBAI-400001",
+    GST: "27AAACU5552C1ZJ",
+  },
+  {
+    insurer: "Universal Sompo General Insurance Co. Ltd.",
+    address: "114, First Floor, Ackruti Star, MIDC Center",
+    GST: "27AAACU8917F1Z6",
+  },
+  {
+    insurer: "HDFC ERGO GEN INS CO LTD",
+    address: "6th  Floor,Leela Business Park, Andheri Kurla Road",
+    GST: "27AABCL5045N1Z8",
+  },
+  {
+    insurer: "ICICI LOMBARD GENERAL INS CO LTD",
+    address: "ICICI Lombard House ,414,Veer Savarkar Marg",
+    GST: "27AAACI7904G1ZN",
+  },
+  {
+    insurer: "Royal Sundaram General Insurance Co. Ltd.",
+    address: "Delphi C Wing, 2nd floor 201-204 ,Hiranandani Business Park",
+    GST: "27AABCR7106G1ZJ",
+  },
+  {
+    insurer: "OLA FLEET TECHNOLOGIES PVT LTD",
+    address: "C.R.ARCADE Office, Andheri East",
+    GST: "27AAKCA2311H1Z0",
+  },
+  {
+    insurer: "Magma HDI General Insurance Co. Ltd.",
+    address: "Khodal Chambers,2nd Floor Unit 203 & 204 R B Mehta Marg",
+    GST: "27AAGCM1685C1ZJ",
+  },
+  {
+    insurer: "Navi General Insurance Ltd.",
+    address: "",
+    GST: "NaN",
+  },
+  {
+    insurer: "National Insurance Company Ltd",
+    address: "Gurgaon DO-I, SCO No.- 41-42-43.Sector-31",
+    GST: "06AAACN9967E2Z6",
+  },
+  {
+    insurer: "ZUNO GENERAL INSURANCE LIMITED",
+    address:
+      "2 ND FLOOR, B WING, UNIT NO 32, KOHINOOR CITY MALL,, TOWER 3, KIROL ROAD, KURLA WEST",
+    GST: "27AAECE2328J1ZO",
+  },
+  {
+    insurer: "ZURICH KOTAK GENERAL INSURANCE COMPANY (INDIA) LIMITED",
+    address:
+      "4th Floor, Unit No. 401, Silver Metropolis,, Jai Coach Compound, Off Western Express Highway,Goregaon East",
+    GST: "27AAFCK7016C1ZT",
+  },
+];
+
 export const policyProviders = [
   "Acko General Insurance Co. Ltd.",
   "Bajaj Allianz General Insurance",
@@ -393,20 +553,24 @@ export const calcAllAmts = (parts: CurrentPart[], labour: CurrentLabour[]) => {
   let amount = 0;
 
   parts.map((part: CurrentPart) => {
-    subTotal = subTotal + part.subTotal;
-    discountAmt = discountAmt + (part.discountAmt || 0);
-    amount = amount + part.amount;
+    subTotal = roundToTwoDecimals(subTotal + part.subTotal);
+    discountAmt = roundToTwoDecimals(discountAmt + (part.discountAmt || 0));
+    amount = roundToTwoDecimals(amount + part.amount);
   });
 
   console.log("TOTALS AFTER PARTS - ", subTotal, discountAmt, amount);
 
   labour.map((work: CurrentLabour) => {
-    subTotal = subTotal + work.subTotal;
-    discountAmt = discountAmt + (work.discountAmt || 0);
-    amount = amount + work.amount;
+    subTotal = roundToTwoDecimals(subTotal + work.subTotal);
+    discountAmt = roundToTwoDecimals(discountAmt + (work.discountAmt || 0));
+    amount = roundToTwoDecimals(amount + work.amount);
   });
 
   console.log("TOTALS AFTER LABOUR - ", subTotal, discountAmt, amount);
+
+  subTotal = roundToTwoDecimals(subTotal);
+  discountAmt = roundToTwoDecimals(discountAmt);
+  amount = roundToTwoDecimals(amount);
 
   return { subTotal, discountAmt, amount };
 };
@@ -460,8 +624,8 @@ export const createTempPartObj = (item: Part) => {
       sgst: item.sgst,
       quantity: 1,
       subTotal: tempSubTotal,
-      cgstAmt: tempCgstAmt,
-      sgstAmt: tempSgstAmt,
+      cgstAmt: roundToTwoDecimals(tempCgstAmt),
+      sgstAmt: roundToTwoDecimals(tempSgstAmt),
       totalTax: roundToTwoDecimals(tempCgstAmt + tempSgstAmt),
       amount: roundToTwoDecimals(tempSubTotal + tempCgstAmt + tempSgstAmt),
     };
@@ -487,8 +651,8 @@ export const createTempLabourObj = (item: Labour) => {
       sgst: item.sgst,
       quantity: 1,
       subTotal: tempSubTotal,
-      cgstAmt: tempCgstAmt,
-      sgstAmt: tempSgstAmt,
+      cgstAmt: roundToTwoDecimals(tempCgstAmt),
+      sgstAmt: roundToTwoDecimals(tempSgstAmt),
       totalTax: roundToTwoDecimals(tempCgstAmt + tempSgstAmt),
       amount: roundToTwoDecimals(tempSubTotal + tempCgstAmt + tempSgstAmt),
     };
@@ -536,8 +700,8 @@ export const updateTempPartObjQuantity = (
 
     currentPartObj.quantity = newQuantity;
     currentPartObj.subTotal = actualSubTotal;
-    currentPartObj.cgstAmt = tempCgstAmt;
-    currentPartObj.sgstAmt = tempSgstAmt;
+    currentPartObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
+    currentPartObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
     currentPartObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
     currentPartObj.amount = roundToTwoDecimals(
       tempSubTotal + tempCgstAmt + tempSgstAmt
@@ -586,8 +750,8 @@ export const updateTempLabourObjQuantity = (
 
     currentLabourObj.quantity = newQuantity;
     currentLabourObj.subTotal = actualSubTotal;
-    currentLabourObj.cgstAmt = tempCgstAmt;
-    currentLabourObj.sgstAmt = tempSgstAmt;
+    currentLabourObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
+    currentLabourObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
     currentLabourObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
     currentLabourObj.amount = roundToTwoDecimals(
       tempSubTotal + tempCgstAmt + tempSgstAmt
@@ -613,8 +777,8 @@ export const updateTempPartObjDiscount = (
 
     currentPartObj.discountPercentage = discountPercentage;
     currentPartObj.discountAmt = discountAmt;
-    currentPartObj.cgstAmt = tempCgstAmt;
-    currentPartObj.sgstAmt = tempSgstAmt;
+    currentPartObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
+    currentPartObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
     currentPartObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
     currentPartObj.amount = roundToTwoDecimals(
       tempSubTotal + tempCgstAmt + tempSgstAmt
@@ -643,8 +807,8 @@ export const updateTempLabourObjDiscount = (
 
     currentLabourObj.discountPercentage = discountPercentage;
     currentLabourObj.discountAmt = discountAmt;
-    currentLabourObj.cgstAmt = tempCgstAmt;
-    currentLabourObj.sgstAmt = tempSgstAmt;
+    currentLabourObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
+    currentLabourObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
     currentLabourObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
     currentLabourObj.amount = roundToTwoDecimals(
       tempSubTotal + tempCgstAmt + tempSgstAmt
@@ -664,8 +828,8 @@ export const removeTempPartObjDiscount = (currentPartObj: CurrentPart) => {
 
     currentPartObj.discountPercentage = 0;
     currentPartObj.discountAmt = 0;
-    currentPartObj.cgstAmt = tempCgstAmt;
-    currentPartObj.sgstAmt = tempSgstAmt;
+    currentPartObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
+    currentPartObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
     currentPartObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
     currentPartObj.amount = roundToTwoDecimals(
       tempSubTotal + tempCgstAmt + tempSgstAmt
@@ -687,8 +851,8 @@ export const removeTempLabourObjDiscount = (
 
     currentLabourObj.discountPercentage = 0;
     currentLabourObj.discountAmt = 0;
-    currentLabourObj.cgstAmt = tempCgstAmt;
-    currentLabourObj.sgstAmt = tempSgstAmt;
+    currentLabourObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
+    currentLabourObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
     currentLabourObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
     currentLabourObj.amount = roundToTwoDecimals(
       tempSubTotal + tempCgstAmt + tempSgstAmt
@@ -741,8 +905,9 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundCgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundCgstObjIndex + 1);
 
-      taxes[foundCgstObjIndex].taxAmt =
-        taxes[foundCgstObjIndex].taxAmt + part.cgstAmt;
+      taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundCgstObjIndex].taxAmt + part.cgstAmt
+      );
 
       taxes = [...arrayFirstHalf, taxes[foundCgstObjIndex], ...arraySecondHalf];
     } else {
@@ -760,8 +925,9 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundSgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundSgstObjIndex + 1);
 
-      taxes[foundSgstObjIndex].taxAmt =
-        taxes[foundSgstObjIndex].taxAmt + part.sgstAmt;
+      taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundSgstObjIndex].taxAmt + part.sgstAmt
+      );
 
       taxes = [...arrayFirstHalf, taxes[foundSgstObjIndex], ...arraySecondHalf];
     } else {
@@ -795,8 +961,9 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundCgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundCgstObjIndex + 1);
 
-      taxes[foundCgstObjIndex].taxAmt =
-        taxes[foundCgstObjIndex].taxAmt + work.cgstAmt;
+      taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundCgstObjIndex].taxAmt + work.cgstAmt
+      );
 
       taxes = [...arrayFirstHalf, taxes[foundCgstObjIndex], ...arraySecondHalf];
     } else {
@@ -814,8 +981,9 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundSgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundSgstObjIndex + 1);
 
-      taxes[foundSgstObjIndex].taxAmt =
-        taxes[foundSgstObjIndex].taxAmt + work.sgstAmt;
+      taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundSgstObjIndex].taxAmt + work.sgstAmt
+      );
 
       taxes = [...arrayFirstHalf, taxes[foundSgstObjIndex], ...arraySecondHalf];
     } else {

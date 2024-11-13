@@ -96,7 +96,6 @@ export function CurrentPartsDataTable<TData, TValue>({
   };
 
   const handleQuantityUpdate = (row: any, toUpdate: number) => {
-    
     let arrayFirstHalf = currentParts!.slice(0, row.index);
     let arraySecondHalf = currentParts!.slice(row.index + 1);
 
@@ -128,13 +127,15 @@ export function CurrentPartsDataTable<TData, TValue>({
   };
 
   const handleAllDiscount = (discount: number) => {
-    if (!currentParts) {return;}
-  
+    if (!currentParts) {
+      return;
+    }
+
     if (Number(discount) > 15) {
       toast("Discount More than 15% is not allowed");
       return;
     }
-  
+
     // Prepare a new array with updated discount values
     const newArr: CurrentPart[] = currentParts.map((part: any) => {
       if (discount === 0) {
@@ -145,14 +146,13 @@ export function CurrentPartsDataTable<TData, TValue>({
         return updateTempPartObjDiscount(part, discount) || part;
       }
     });
-  
+
     // Only update state if all parts are successfully updated
     if (newArr.length === currentParts.length) {
       setCurrentParts(newArr);
       setIsEdited(true);
     }
   };
-  
 
   const removeAllDiscount = () => {
     let newArr: CurrentPart[] = [];
@@ -170,17 +170,19 @@ export function CurrentPartsDataTable<TData, TValue>({
       toast("Discount more than 15% is not allowed");
       return;
     }
-  
+
     const partNumber = row.getValue("partNumber");
-    const toUpdateDisc = currentParts?.find((part) => part.partNumber === partNumber);
-  
+    const toUpdateDisc = currentParts?.find(
+      (part) => part.partNumber === partNumber
+    );
+
     if (!toUpdateDisc) {
       console.log("Part not found or invalid part number");
       return;
     }
-  
+
     let updatedObj;
-    
+
     if (discount === 0) {
       // Reset discountPercentage to 0 and restore original amount
       updatedObj = removeTempPartObjDiscount(toUpdateDisc);
@@ -188,26 +190,24 @@ export function CurrentPartsDataTable<TData, TValue>({
       // Apply the discount using your helper function
       updatedObj = updateTempPartObjDiscount(toUpdateDisc, discount);
     }
-  
+
     if (!updatedObj) {
       console.log("Failed to update discount. Check helper function.");
       return;
     }
-  
+
     // Update the parts list with the modified part
     const arrayFirstHalf = currentParts!.slice(0, row.index);
     const arraySecondHalf = currentParts!.slice(row.index + 1);
     setCurrentParts([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
     setIsEdited(true);
   };
-  
-  
 
   const handleAllInsurance = (insurance: number) => {
-    if (insurance > 15) {
-      toast("Discount more than 15% is not allowed");
-      return;
-    }
+    // if (insurance > 15) {
+    //   toast("Discount more than 15% is not allowed");
+    //   return;
+    // }
     let tempObj = currentParts;
     console.log("ALL insurance - ", insurance);
     tempObj!.map((part) => {
@@ -246,10 +246,10 @@ export function CurrentPartsDataTable<TData, TValue>({
   };
 
   const handleInsurance = (row: any, insurance: number) => {
-    if (insurance > 15) {
-      toast("Discount more than 15% is not allowed");
-      return;
-    }
+    // if (insurance > 15) {
+    //   toast("Discount more than 15% is not allowed");
+    //   return;
+    // }
     let arrayFirstHalf = currentParts!.slice(0, row.index);
     let arraySecondHalf = currentParts!.slice(row.index + 1);
 
@@ -406,9 +406,9 @@ export function CurrentPartsDataTable<TData, TValue>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     );
                   }

@@ -1,4 +1,12 @@
-import { Client, Account, Databases, Query, ID, Storage, Functions} from "appwrite";
+import {
+  Client,
+  Account,
+  Databases,
+  Query,
+  ID,
+  Storage,
+  Functions,
+} from "appwrite";
 import { getCookie } from "cookies-next";
 import ImageKit from "imagekit";
 import {
@@ -59,11 +67,11 @@ export const loginUser = async (email: any, password: any) => {
 };
 
 export const listAllUsers = async () => {
-  const response = await functions.createExecution('6731d19d00250e7e0b6f');
+  const response = await functions.createExecution("6731d19d00250e7e0b6f");
   const obj = JSON.parse(response.responseBody);
   const users = obj.users.users;
   return users;
-}
+};
 
 export const listSessions = async () => {
   try {
@@ -558,14 +566,24 @@ export const createInvoice = async (
   jobCardId: string,
   carNumber: string,
   invoiceType: string,
-  invoiceNumber: number
+  invoiceNumber: number,
+  invoiceSeries: string,
+  invoiceCode: string
 ) => {
   try {
     let carsResult = await databases.createDocument(
       config.databaseId,
       config.invoicesCollectionId,
       ID.unique(),
-      { invoiceUrl, jobCardId, carNumber, invoiceType, invoiceNumber }
+      {
+        invoiceUrl,
+        jobCardId,
+        carNumber,
+        invoiceType,
+        invoiceNumber,
+        invoiceSeries,
+        invoiceCode,
+      }
     );
     // console.log("The created Car is - ", result);
     return carsResult;
@@ -603,6 +621,26 @@ export const getAllInvoices = async () => {
     return result;
   } catch (error: any) {
     console.log(error.message);
+    return null;
+  }
+};
+export const getLatestInvoiceBySeries = async (invoiceSeries: string) => {
+  console.log("INVOCIJDJSDJ", invoiceSeries);
+  try {
+    const result = await databases.listDocuments(
+      config.databaseId,
+      config.invoicesCollectionId,
+      [
+        Query.equal("invoiceSeries", invoiceSeries), // Filter by the specified invoice series
+        Query.orderDesc("$createdAt"), // Order by creation date in descending order
+      ]
+    );
+    console.log("HEY HEYEYYEY", result);
+
+    // Return the first document if available, as it will be the latest invoice in that series
+    return result.documents.length > 0 ? result.documents[0] : null;
+  } catch (error) {
+    console.log(error);
     return null;
   }
 };

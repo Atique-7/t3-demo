@@ -8,6 +8,7 @@ import {
   getAllParts,
   getInvoicesByJobCardId,
   getJobCardById,
+  getLatestInvoiceBySeries,
   getTempCarById,
   updateJobCardById,
   updateJobCardInsuranceDetails,
@@ -70,6 +71,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import PrimaryButton from "@/components/PrimaryButton";
 
 // Define the structure for the Car object
 
@@ -98,6 +100,10 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>();
 
   const [invoiceCounter, setInvoiceCounter] = useState(0);
+
+  const [invoiceSeries, setInvoiceSeries] = useState("");
+
+  const [invoiceCode, setInvoiceCode] = useState("");
 
   const [buttonLoading, setButtonLoading] = useState(false);
 
@@ -166,11 +172,22 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     };
 
     const getJobCardInvoices = async () => {
+      const series = jobCard?.purposeOfVisit === "BodyShop" ? "bds" : "src";
+      setInvoiceSeries(series);
+
+      // Fetch the latest invoice in the selected series
+      const invoice = await getLatestInvoiceBySeries(series);
+      const newInvoiceCounter = invoice ? invoice.invoiceNumber + 1 : 1; // If no previous invoice, start with 1
+
+      setInvoiceCounter(newInvoiceCounter);
+
+      // Compute invoice code directly here, using the 'series' and 'newInvoiceCounter'
+      const newInvoiceCode = `${series}/${newInvoiceCounter}`;
+      setInvoiceCode(newInvoiceCode);
+
+      console.log("Generated Invoice Code:", newInvoiceCode);
+
       const invoices = await getAllInvoices();
-      // console.log("THE INVOICES ARE = ", invoices);
-
-      setInvoiceCounter(invoices.documents[0].invoiceNumber + 1);
-
       const jobCardInvoicesArr = invoices.documents.filter(
         (invoice: Invoice) => invoice.jobCardId == params.jobCardId
       );
@@ -198,9 +215,9 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
     getLabour();
 
-    getJobCardInvoices();
-
     getJobCardDetails();
+
+    getJobCardInvoices();
   }, []);
 
   const saveCurrentPartsAndLbour = async (statusUpdate?: number) => {
@@ -271,19 +288,25 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
         currentLabour,
         currentJobCardStatus,
         invoiceCounter,
+        invoiceSeries,
+        invoiceCode,
       }),
     }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
+
       result.json().then((invoiceDetails: any) => {
         openInNewTab(invoiceDetails.invoiceUrl);
       });
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(3);
 
-      if (!isInvoiceCounterIncreased) {
-        setInvoiceCounter((prev) => prev + 1);
-      }
-
-      setIsInvoiceCounterIncreased(true);
+      // if (!isInvoiceCounterIncreased) {
+      //   setInvoiceCounter((prev) => prev + 1);
+      // }
+      //setIsInvoiceCounterIncreased(true);
 
       toast("Quote Generated \u2705");
     });
@@ -303,19 +326,24 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
         currentLabour,
         currentJobCardStatus,
         invoiceCounter,
+        invoiceSeries,
+        invoiceCode,
       }),
     }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
       result.json().then((invoiceDetails: any) => {
         openInNewTab(invoiceDetails.invoiceUrl);
       });
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(4);
 
-      if (!isInvoiceCounterIncreased) {
-        setInvoiceCounter((prev) => prev + 1);
-      }
-
-      setIsInvoiceCounterIncreased(true);
+      // if (!isInvoiceCounterIncreased) {
+      //   setInvoiceCounter((prev) => prev + 1);
+      // }
+      //setIsInvoiceCounterIncreased(true);
 
       toast("Pro-Forma Invoice Generated \u2705");
     });
@@ -335,22 +363,33 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
         currentLabour,
         currentJobCardStatus,
         invoiceCounter,
+        invoiceSeries,
+        invoiceCode,
       }),
     }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
       result.json().then((invoiceDetails: any) => {
         openInNewTab(invoiceDetails.invoiceUrl);
       });
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(5);
 
-      if (!isInvoiceCounterIncreased) {
-        setInvoiceCounter((prev) => prev + 1);
-      }
-
-      setIsInvoiceCounterIncreased(true);
+      // if (!isInvoiceCounterIncreased) {
+      //   setInvoiceCounter((prev) => prev + 1);
+      // }
+      //setIsInvoiceCounterIncreased(true);
 
       toast("Tax Invoice Generated \u2705");
     });
+  };
+
+  const loggg = () => {
+    console.log(invoiceCode);
+    console.log(invoiceSeries);
+    console.log(invoiceCounter);
   };
 
   const saveInsuranceDetails = async () => {
@@ -573,6 +612,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                   data={{ policyNumber: policyNumber }}
                 />
               )}
+
               <div>
                 <Dialog>
                   <DialogTrigger asChild>

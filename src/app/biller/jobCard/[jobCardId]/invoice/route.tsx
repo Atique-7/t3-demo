@@ -29,6 +29,8 @@ export async function POST(
       currentLabour,
       currentJobCardStatus,
       invoiceCounter,
+      invoiceSeries,
+      invoiceCode,
     } = await request.json();
 
     console.log(
@@ -149,7 +151,9 @@ export async function POST(
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter
+        invoiceCounter,
+        invoiceSeries,
+        invoiceCode
       );
 
       let result2 = await createInvoice(
@@ -157,7 +161,9 @@ export async function POST(
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter
+        invoiceCounter,
+        invoiceSeries,
+        invoiceCode
       );
 
       console.log("This is the result - ", result1, result2);
@@ -204,13 +210,19 @@ export async function POST(
 
       console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 
+      // Determine the series based on job card purpose of visit
+      const invoiceSeries =
+        jobCard.purposeOfVisit === "BodyShop" ? "bds" : "src";
+
       // Create a new ReadableStream from the buffer for the response
       let result = await createInvoice(
         pdfUrl,
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter
+        invoiceCounter,
+        invoiceSeries,
+        invoiceCode
       );
 
       console.log("This is the result - ", result);

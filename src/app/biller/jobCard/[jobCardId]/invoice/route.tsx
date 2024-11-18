@@ -167,6 +167,7 @@ export async function POST(
       );
 
       console.log("This is the result - ", result1, result2);
+      return NextResponse.json("HELLOO", { status: 201 });
     } else {
       const stream = await renderToStream(
         <InvoicePDF
@@ -212,7 +213,7 @@ export async function POST(
 
       // Determine the series based on job card purpose of visit
       const invoiceSeries =
-        jobCard.purposeOfVisit === "BodyShop" ? "bds" : "src";
+        jobCard.purposeOfVisit === "BodyShop" ? "BDS" : "SER";
 
       // Create a new ReadableStream from the buffer for the response
       let result = await createInvoice(

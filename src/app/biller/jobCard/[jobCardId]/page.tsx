@@ -172,8 +172,9 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     };
 
     const getJobCardInvoices = async () => {
-      const series = jobCard?.purposeOfVisit === "BodyShop" ? "bds" : "src";
+      const series = jobCard?.purposeOfVisit === "BodyShop" ? "BDS" : "SER";
       setInvoiceSeries(series);
+      console.log(series);
 
       // Fetch the latest invoice in the selected series
       const invoice = await getLatestInvoiceBySeries(series);
@@ -313,6 +314,9 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   };
 
   const generateProFormaInvoice = async () => {
+    console.log(invoiceCode);
+    console.log(invoiceSeries);
+    console.log(invoiceCounter);
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 

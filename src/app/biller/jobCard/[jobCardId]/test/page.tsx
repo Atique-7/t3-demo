@@ -55252,7 +55252,7 @@ export default function page() {
               width={100}
               height={50}
               alt="Logo"
-              onClick={inputParts}
+              onClick={getData}
             />
             <div>
               <h3 className="text-md font-bold">CHAMUNDA MOTORS PVT LTD</h3>

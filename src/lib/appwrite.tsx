@@ -568,7 +568,10 @@ export const createInvoice = async (
   invoiceType: string,
   invoiceNumber: number,
   invoiceSeries: string,
-  invoiceCode: string
+  invoiceCode: string,
+  isUpdatedInvoice: boolean,
+  insuranceInvoiceType?: string,
+  isInsuranceInvoice?: boolean
 ) => {
   try {
     let carsResult = await databases.createDocument(
@@ -583,6 +586,9 @@ export const createInvoice = async (
         invoiceNumber,
         invoiceSeries,
         invoiceCode,
+        isUpdatedInvoice,
+        insuranceInvoiceType,
+        isInsuranceInvoice,
       }
     );
     // console.log("The created Car is - ", result);

@@ -9,7 +9,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { CurrentLabour, CurrentPart } from "@/lib/definitions";
-import { roundToTwoDecimals } from "@/lib/helper";
+import { roundToTwoDecimals, splitInsuranceAmt } from "@/lib/helper";
 import { convertStringsToArray } from "@/lib/helper";
 
 Font.register({
@@ -22,7 +22,6 @@ Font.register({
   ],
 });
 
-// Stylesheet for react-pdf
 const styles = StyleSheet.create({
   page: {
     display: "flex",
@@ -196,30 +195,243 @@ export const InvoicePDF = ({
   currentDate,
   invoiceType,
   invoiceNumber,
-  purposeOfVisitAndAdvisors,
   isInsurance,
+  liabilityType,
 }: any) => {
-  // console.log("THIS IS PRINTING FROM INVOICE PDF");
-
   let partsTotal = 0;
   let labourTotal = 0;
 
   let totalTax = 0;
+  let totalDiscount = 0;
+
+  let totalSubtotal = 0;
+  let insuranceDetails;
+
+  if (isInsurance && invoiceType != "Quote") {
+    insuranceDetails = JSON.parse(jobCard.insuranceDetails);
+  }
+
+  // console.log("THESE ARE THE PARTS - ", liabilityType, parts);
 
   parts.map((part: CurrentPart) => {
-    partsTotal = partsTotal + part.amount;
-    // totalTaxableValue = totalTaxableValue + (part.subTotal - (part.discountAmt || 0));
-    totalTax = totalTax + part.totalTax;
+    if (isInsurance && invoiceType != "Quote") {
+      if (part.insurancePercentage && part.insurancePercentage != 0) {
+        const splitPartAmount = splitInsuranceAmt(
+          part.amount,
+          part.insurancePercentage
+        );
+
+        const splitPartSubTotal = splitInsuranceAmt(
+          part.subTotal,
+          part.insurancePercentage
+        );
+
+        const splitPartCGST = splitInsuranceAmt(
+          part.cgstAmt,
+          part.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          part.sgstAmt,
+          part.insurancePercentage
+        );
+
+        const splitPartTotalTax = splitInsuranceAmt(
+          part.totalTax,
+          part.insurancePercentage
+        );
+
+        if (liabilityType == "Customer") {
+          part.amountCust = splitPartAmount.customerAmt;
+          part.subTotalCust = splitPartSubTotal.customerAmt;
+          part.cgstAmtCust = splitPartCGST.customerAmt;
+          part.sgstAmtCust = splitPartSGST.customerAmt;
+          part.totalTaxCust = splitPartTotalTax.customerAmt;
+
+          partsTotal = partsTotal + part.amountCust;
+          totalTax = totalTax + part.totalTaxCust;
+          totalSubtotal = totalSubtotal + part.subTotalCust;
+        } else {
+          part.amountIns = splitPartAmount.insuranceAmt;
+          part.subTotalIns = splitPartSubTotal.insuranceAmt;
+          part.cgstAmtIns = splitPartCGST.insuranceAmt;
+          part.sgstAmtIns = splitPartSGST.insuranceAmt;
+          part.totalTaxIns = splitPartTotalTax.insuranceAmt;
+
+          partsTotal = partsTotal + part.amountIns;
+          totalTax = totalTax + part.totalTaxIns;
+          totalSubtotal = totalSubtotal + part.subTotalIns;
+        }
+
+        if (
+          part.discountPercentage &&
+          part.discountAmt &&
+          part.discountPercentage != 0
+        ) {
+          const splitPartDiscAmt = splitInsuranceAmt(
+            part.discountAmt,
+            part.insurancePercentage
+          );
+
+          if (liabilityType == "Customer") {
+            part.discountAmtCust = splitPartDiscAmt.customerAmt;
+
+            totalDiscount = totalDiscount + part.discountAmtCust;
+          } else {
+            part.discountAmtIns = splitPartDiscAmt.insuranceAmt;
+
+            totalDiscount = totalDiscount + part.discountAmtIns;
+          }
+        }
+      } else {
+        if (liabilityType == "Customer") {
+          partsTotal = partsTotal + part.amount;
+          totalTax = totalTax + part.totalTax;
+
+          totalSubtotal = totalSubtotal + part.subTotal;
+          // totalDiscount = totalDiscount + part.discountAmt
+
+          if (
+            part.discountPercentage &&
+            part.discountAmt &&
+            part.discountPercentage != 0
+          ) {
+            totalDiscount = totalDiscount + part.discountAmt;
+          }
+        }
+      }
+    } else {
+      partsTotal = partsTotal + part.amount;
+      totalTax = totalTax + part.totalTax;
+      totalSubtotal = totalSubtotal + part.subTotal;
+
+      if (
+        part.discountPercentage &&
+        part.discountAmt &&
+        part.discountPercentage != 0
+      ) {
+        totalDiscount = totalDiscount + part.discountAmt;
+      }
+    }
   });
 
   labour.map((work: CurrentLabour) => {
-    labourTotal = labourTotal + work.amount;
-    // totalTaxableValue = totalTaxableValue + (work.subTotal - (work.discountAmt || 0));
-    totalTax = totalTax + work.totalTax;
+    if (isInsurance && invoiceType != "Quote") {
+      if (work.insurancePercentage && work.insurancePercentage != 0) {
+        const splitLabourAmount = splitInsuranceAmt(
+          work.amount,
+          work.insurancePercentage
+        );
+
+        const splitLabourSubTotal = splitInsuranceAmt(
+          work.subTotal,
+          work.insurancePercentage
+        );
+
+        const splitLabourCGST = splitInsuranceAmt(
+          work.cgstAmt,
+          work.insurancePercentage
+        );
+
+        const splitLabourSGST = splitInsuranceAmt(
+          work.sgstAmt,
+          work.insurancePercentage
+        );
+
+        const splitLabourTotalTax = splitInsuranceAmt(
+          work.totalTax,
+          work.insurancePercentage
+        );
+
+        if (liabilityType == "Customer") {
+          work.amountCust = splitLabourAmount.customerAmt;
+          work.subTotalCust = splitLabourSubTotal.customerAmt;
+          work.cgstAmtCust = splitLabourCGST.customerAmt;
+          work.sgstAmtCust = splitLabourSGST.customerAmt;
+          work.totalTaxCust = splitLabourTotalTax.customerAmt;
+
+          labourTotal = labourTotal + work.amountCust;
+          totalTax = totalTax + work.totalTaxCust;
+          totalSubtotal = totalSubtotal + work.subTotalCust;
+        } else {
+          work.amountIns = splitLabourAmount.insuranceAmt;
+          work.subTotalIns = splitLabourSubTotal.insuranceAmt;
+          work.cgstAmtIns = splitLabourCGST.insuranceAmt;
+          work.sgstAmtIns = splitLabourSGST.insuranceAmt;
+          work.totalTaxIns = splitLabourTotalTax.insuranceAmt;
+
+          labourTotal = labourTotal + work.amountIns;
+          totalTax = totalTax + work.totalTaxIns;
+          totalSubtotal = totalSubtotal + work.subTotalIns;
+        }
+
+        if (
+          work.discountPercentage &&
+          work.discountAmt &&
+          work.discountPercentage != 0
+        ) {
+          const splitWorkDiscAmt = splitInsuranceAmt(
+            work.discountAmt,
+            work.insurancePercentage
+          );
+
+          // console.log("DISCOUNT CHECK LABOUR - ", splitWorkDiscAmt);
+
+          if (liabilityType == "Customer") {
+            work.discountAmtCust = splitWorkDiscAmt.customerAmt;
+
+            totalDiscount = totalDiscount + work.discountAmtCust;
+          } else {
+            work.discountAmtIns = splitWorkDiscAmt.insuranceAmt;
+
+            totalDiscount = totalDiscount + work.discountAmtIns;
+          }
+        } else {
+          // console.log("NOT REGISTERING");
+        }
+      } else {
+        if (liabilityType == "Customer") {
+          labourTotal = labourTotal + work.amount;
+          totalTax = totalTax + work.totalTax;
+
+          totalSubtotal = totalSubtotal + work.subTotal;
+          if (
+            work.discountPercentage &&
+            work.discountAmt &&
+            work.discountPercentage != 0
+          ) {
+            totalDiscount = totalDiscount + work.discountAmt;
+          }
+        }
+      }
+    } else {
+      labourTotal = labourTotal + work.amount;
+      totalTax = totalTax + work.totalTax;
+      totalSubtotal = totalSubtotal + work.subTotal;
+
+      if (
+        work.discountPercentage &&
+        work.discountAmt &&
+        work.discountPercentage != 0
+      ) {
+        totalDiscount = totalDiscount + work.discountAmt;
+      }
+    }
   });
 
   partsTotal = roundToTwoDecimals(partsTotal);
   labourTotal = roundToTwoDecimals(labourTotal);
+  totalTax = roundToTwoDecimals(totalTax);
+  totalDiscount = roundToTwoDecimals(totalDiscount);
+  totalSubtotal = roundToTwoDecimals(totalSubtotal);
+
+  console.log("HELLOOO PRINTING", {
+    partsTotal,
+    labourTotal,
+    totalTax,
+    totalDiscount,
+    totalSubtotal,
+  });
 
   return (
     <Document>
@@ -239,7 +451,11 @@ export const InvoicePDF = ({
             </View>
           </View>
           <View style={styles.invoiceTypeRow}>
-            <Text style={styles.invoiceType}>{invoiceType}</Text>
+            <Text style={styles.invoiceType}>
+              {isInsurance ? <Text>{liabilityType}</Text> : <></>}
+              <Text> </Text>
+              {invoiceType}
+            </Text>
           </View>
           <View style={styles.detailTablesRow}>
             <View style={styles.detailTable}>
@@ -253,7 +469,20 @@ export const InvoicePDF = ({
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{jobCard.customerName}</Text>
+                  <Text style={styles.tableData}>
+                    {/* {jobCard.customerName} */}
+                    {isInsurance && invoiceType != "Quote" ? (
+                      <>
+                        {liabilityType == "Customer" ? (
+                          <>{jobCard.customerName}</>
+                        ) : (
+                          <>{insuranceDetails.policyProvider}</>
+                        )}
+                      </>
+                    ) : (
+                      <>{jobCard.customerName}</>
+                    )}
+                  </Text>
                 </View>
               </View>
               <View style={styles.tableRow}>
@@ -264,8 +493,17 @@ export const InvoicePDF = ({
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>
-                    {" "}
-                    {jobCard?.customerPhone}
+                    {isInsurance && invoiceType != "Quote" ? (
+                      <>
+                        {liabilityType == "Customer" ? (
+                          <>{jobCard.customerPhone}</>
+                        ) : (
+                          <>-</>
+                        )}
+                      </>
+                    ) : (
+                      <>{jobCard.customerPhone}</>
+                    )}
                   </Text>
                 </View>
               </View>
@@ -277,11 +515,49 @@ export const InvoicePDF = ({
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>
-                    {" "}
-                    {jobCard?.customerAddress}
+                    {isInsurance && invoiceType != "Quote" ? (
+                      <>
+                        {liabilityType == "Customer" ? (
+                          <>{jobCard.customerAddress}</>
+                        ) : (
+                          <>{insuranceDetails.policyProviderAddress}</>
+                        )}
+                      </>
+                    ) : (
+                      <>{jobCard.customerName}</>
+                    )}
                   </Text>
                 </View>
               </View>
+              {isInsurance && invoiceType != "Quote" ? (
+                <>
+                  {liabilityType == "Customer" ? (
+                    <></>
+                  ) : (
+                    <>
+                      <View style={styles.tableRow}>
+                        <View style={styles.tableCell}>
+                          <Text
+                            style={[
+                              styles.tableData,
+                              styles.tableDataEmphasized,
+                            ]}
+                          >
+                            GST Number:
+                          </Text>
+                        </View>
+                        <View style={styles.tableCell}>
+                          <Text style={styles.tableData}>
+                            {insuranceDetails.policyProviderGST}
+                          </Text>
+                        </View>
+                      </View>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>-</>
+              )}
             </View>
             <View style={styles.detailTable}>
               <View style={styles.tableTitleRow}>
@@ -446,7 +722,32 @@ export const InvoicePDF = ({
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.amount}</Text>
+                  <Text style={styles.tableData}>
+                    {isInsurance && invoiceType != "Quote" ? (
+                      <>
+                        {part.insurancePercentage &&
+                        part.insurancePercentage != 0 ? (
+                          <>
+                            {liabilityType == "Customer" ? (
+                              <>{part.amountCust}</>
+                            ) : (
+                              <>{part.amountIns}</>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {liabilityType == "Customer" ? (
+                              <>{part.amount}</>
+                            ) : (
+                              <>0</>
+                            )}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>{part.amount}</>
+                    )}
+                  </Text>
                 </View>
               </View>
             ))}
@@ -555,10 +856,37 @@ export const InvoicePDF = ({
                   <Text style={styles.tableData}>{work.mrp}</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>-</Text>
+                  <Text style={styles.tableData}>
+                    {work.discountPercentage}
+                  </Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.amount}</Text>
+                  <Text style={styles.tableData}>
+                    {isInsurance && invoiceType != "Quote" ? (
+                      <>
+                        {work.insurancePercentage &&
+                        work.insurancePercentage != 0 ? (
+                          <>
+                            {liabilityType == "Customer" ? (
+                              <>{work.amountCust}</>
+                            ) : (
+                              <>{work.amountIns}</>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {liabilityType == "Customer" ? (
+                              <>{work.amount}</>
+                            ) : (
+                              <>0</>
+                            )}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>{work.amount}</>
+                    )}
+                  </Text>
                 </View>
               </View>
             ))}
@@ -598,7 +926,9 @@ export const InvoicePDF = ({
                 <Text style={styles.tableTitle}>Observation and Remarks</Text>
               </View>
               <View style={styles.observationRow}>
-                <Text style={styles.tableData}>-</Text>
+                <Text style={styles.tableData}>
+                  {/* {roundToTwoDecimals(labourTotal + partsTotal)} */}-
+                </Text>
               </View>
             </View>
             <View style={styles.totalsTable}>
@@ -610,7 +940,7 @@ export const InvoicePDF = ({
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>
-                    {jobCard.subTotal - jobCard.discountAmt}
+                    {roundToTwoDecimals(totalSubtotal - totalDiscount)}
                   </Text>
                 </View>
               </View>
@@ -631,7 +961,9 @@ export const InvoicePDF = ({
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{jobCard.amount}</Text>
+                  <Text style={styles.tableData}>
+                    {roundToTwoDecimals(labourTotal + partsTotal)}
+                  </Text>
                 </View>
               </View>
               <View style={styles.totalsTableRow}>
@@ -642,7 +974,7 @@ export const InvoicePDF = ({
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>
-                    {Math.round(jobCard.amount)}
+                    {Math.round(roundToTwoDecimals(labourTotal + partsTotal))}
                   </Text>
                 </View>
               </View>

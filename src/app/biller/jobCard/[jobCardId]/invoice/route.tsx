@@ -1,5 +1,6 @@
 import {
   createInvoice,
+  getAllInvoices,
   getJobCardById,
   getTempCarById,
   imagekit,
@@ -14,7 +15,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { InvoicePDF } from "@/components/InvoiceTest";
 import { renderToStream } from "@react-pdf/renderer";
-import { CurrentLabour, CurrentPart } from "@/lib/definitions";
+import { CurrentLabour, CurrentPart, Invoice } from "@/lib/definitions";
 
 export async function POST(
   request: NextRequest,
@@ -33,14 +34,14 @@ export async function POST(
       invoiceCode,
     } = await request.json();
 
-    console.log(
-      "VALUES",
-      jobCard,
-      car,
-      currentParts,
-      currentLabour,
-      currentJobCardStatus
-    );
+    // console.log(
+    //   "VALUES",
+    //   jobCard,
+    //   car,
+    //   currentParts,
+    //   currentLabour,
+    //   currentJobCardStatus
+    // );
 
     const foundIndexParts = currentParts.findIndex(
       (part: CurrentPart) =>
@@ -54,15 +55,30 @@ export async function POST(
 
     const isInsurance = foundIndexParts != -1 || foundIndexLabour != -1;
 
-    console.log("THIS INVOICE HAS INSURANCE", isInsurance);
+    // console.log("THIS INVOICE HAS INSURANCE", isInsurance);
 
     let invoiceType = invoiceTypes.find(
       (a) => a.code == currentJobCardStatus + 1
     );
 
+    const insuranceInvoiceCode = `${invoiceSeries}/${invoiceCounter + 1}`;
+
     let invoiceTypeString = invoiceType?.description;
 
-    console.log("THIS IS THE INVOICE TYPE - ", invoiceTypeString);
+    const invoices = await getAllInvoices();
+
+    const jobCardInvoicesArr = invoices.documents.filter(
+      (invoice: Invoice) => invoice.jobCardId == params.jobCardId
+    );
+
+    let isUpdatedInvoice = false;
+
+    jobCardInvoicesArr.map((invoice: Invoice) => {
+      if (invoice.invoiceType == invoiceTypeString) {
+        isUpdatedInvoice = true;
+        return;
+      }
+    });
 
     const povs = convertStringsToArray(car.purposeOfVisitAndAdvisors);
 
@@ -76,10 +92,10 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={invoiceCounter}
+          invoiceNumber={invoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={isInsurance}
-          isCutomer={true}
+          liabilityType={"Customer"}
         />
       );
 
@@ -94,10 +110,10 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={invoiceCounter}
+          invoiceNumber={insuranceInvoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={isInsurance}
-          isCutomer={false}
+          liabilityType={"Insurance"}
         />
       );
 
@@ -105,6 +121,7 @@ export async function POST(
 
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
       let uniqueStr1 = "";
       let uniqueStr2 = "";
 
@@ -133,7 +150,7 @@ export async function POST(
         file: buffer2, // Buffer object
         fileName: `${
           params.jobCardId
-        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr1}_Insurance.pdf`, // Name of the file
+        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr2}_Insurance.pdf`, // Name of the file
         folder: "/pdfs/", // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
@@ -146,6 +163,7 @@ export async function POST(
       console.log("PDF uploaded to ImageKit, URL:", pdfUrl1, pdfUrl2);
 
       // Create a new ReadableStream from the buffer for the response
+
       let result1 = await createInvoice(
         pdfUrl1,
         jobCard.$id,
@@ -153,7 +171,9 @@ export async function POST(
         invoiceTypeString!,
         invoiceCounter,
         invoiceSeries,
-        invoiceCode
+        invoiceCode,
+        isUpdatedInvoice,
+        "Customer"
       );
 
       let result2 = await createInvoice(
@@ -161,14 +181,20 @@ export async function POST(
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter,
+        invoiceCounter + 1,
         invoiceSeries,
-        invoiceCode
+        insuranceInvoiceCode,
+        isUpdatedInvoice,
+        "Insurance",
+        isInsurance
       );
 
       console.log("This is the result - ", result1, result2);
-      return NextResponse.json("HELLOO", { status: 201 });
+
+      return NextResponse.json([result1, result2], { status: 201 });
     } else {
+      console.log("There is no insurance or ITS QUOTE");
+
       const stream = await renderToStream(
         <InvoicePDF
           jobCard={jobCard}
@@ -178,11 +204,13 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={invoiceCounter}
+          invoiceNumber={invoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={isInsurance}
         />
       );
+
+      // console.log("THIS IS THE STREAM", stream);
 
       const buffer = await streamToBuffer(stream);
 
@@ -211,11 +239,7 @@ export async function POST(
 
       console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 
-      // Determine the series based on job card purpose of visit
-      const invoiceSeries =
-        jobCard.purposeOfVisit === "BodyShop" ? "BDS" : "SER";
-
-      // Create a new ReadableStream from the buffer for the response
+      // // Create a new ReadableStream from the buffer for the response
       let result = await createInvoice(
         pdfUrl,
         jobCard.$id,
@@ -223,12 +247,13 @@ export async function POST(
         invoiceTypeString!,
         invoiceCounter,
         invoiceSeries,
-        invoiceCode
+        invoiceCode,
+        isUpdatedInvoice
       );
 
       console.log("This is the result - ", result);
 
-      return NextResponse.json(result, { status: 201 });
+      return NextResponse.json([result], { status: 201 });
     }
 
     // return;

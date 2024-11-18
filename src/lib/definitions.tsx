@@ -41,6 +41,7 @@ export interface JobCard {
   jobCardStatus: number;
   customerName: string;
   customerPhone: string;
+  customerAddress?: string;
   parts: string[];
   labour: string[];
   partsTotalPreTax: number;
@@ -53,12 +54,17 @@ export interface JobCard {
   jobCardNumber: number;
   insuranceDetails: string;
   purposeOfVisit: string;
+  totalTax?: number;
+  gstin?: string;
+  placeOfSupply?: string;
+  // invoiceDate?: string;
   $id: string;
   $createdAt: string;
   $updatedAt: string;
   $permissions: string[];
   $databaseId: string;
   $collectionId: string;
+  taxes: any[];
 }
 
 export type CurrentPart = {
@@ -81,6 +87,18 @@ export type CurrentPart = {
   insurancePercentage?: number;
   insuranceAmt?: number;
   customerAmt?: number;
+  amountCust?: number;
+  subTotalCust?: number;
+  cgstAmtCust?: number;
+  sgstAmtCust?: number;
+  discountAmtCust?: number;
+  totalTaxCust?: number;
+  amountIns?: number;
+  subTotalIns?: number;
+  cgstAmtIns?: number;
+  sgstAmtIns?: number;
+  totalTaxIns?: number;
+  discountAmtIns?: number;
 };
 
 export interface Labour {
@@ -120,6 +138,18 @@ export type CurrentLabour = {
   insurancePercentage?: number;
   insuranceAmt?: number;
   customerAmt?: number;
+  amountCust?: number;
+  subTotalCust?: number;
+  cgstAmtCust?: number;
+  sgstAmtCust?: number;
+  totalTaxCust?: number;
+  discountAmtCust?: number;
+  amountIns?: number;
+  subTotalIns?: number;
+  cgstAmtIns?: number;
+  sgstAmtIns?: number;
+  totalTaxIns?: number;
+  discountAmtIns?: number;
 };
 
 export type TempCar = {
@@ -182,6 +212,9 @@ export interface Invoice {
   carNumber: string;
   invoiceType: string;
   invoiceNumber: number;
+  isInsuranceInvoice: boolean;
+  insuranceInvoiceType: string;
+  invoiceDate?: string;
   $id: string;
   $createdAt: string;
   $updatedAt: string;
@@ -196,4 +229,15 @@ export interface TaxObj {
   taxRate: number;
   taxName: string;
   taxAmt: number;
+}
+
+export interface InputPart {
+  partName: string;
+  partNumber: string;
+  hsn: string;
+  category: string;
+  mrp: number;
+  gst: number;
+  cgst: number;
+  sgst: number;
 }

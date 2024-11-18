@@ -166,18 +166,14 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
         setIsInsuranceDetails(false);
       }
 
-      setJobCard((prev) => jobCardObj);
-      setCurrentJobCardStatus(jobCardObj.jobCardStatus);
-      setCar((prev) => carObj);
-    };
-
-    const getJobCardInvoices = async () => {
-      const series = jobCard?.purposeOfVisit === "BodyShop" ? "BDS" : "SER";
+      console.log("THIS IS THE PURPOSE OF VISIT - ", jobCardObj.purposeOfVisit);
+      const series = jobCardObj.purposeOfVisit === "Bodyshop" ? "BDS" : "SER";
+      console.log("This is the SERIES - ", series);
       setInvoiceSeries(series);
-      console.log(series);
 
       // Fetch the latest invoice in the selected series
       const invoice = await getLatestInvoiceBySeries(series);
+      console.log("THESE ARE THE INVOICES BY SERIES ", series, " - ", invoice);
       const newInvoiceCounter = invoice ? invoice.invoiceNumber + 1 : 1; // If no previous invoice, start with 1
 
       setInvoiceCounter(newInvoiceCounter);
@@ -188,6 +184,12 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
       console.log("Generated Invoice Code:", newInvoiceCode);
 
+      setJobCard((prev) => jobCardObj);
+      setCurrentJobCardStatus(jobCardObj.jobCardStatus);
+      setCar((prev) => carObj);
+    };
+
+    const getJobCardInvoices = async () => {
       const invoices = await getAllInvoices();
       const jobCardInvoicesArr = invoices.documents.filter(
         (invoice: Invoice) => invoice.jobCardId == params.jobCardId
@@ -298,9 +300,15 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
         window.location.reload(); // Refreshes the page to get the latest data
       }, 1000);
 
-      result.json().then((invoiceDetails: any) => {
-        openInNewTab(invoiceDetails.invoiceUrl);
+      // result.json().then((invoiceDetails: any) => {
+      //   openInNewTab(invoiceDetails.invoiceUrl);
+      // });
+      result.json().then((invoices: any) => {
+        invoices.map((invoice: any) => {
+          openInNewTab(invoice.invoiceUrl);
+        });
       });
+
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(3);
 
@@ -314,9 +322,6 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   };
 
   const generateProFormaInvoice = async () => {
-    console.log(invoiceCode);
-    console.log(invoiceSeries);
-    console.log(invoiceCounter);
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 
@@ -338,9 +343,16 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
       setTimeout(() => {
         window.location.reload(); // Refreshes the page to get the latest data
       }, 1000);
-      result.json().then((invoiceDetails: any) => {
-        openInNewTab(invoiceDetails.invoiceUrl);
+
+      // result.json().then((invoiceDetails: any) => {
+      //   openInNewTab(invoiceDetails.invoiceUrl);
+      // });
+      result.json().then((invoices: any) => {
+        invoices.map((invoice: any) => {
+          openInNewTab(invoice.invoiceUrl);
+        });
       });
+
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(4);
 
@@ -372,12 +384,20 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
+      // Set a short timeout before refreshing the page
       setTimeout(() => {
         window.location.reload(); // Refreshes the page to get the latest data
       }, 1000);
-      result.json().then((invoiceDetails: any) => {
-        openInNewTab(invoiceDetails.invoiceUrl);
+
+      // result.json().then((invoiceDetails: any) => {
+      //   openInNewTab(invoiceDetails.invoiceUrl);
+      // });
+      result.json().then((invoices: any) => {
+        invoices.map((invoice: any) => {
+          openInNewTab(invoice.invoiceUrl);
+        });
       });
+
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(5);
 

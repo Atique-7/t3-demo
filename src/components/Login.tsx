@@ -30,11 +30,11 @@ function Login({}: Props) {
     console.log("COOKIE SET", userDetails);
 
     const userAccess = userDetails.labels[0];
+    //const allUsers = await listAllUsers();
 
-    if(userAccess === "service") {
-      const allUsers = await listAllUsers();
-      console.log("lkkkkkkk",allUsers)
-      setCookie("users", allUsers);
+    if (userAccess === "service") {
+      // console.log("lkkkkkkk", allUsers);
+      // setCookie("users", allUsers);
     }
     let redirectURL = "/";
 

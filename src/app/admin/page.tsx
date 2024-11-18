@@ -96,6 +96,11 @@ export default function Admin({}: Props) {
     getParts();
     getLabour();
     getInvoices();
+    const v = getAllJobCards();
+    setTimeout(() => {
+      console.log(v);
+      // Refreshes the page to get the latest data
+    }, 1000);
   }, []);
 
   return (

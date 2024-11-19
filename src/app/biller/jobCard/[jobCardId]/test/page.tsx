@@ -52,9 +52,7 @@ export default function page() {
   const getData = async () => {
     await fetch(`http://localhost:3000/tally/updateInvoices`, {
       method: "POST",
-      body: JSON.stringify({
-        dateTimeStamp: "17-11-2024",
-      }),
+      body: JSON.stringify({ data: { lastSync: "19-Nov-24 08:19:15" } }),
     }).then((result: any) => {
       result.json().then((invoiceDetails: any) => {
         console.log("HELLOOO", invoiceDetails);
@@ -55248,7 +55246,7 @@ export default function page() {
           </div>
           <div className="flex justify-between font-medium text-right text-sm">
             <Image
-              src={logo} 
+              src={logo}
               width={100}
               height={50}
               alt="Logo"

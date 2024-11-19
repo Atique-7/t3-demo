@@ -18,11 +18,12 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  //   console.log("BODY", request.body);
+  // console.log("BODY", request.body);
   try {
     const body = await request.json();
+    // console.log(body);
 
-    const dateTimeStamp = body.dateTimeStamp;
+    const dateTimeStamp = body.data.lastSync;
 
     const result = await getAllTaxInvoicesAfterDateTime(dateTimeStamp);
 

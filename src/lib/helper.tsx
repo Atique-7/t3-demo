@@ -1001,10 +1001,50 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
   return taxes;
 };
 
-export function convertToISODate(inputDate: string) {
-  const [day, month, year] = inputDate.split("-");
-  const date = new Date(`${year}-${month}-${day}`);
-  return date.toISOString(); // Returns ISO format
+export function convertToISODateTime(inputDate: string) {
+  const months = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
+
+  // Parse the input string
+  const [day, monthAbbr, year, time] = inputDate.split(/[-\s]/);
+
+  // Convert month abbreviation to numeric value
+  const month = months[monthAbbr as keyof typeof months];
+
+  // Parse time (ensure no extra offset manipulation)
+  const [hours, minutes, seconds] = time.split(":").map(Number);
+
+  // Apply your system's custom minute adjustment
+  const adjustedMinutes = (minutes + 40) % 60; // Add 40, wrap around if >= 60
+  const adjustedHours = (hours + Math.floor((minutes + 40) / 60)) % 24; // Adjust hours if minutes overflow
+
+  // Construct a Date object as if the input is local time with the adjusted values
+  const localDate = new Date(
+    parseInt(`20${year}`), // Year
+    parseInt(month) - 1, // Month (0-indexed)
+    parseInt(day), // Day
+    adjustedHours, // Adjusted Hours
+    adjustedMinutes, // Adjusted Minutes
+    seconds // Seconds remain the same
+  );
+
+  // Convert the local date to ISO format with timezone offset
+  const isoString = localDate.toISOString();
+
+  // Replace Z with +00:00 for system compatibility
+  return isoString.replace("Z", "+00:00");
 }
 
 export const base64Logo =

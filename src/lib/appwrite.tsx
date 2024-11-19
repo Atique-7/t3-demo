@@ -11,7 +11,7 @@ import { getCookie } from "cookies-next";
 import ImageKit from "imagekit";
 import {
   convertStringsToArray,
-  convertToISODate,
+  convertToISODateTime,
   convertToStrings,
   purposeOfVisits,
 } from "./helper";
@@ -654,7 +654,7 @@ export const getLatestInvoiceBySeries = async (invoiceSeries: string) => {
 
 export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: string) => {
   try {
-    const isoDate = convertToISODate(dateTimeStamp);
+    const isoDate = convertToISODateTime(dateTimeStamp);
 
     let result = await databases.listDocuments(
       config.databaseId,
@@ -662,7 +662,7 @@ export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: string) => {
       [
         Query.limit(9999),
         Query.greaterThan("$createdAt", isoDate),
-        Query.equal("invoiceType", "Pro-Forma Invoice"),
+        Query.equal("invoiceType", "Tax Invoice"),
       ]
     );
     return result;

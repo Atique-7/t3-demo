@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   // console.log("BODY", request.body);
   try {
     const body = await request.json();
-    // console.log(body);
+    console.log(body);
 
     const dateTimeStamp = body.data.lastSync;
 
@@ -109,7 +109,8 @@ export async function POST(request: NextRequest) {
               part.subTotalCust = splitPartSubTotal.customerAmt;
               part.cgstAmtCust = splitPartCGST.customerAmt;
               part.sgstAmtCust = splitPartSGST.customerAmt;
-              part.totalTaxCust = splitPartTotalTax.customerAmt;
+              part.totalTaxCust =
+                splitPartCGST.customerAmt + splitPartSGST.customerAmt;
 
               partsTotal = partsTotal + part.amountCust;
               totalTax = totalTax + part.totalTaxCust;
@@ -119,7 +120,8 @@ export async function POST(request: NextRequest) {
               part.subTotalIns = splitPartSubTotal.insuranceAmt;
               part.cgstAmtIns = splitPartCGST.insuranceAmt;
               part.sgstAmtIns = splitPartSGST.insuranceAmt;
-              part.totalTaxIns = splitPartTotalTax.insuranceAmt;
+              part.totalTaxIns =
+                splitPartCGST.insuranceAmt + splitPartSGST.insuranceAmt;
 
               partsTotal = partsTotal + part.amountIns;
               totalTax = totalTax + part.totalTaxIns;
@@ -136,7 +138,7 @@ export async function POST(request: NextRequest) {
                 part.insurancePercentage
               );
 
-              // console.log("DISCOUNT CHECK - ", splitPartDiscAmt);
+              console.log("DISCOUNT CHECK - ", splitPartDiscAmt);
 
               if (insuranceInvoiceTypeCOPY == "Customer") {
                 part.discountAmtCust = splitPartDiscAmt.customerAmt;
@@ -164,6 +166,12 @@ export async function POST(request: NextRequest) {
                 totalDiscount = totalDiscount + part.discountAmt;
               }
             }
+          }
+
+          if (part.cgstAmt + part.sgstAmt == part.totalTax) {
+            console.log("YAHAN CALCULATIN THIK HAI");
+          } else {
+            console.log("DIKKAT HAI", part);
           }
         });
 
@@ -204,7 +212,8 @@ export async function POST(request: NextRequest) {
               work.subTotalCust = splitLabourSubTotal.customerAmt;
               work.cgstAmtCust = splitLabourCGST.customerAmt;
               work.sgstAmtCust = splitLabourSGST.customerAmt;
-              work.totalTaxCust = splitLabourTotalTax.customerAmt;
+              work.totalTaxCust =
+                splitLabourCGST.customerAmt + splitLabourSGST.customerAmt;
 
               labourTotal = labourTotal + work.amountCust;
               totalTax = totalTax + work.totalTaxCust;
@@ -214,7 +223,8 @@ export async function POST(request: NextRequest) {
               work.subTotalIns = splitLabourSubTotal.insuranceAmt;
               work.cgstAmtIns = splitLabourCGST.insuranceAmt;
               work.sgstAmtIns = splitLabourSGST.insuranceAmt;
-              work.totalTaxIns = splitLabourTotalTax.insuranceAmt;
+              work.totalTaxIns =
+                splitLabourCGST.insuranceAmt + splitLabourSGST.insuranceAmt;
 
               labourTotal = labourTotal + work.amountIns;
               totalTax = totalTax + work.totalTaxIns;
@@ -267,20 +277,6 @@ export async function POST(request: NextRequest) {
         totalTax = roundToTwoDecimals(totalTax);
         totalDiscount = roundToTwoDecimals(totalDiscount);
         totalSubtotal = roundToTwoDecimals(totalSubtotal);
-
-        // console.log("HELLOOO PRINTING", {
-        //   partsTotal,
-        //   labourTotal,
-        //   totalTax,
-        //   totalDiscount,
-        //   totalSubtotal,
-        // });
-
-        // console.log("OBJECTIFIED RESULTS _ ", {
-        //   partsArr,
-        //   labourArr,
-        //   taxesObj,
-        // });
 
         const keysToRetainParts: (keyof CurrentPart)[] = [
           "partId",

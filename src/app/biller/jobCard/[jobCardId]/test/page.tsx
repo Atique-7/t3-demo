@@ -52,9 +52,7 @@ export default function page() {
   const getData = async () => {
     await fetch(`http://localhost:3000/tally/updateInvoices`, {
       method: "POST",
-      body: JSON.stringify({
-        currDateTime: "2024-11-13T8:25:36.305+00:00",
-      }),
+      body: JSON.stringify({ data: { lastSync: "19-Nov-24 08:19:15" } }),
     }).then((result: any) => {
       result.json().then((invoiceDetails: any) => {
         console.log("HELLOOO", invoiceDetails);

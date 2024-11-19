@@ -18,16 +18,16 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  //   console.log("BODY", request.body);
+  // console.log("BODY", request.body);
   try {
-    const dateTimeStamp = await request.json();
+    const body = await request.json();
+    // console.log(body);
 
-    const result = await getAllInvoices();
+    const dateTimeStamp = body.data.lastSync;
 
-    const newInvoices = result.documents.slice(4, 6);
+    const result = await getAllTaxInvoicesAfterDateTime(dateTimeStamp);
 
-    console.log("THESE ARE THE NEW INVOICES ROUTREEEEEEE", newInvoices);
-    // newInvoices.slic
+    const newInvoices = result.documents;
 
     const updatedNewInvoices = await Promise.all(
       newInvoices.map(async (invoice: Invoice, index: number) => {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         let labourArr = stringToObj(result.labour);
         // let taxesObj = stringToObj(result.taxes);
 
-        console.log("THIS IS THE JOB CARD - ", result);
+        // console.log("THIS IS THE JOB CARD - ", result);
 
         let invoiceTypeCOPY = invoice.invoiceType;
 
@@ -268,13 +268,13 @@ export async function POST(request: NextRequest) {
         totalDiscount = roundToTwoDecimals(totalDiscount);
         totalSubtotal = roundToTwoDecimals(totalSubtotal);
 
-        console.log("HELLOOO PRINTING", {
-          partsTotal,
-          labourTotal,
-          totalTax,
-          totalDiscount,
-          totalSubtotal,
-        });
+        // console.log("HELLOOO PRINTING", {
+        //   partsTotal,
+        //   labourTotal,
+        //   totalTax,
+        //   totalDiscount,
+        //   totalSubtotal,
+        // });
 
         // console.log("OBJECTIFIED RESULTS _ ", {
         //   partsArr,
@@ -473,17 +473,20 @@ export async function POST(request: NextRequest) {
 
         const dateTemp = new Date(invoice["$createdAt"]);
 
-        // Extract the date in "YYYY-MM-DD" format
-        const dateString = dateTemp.toISOString().split("T")[0];
+        const day = String(dateTemp.getDate()).padStart(2, "0"); // Ensures 2 digits
+        const month = String(dateTemp.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+        const year = dateTemp.getFullYear();
 
-        invoice.invoiceDate = dateString;
+        // Combine into the desired format
+        const formattedDate = `${day}-${month}-${year}`;
+
+        invoice.invoiceDate = formattedDate;
 
         invoice.jobCardDetails = result;
 
         return invoice;
       })
     );
-    console.log("HELLO TEST", updatedNewInvoices);
 
     const returnInvoicesObj = { invoices: updatedNewInvoices };
 

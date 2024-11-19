@@ -11,6 +11,7 @@ import { getCookie } from "cookies-next";
 import ImageKit from "imagekit";
 import {
   convertStringsToArray,
+  convertToISODateTime,
   convertToStrings,
   purposeOfVisits,
 } from "./helper";
@@ -651,26 +652,22 @@ export const getLatestInvoiceBySeries = async (invoiceSeries: string) => {
   }
 };
 
-export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: any) => {
+export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: string) => {
   try {
+    const isoDate = convertToISODateTime(dateTimeStamp);
+
     let result = await databases.listDocuments(
       config.databaseId,
       config.invoicesCollectionId,
       [
-        // Query.orderAsc("$createdAt"),
-        // Query.and([
-        // Query.greaterThan("$createdAt", "2024-11-13T8:25:36.305+00:00"),
-        // Query.equal("invoiceType", "Quote"),
-        // ]),
-
         Query.limit(9999),
+        Query.greaterThan("$createdAt", isoDate),
+        Query.equal("invoiceType", "Tax Invoice"),
       ]
     );
-    // console.log("THESE ARE THE NEW INVOICES - ", result);
     return result;
   } catch (error: any) {
     console.log(error.message);
-    console.log("JIJFOIDEFI");
     return null;
   }
 };

@@ -141,7 +141,10 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr1}_Customer.pdf`, // Name of the file
-        folder: "/pdfs/", // Optional folder
+        folder: `/Invoices/${invoiceTypeString?.slice(
+          0,
+          -8
+        )}/InsuranceInvoices/Customer`, // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
@@ -151,7 +154,10 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr2}_Insurance.pdf`, // Name of the file
-        folder: "/pdfs/", // Optional folder
+        folder: `/Invoices/${invoiceTypeString?.slice(
+          0,
+          -8
+        )}/InsuranceInvoices/Insurance`, // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
@@ -193,7 +199,7 @@ export async function POST(
 
       return NextResponse.json([result1, result2], { status: 201 });
     } else {
-      console.log("There is no insurance or ITS QUOTE");
+      // console.log("There is no insurance or ITS QUOTE");
 
       const stream = await renderToStream(
         <InvoicePDF
@@ -229,8 +235,8 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr}.pdf`, // Name of the file
-        folder: "/pdfs/", // Optional folder
-        useUniqueFileName: false, // Ensure file name uniqueness
+        folder: `/Invoices/${invoiceTypeString}`, // Optional folder
+        useUniqueFileName: true, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
 

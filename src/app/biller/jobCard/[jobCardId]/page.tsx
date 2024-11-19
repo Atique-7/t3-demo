@@ -71,7 +71,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import PrimaryButton from "@/components/PrimaryButton";
 
 // Define the structure for the Car object
 

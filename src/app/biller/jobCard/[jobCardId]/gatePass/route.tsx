@@ -67,7 +67,7 @@ export async function POST(
     const uploadResponse = await imagekit.upload({
       file: buffer, // Buffer object
       fileName: `${params.jobCardId}_gatePass_${uniqueStr}.pdf`, // Name of the file
-      folder: "/pdfs/", // Optional folder
+      folder: "/GatePasses/", // Optional folder
       useUniqueFileName: false, // Ensure file name uniqueness
       isPrivateFile: false, // If you want a public URL
     });

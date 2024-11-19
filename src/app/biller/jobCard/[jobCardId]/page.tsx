@@ -369,8 +369,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(5);
 
-    // await fetch(`http://localhost:3000${pathname}/invoice`, {
-    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    await fetch(`http://localhost:3000${pathname}/invoice`, {
+      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,

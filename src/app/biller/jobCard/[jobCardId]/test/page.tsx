@@ -53,7 +53,7 @@ export default function page() {
     await fetch(`http://localhost:3000/tally/updateInvoices`, {
       method: "POST",
       body: JSON.stringify({
-        currDateTime: "2024-11-13T8:25:36.305+00:00",
+        dateTimeStamp: "17-11-2024",
       }),
     }).then((result: any) => {
       result.json().then((invoiceDetails: any) => {
@@ -55248,7 +55248,7 @@ export default function page() {
           </div>
           <div className="flex justify-between font-medium text-right text-sm">
             <Image
-              src={logo}
+              src={logo} 
               width={100}
               height={50}
               alt="Logo"

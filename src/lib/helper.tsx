@@ -609,9 +609,9 @@ export const getDiscount = (subTotal: number, rate: number) => {
 
 export const createTempPartObj = (item: Part) => {
   if (item) {
-    let tempSubTotal = getSubTotal(item.mrp, 1);
-    let tempCgstAmt = getTaxAmount(tempSubTotal, item.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, item.sgst);
+    let tempSubTotal = roundToTwoDecimals(getSubTotal(item.mrp, 1));
+    let tempCgstAmt = roundToTwoDecimals(getTaxAmount(tempSubTotal, item.cgst));
+    let tempSgstAmt = roundToTwoDecimals(getTaxAmount(tempSubTotal, item.sgst));
 
     let returnObj: CurrentPart = {
       partId: item.$id,
@@ -624,10 +624,10 @@ export const createTempPartObj = (item: Part) => {
       sgst: item.sgst,
       quantity: 1,
       subTotal: tempSubTotal,
-      cgstAmt: roundToTwoDecimals(tempCgstAmt),
-      sgstAmt: roundToTwoDecimals(tempSgstAmt),
-      totalTax: roundToTwoDecimals(tempCgstAmt + tempSgstAmt),
-      amount: roundToTwoDecimals(tempSubTotal + tempCgstAmt + tempSgstAmt),
+      cgstAmt: tempCgstAmt,
+      sgstAmt: tempSgstAmt,
+      totalTax: tempCgstAmt + tempSgstAmt,
+      amount: tempSubTotal + tempCgstAmt + tempSgstAmt,
     };
 
     return returnObj;
@@ -636,9 +636,9 @@ export const createTempPartObj = (item: Part) => {
 
 export const createTempLabourObj = (item: Labour) => {
   if (item) {
-    let tempSubTotal = getSubTotal(item.mrp, 1);
-    let tempCgstAmt = getTaxAmount(tempSubTotal, item.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, item.sgst);
+    let tempSubTotal = roundToTwoDecimals(getSubTotal(item.mrp, 1));
+    let tempCgstAmt = roundToTwoDecimals(getTaxAmount(tempSubTotal, item.cgst));
+    let tempSgstAmt = roundToTwoDecimals(getTaxAmount(tempSubTotal, item.sgst));
 
     let returnObj: CurrentLabour = {
       labourId: item.$id,
@@ -651,10 +651,10 @@ export const createTempLabourObj = (item: Labour) => {
       sgst: item.sgst,
       quantity: 1,
       subTotal: tempSubTotal,
-      cgstAmt: roundToTwoDecimals(tempCgstAmt),
-      sgstAmt: roundToTwoDecimals(tempSgstAmt),
-      totalTax: roundToTwoDecimals(tempCgstAmt + tempSgstAmt),
-      amount: roundToTwoDecimals(tempSubTotal + tempCgstAmt + tempSgstAmt),
+      cgstAmt: tempCgstAmt,
+      sgstAmt: tempSgstAmt,
+      totalTax: tempCgstAmt + tempSgstAmt,
+      amount: tempSubTotal + tempCgstAmt + tempSgstAmt,
     };
 
     return returnObj;
@@ -680,32 +680,41 @@ export const updateTempPartObjQuantity = (
       currentPartObj.discountPercentage &&
       currentPartObj.discountPercentage > 0
     ) {
-      console.log("HAI DISCOUNT", currentPartObj.discountPercentage);
-      actualSubTotal = getSubTotal(currentPartObj.mrp, newQuantity);
-      let discountAmt = getDiscount(
-        actualSubTotal,
-        currentPartObj.discountPercentage
+      // console.log("HAI DISCOUNT", currentPartObj.discountPercentage);
+      actualSubTotal = roundToTwoDecimals(
+        getSubTotal(currentPartObj.mrp, newQuantity)
+      );
+      let discountAmt = roundToTwoDecimals(
+        getDiscount(actualSubTotal, currentPartObj.discountPercentage)
       );
 
       tempSubTotal = actualSubTotal - discountAmt;
       currentPartObj.discountAmt = discountAmt;
     } else {
-      actualSubTotal = getSubTotal(currentPartObj.mrp, newQuantity);
+      actualSubTotal = roundToTwoDecimals(
+        getSubTotal(currentPartObj.mrp, newQuantity)
+      );
       tempSubTotal = actualSubTotal;
     }
-    let tempCgstAmt = getTaxAmount(tempSubTotal, currentPartObj.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, currentPartObj.sgst);
+    let tempCgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentPartObj.cgst)
+    );
+    let tempSgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentPartObj.sgst)
+    );
 
-    console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
+    console.log(
+      "TEMP OBJECTS = " + tempCgstAmt,
+      tempSgstAmt,
+      tempCgstAmt + tempSgstAmt
+    );
 
     currentPartObj.quantity = newQuantity;
     currentPartObj.subTotal = actualSubTotal;
-    currentPartObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
-    currentPartObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
-    currentPartObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
-    currentPartObj.amount = roundToTwoDecimals(
-      tempSubTotal + tempCgstAmt + tempSgstAmt
-    );
+    currentPartObj.cgstAmt = tempCgstAmt;
+    currentPartObj.sgstAmt = tempSgstAmt;
+    currentPartObj.totalTax = tempCgstAmt + tempSgstAmt;
+    currentPartObj.amount = tempSubTotal + tempCgstAmt + tempSgstAmt;
 
     return currentPartObj;
   }
@@ -730,32 +739,37 @@ export const updateTempLabourObjQuantity = (
       currentLabourObj.discountPercentage &&
       currentLabourObj.discountPercentage > 0
     ) {
-      console.log("HAI DISCOUNT", currentLabourObj.discountPercentage);
-      actualSubTotal = getSubTotal(currentLabourObj.mrp, newQuantity);
-      let discountAmt = getDiscount(
-        actualSubTotal,
-        currentLabourObj.discountPercentage
+      // console.log("HAI DISCOUNT", currentLabourObj.discountPercentage);
+      actualSubTotal = roundToTwoDecimals(
+        getSubTotal(currentLabourObj.mrp, newQuantity)
+      );
+      let discountAmt = roundToTwoDecimals(
+        getDiscount(actualSubTotal, currentLabourObj.discountPercentage)
       );
 
       tempSubTotal = actualSubTotal - discountAmt;
       currentLabourObj.discountAmt = discountAmt;
     } else {
-      actualSubTotal = getSubTotal(currentLabourObj.mrp, newQuantity);
+      actualSubTotal = roundToTwoDecimals(
+        getSubTotal(currentLabourObj.mrp, newQuantity)
+      );
       tempSubTotal = actualSubTotal;
     }
-    let tempCgstAmt = getTaxAmount(tempSubTotal, currentLabourObj.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, currentLabourObj.sgst);
+    let tempCgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentLabourObj.cgst)
+    );
+    let tempSgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentLabourObj.sgst)
+    );
 
-    console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
+    // console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
 
     currentLabourObj.quantity = newQuantity;
     currentLabourObj.subTotal = actualSubTotal;
-    currentLabourObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
-    currentLabourObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
-    currentLabourObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
-    currentLabourObj.amount = roundToTwoDecimals(
-      tempSubTotal + tempCgstAmt + tempSgstAmt
-    );
+    currentLabourObj.cgstAmt = tempCgstAmt;
+    currentLabourObj.sgstAmt = tempSgstAmt;
+    currentLabourObj.totalTax = tempCgstAmt + tempSgstAmt;
+    currentLabourObj.amount = tempSubTotal + tempCgstAmt + tempSgstAmt;
 
     return currentLabourObj;
   }
@@ -766,23 +780,27 @@ export const updateTempPartObjDiscount = (
   discountPercentage: number
 ) => {
   if (currentPartObj && discountPercentage) {
-    let discountAmt = getDiscount(currentPartObj.subTotal, discountPercentage);
+    let discountAmt = roundToTwoDecimals(
+      getDiscount(currentPartObj.subTotal, discountPercentage)
+    );
     let tempSubTotal = roundToTwoDecimals(
       currentPartObj.subTotal - discountAmt
     );
-    let tempCgstAmt = getTaxAmount(tempSubTotal, currentPartObj.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, currentPartObj.sgst);
+    let tempCgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentPartObj.cgst)
+    );
+    let tempSgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentPartObj.sgst)
+    );
 
-    console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
+    // console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
 
     currentPartObj.discountPercentage = discountPercentage;
     currentPartObj.discountAmt = discountAmt;
-    currentPartObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
-    currentPartObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
-    currentPartObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
-    currentPartObj.amount = roundToTwoDecimals(
-      tempSubTotal + tempCgstAmt + tempSgstAmt
-    );
+    currentPartObj.cgstAmt = tempCgstAmt;
+    currentPartObj.sgstAmt = tempSgstAmt;
+    currentPartObj.totalTax = tempCgstAmt + tempSgstAmt;
+    currentPartObj.amount = tempSubTotal + tempCgstAmt + tempSgstAmt;
 
     return currentPartObj;
   }
@@ -793,26 +811,27 @@ export const updateTempLabourObjDiscount = (
   discountPercentage: number
 ) => {
   if (currentLabourObj && discountPercentage) {
-    let discountAmt = getDiscount(
-      currentLabourObj.subTotal,
-      discountPercentage
+    let discountAmt = roundToTwoDecimals(
+      getDiscount(currentLabourObj.subTotal, discountPercentage)
     );
     let tempSubTotal = roundToTwoDecimals(
       currentLabourObj.subTotal - discountAmt
     );
-    let tempCgstAmt = getTaxAmount(tempSubTotal, currentLabourObj.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, currentLabourObj.sgst);
+    let tempCgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentLabourObj.cgst)
+    );
+    let tempSgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentLabourObj.sgst)
+    );
 
-    console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
+    // console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
 
     currentLabourObj.discountPercentage = discountPercentage;
     currentLabourObj.discountAmt = discountAmt;
-    currentLabourObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
-    currentLabourObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
-    currentLabourObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
-    currentLabourObj.amount = roundToTwoDecimals(
-      tempSubTotal + tempCgstAmt + tempSgstAmt
-    );
+    currentLabourObj.cgstAmt = tempCgstAmt;
+    currentLabourObj.sgstAmt = tempSgstAmt;
+    currentLabourObj.totalTax = tempCgstAmt + tempSgstAmt;
+    currentLabourObj.amount = tempSubTotal + tempCgstAmt + tempSgstAmt;
 
     return currentLabourObj;
   }
@@ -821,19 +840,21 @@ export const updateTempLabourObjDiscount = (
 export const removeTempPartObjDiscount = (currentPartObj: CurrentPart) => {
   if (currentPartObj) {
     let tempSubTotal = currentPartObj.subTotal;
-    let tempCgstAmt = getTaxAmount(tempSubTotal, currentPartObj.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, currentPartObj.sgst);
+    let tempCgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentPartObj.cgst)
+    );
+    let tempSgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentPartObj.sgst)
+    );
 
-    console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
+    // console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
 
     currentPartObj.discountPercentage = 0;
     currentPartObj.discountAmt = 0;
-    currentPartObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
-    currentPartObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
-    currentPartObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
-    currentPartObj.amount = roundToTwoDecimals(
-      tempSubTotal + tempCgstAmt + tempSgstAmt
-    );
+    currentPartObj.cgstAmt = tempCgstAmt;
+    currentPartObj.sgstAmt = tempSgstAmt;
+    currentPartObj.totalTax = tempCgstAmt + tempSgstAmt;
+    currentPartObj.amount = tempSubTotal + tempCgstAmt + tempSgstAmt;
 
     return currentPartObj;
   }
@@ -844,19 +865,21 @@ export const removeTempLabourObjDiscount = (
 ) => {
   if (currentLabourObj) {
     let tempSubTotal = currentLabourObj.subTotal;
-    let tempCgstAmt = getTaxAmount(tempSubTotal, currentLabourObj.cgst);
-    let tempSgstAmt = getTaxAmount(tempSubTotal, currentLabourObj.sgst);
+    let tempCgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentLabourObj.cgst)
+    );
+    let tempSgstAmt = roundToTwoDecimals(
+      getTaxAmount(tempSubTotal, currentLabourObj.sgst)
+    );
 
-    console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
+    // console.log("TEMP OBJECTS = ", tempSubTotal, tempCgstAmt, tempSgstAmt);
 
     currentLabourObj.discountPercentage = 0;
     currentLabourObj.discountAmt = 0;
-    currentLabourObj.cgstAmt = roundToTwoDecimals(tempCgstAmt);
-    currentLabourObj.sgstAmt = roundToTwoDecimals(tempSgstAmt);
-    currentLabourObj.totalTax = roundToTwoDecimals(tempCgstAmt + tempSgstAmt);
-    currentLabourObj.amount = roundToTwoDecimals(
-      tempSubTotal + tempCgstAmt + tempSgstAmt
-    );
+    currentLabourObj.cgstAmt = tempCgstAmt;
+    currentLabourObj.sgstAmt = tempSgstAmt;
+    currentLabourObj.totalTax = tempCgstAmt + tempSgstAmt;
+    currentLabourObj.amount = tempSubTotal + tempCgstAmt + tempSgstAmt;
 
     return currentLabourObj;
   }

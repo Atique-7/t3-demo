@@ -16,7 +16,7 @@ import {
   searchCarHistory,
   searchTempCar,
   client,
-  listAllUsers
+  listAllUsers,
 } from "@/lib/appwrite";
 import Image from "next/image";
 import loader from "../../public/assets/t3-loader.gif";
@@ -29,16 +29,17 @@ import {
   convertToStrings,
   getAllCarMakes,
   purposeOfVisits,
-  serviceAdvisors
+  serviceAdvisors,
 } from "@/lib/helper";
 
 import { useRouter } from "next/navigation";
 import { SearchSelect } from "./SearchSelect";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "./ui/radioGroup";
 
 type Props = {};
 
-export default function AddCarCards({ }: Props) {
+export default function AddCarCards({}: Props) {
   const router = useRouter();
 
   const [currentState, setCurrentState] = useState(0);
@@ -49,18 +50,36 @@ export default function AddCarCards({ }: Props) {
 
   // Storing purposeOfVisitCode (number) and advisorEmail (string)
   const [purposeOfVisitSelections, setPurposeOfVisitSelections] = useState<
-    { purposeOfVisitCode: number; description: string | undefined; advisorEmail: string, open: boolean }[]
+    {
+      purposeOfVisitCode: number;
+      description: string | undefined;
+      advisorEmail: string;
+      open: boolean;
+    }[]
   >([]);
 
   // Storing purposeOfVisitCode (number) and advisors (array of strings)
   const [currentServiceAdvisors, setCurrentServiceAdvisors] = useState<
-  { purposeOfVisitCode: number; advisors: { name: string; email: string }[] }[]
->([]);
+    {
+      purposeOfVisitCode: number;
+      advisors: { name: string; email: string }[];
+    }[]
+  >([]);
 
   // For controlling visibility of dropdowns for each purposeOfVisitCode
-  const [dropdownVisible, setDropdownVisible] = useState<{ [key: number]: boolean }>({});
+  const [dropdownVisible, setDropdownVisible] = useState<{
+    [key: number]: boolean;
+  }>({});
 
-  const [advisorsByPurpose, setAdvisorsByPurpose] = useState<{ [key: number]: { name: string; email: string }[] }>({});
+  const [checkboxStates, setCheckboxStates] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  const [selectedPurposeCode, setSelectedPurposeCode] = useState<number>();
+
+  const [advisorsByPurpose, setAdvisorsByPurpose] = useState<{
+    [key: number]: { name: string; email: string }[];
+  }>({});
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
@@ -76,16 +95,22 @@ export default function AddCarCards({ }: Props) {
   useEffect(() => {
     const fetchAdvisors = async () => {
       const users = await listAllUsers();
-      
-      const advisorsMap: { [key: number]: { name: string; email: string }[] } = {};
+
+      const advisorsMap: { [key: number]: { name: string; email: string }[] } =
+        {};
 
       users.forEach((user: any) => {
         const { advisorRoleId } = user.prefs;
-        if(advisorRoleId) {
+        if (advisorRoleId) {
           if (advisorRoleId in advisorsMap) {
-            advisorsMap[advisorRoleId].push({ name: user.name, email: user.email });
+            advisorsMap[advisorRoleId].push({
+              name: user.name,
+              email: user.email,
+            });
           } else {
-            advisorsMap[advisorRoleId] = [{ name: user.name, email: user.email }];
+            advisorsMap[advisorRoleId] = [
+              { name: user.name, email: user.email },
+            ];
           }
         }
       });
@@ -108,19 +133,33 @@ export default function AddCarCards({ }: Props) {
     console.log(advisorsByPurpose);
     setDropdownVisible((prev) => ({
       ...prev,
-      [code]: !prev[code],  // Toggle the dropdown for the selected purposeOfVisitCode
+      [code]: !prev[code], // Toggle the dropdown for the selected purposeOfVisitCode
     }));
+
+    setSelectedPurposeCode(code);
 
     // Update purposeOfVisitSelections state
     setPurposeOfVisitSelections((prev) => {
-      const alreadyExists = prev.find((item) => item.purposeOfVisitCode === code);
+      const alreadyExists = prev.find(
+        (item) => item.purposeOfVisitCode === code
+      );
       if (alreadyExists) {
         // Remove the purposeOfVisit if it's unchecked
         return prev.filter((item) => item.purposeOfVisitCode !== code);
       } else {
         // Add the purposeOfVisitCode and initialize its service advisor
-        const povDescription = purposeOfVisits.find((item) => item.code === code)?.description;
-        return [...prev, { purposeOfVisitCode: code, description: povDescription, advisorEmail: "", open: false}];
+        const povDescription = purposeOfVisits.find(
+          (item) => item.code === code
+        )?.description;
+        return [
+          ...prev,
+          {
+            purposeOfVisitCode: code,
+            description: povDescription,
+            advisorEmail: "",
+            open: false,
+          },
+        ];
       }
     });
 
@@ -130,7 +169,9 @@ export default function AddCarCards({ }: Props) {
         (item) => item.purposeOfVisitCode === code
       );
 
-      const advisorExists = prev.some((item) => item.purposeOfVisitCode === code);
+      const advisorExists = prev.some(
+        (item) => item.purposeOfVisitCode === code
+      );
 
       if (advisorExists) {
         // Replace existing advisors for the given purposeOfVisitCode
@@ -143,9 +184,120 @@ export default function AddCarCards({ }: Props) {
         // Add new advisors for the given purposeOfVisitCode
         return [
           ...prev,
-          { purposeOfVisitCode: code, advisors: selectedAdvisors?.advisors || [] },
+          {
+            purposeOfVisitCode: code,
+            advisors: selectedAdvisors?.advisors || [],
+          },
         ];
       }
+    });
+  };
+
+  const handleCheckboxToggle = (code: number, checked: boolean) => {
+    // Toggle dropdown visibility for the checkbox
+
+    setCheckboxStates((prev) => ({
+      ...prev,
+      [code]: checked, // Set the checked state for this checkbox
+    }));
+
+    // Update purposeOfVisitSelections for checkbox
+    setPurposeOfVisitSelections((prev) => {
+      if (checked) {
+        // Add the checkbox selection
+        const povDescription = purposeOfVisits.find(
+          (item) => item.code === code
+        )?.description;
+        return [
+          ...prev,
+          {
+            purposeOfVisitCode: code,
+            description: povDescription,
+            advisorEmail: "",
+            open: false,
+          },
+        ];
+      } else {
+        // Remove the checkbox selection
+        return prev.filter((item) => item.purposeOfVisitCode !== code);
+      }
+    });
+
+    setCurrentServiceAdvisors((prev) => {
+      if (checked) {
+        const selectedAdvisors = serviceAdvisors.find(
+          (item) => item.purposeOfVisitCode === code
+        );
+
+        return [
+          ...prev,
+          {
+            purposeOfVisitCode: code,
+            advisors: selectedAdvisors?.advisors || [],
+          },
+        ];
+      } else {
+        return prev.filter((item) => item.purposeOfVisitCode !== code);
+      }
+    });
+  };
+
+  const handleRadioChange = (code: number) => {
+    setDropdownVisible({ [code]: true }); // Clear all others and only show the selected one
+
+    setSelectedPurposeCode(code); // Update the selected code state
+
+    // setPurposeOfVisitSelections(() => {
+    //   const povDescription = purposeOfVisits.find(
+    //     (item) => item.code === code
+    //   )?.description;
+
+    //   return [
+    //     {
+    //       purposeOfVisitCode: code,
+    //       description: povDescription,
+    //       advisorEmail: "",
+    //       open: false,
+    //     },
+    //   ];
+    // });
+    setPurposeOfVisitSelections((prev) => {
+      const existingSelection = prev.find(
+        (item) => item.purposeOfVisitCode === code
+      );
+
+      if (!existingSelection) {
+        // Append the new selection if it doesn't already exist
+        const povDescription = purposeOfVisits.find(
+          (item) => item.code === code
+        )?.description;
+
+        return [
+          ...prev,
+          {
+            purposeOfVisitCode: code,
+            description: povDescription,
+            advisorEmail: "",
+            open: false,
+          },
+        ];
+      }
+
+      // If the selection already exists, leave the state unchanged
+      return prev;
+    });
+
+    setCurrentServiceAdvisors(() => {
+      const selectedAdvisors = serviceAdvisors.find(
+        (item) => item.purposeOfVisitCode === code
+      );
+
+      return [
+        {
+          purposeOfVisitCode: code,
+          advisors: selectedAdvisors?.advisors || [],
+        },
+      ];
     });
   };
 
@@ -153,7 +305,9 @@ export default function AddCarCards({ }: Props) {
   const handleServiceAdvisorChange = (code: number, advisorEmail: string) => {
     setPurposeOfVisitSelections((prev) =>
       prev.map((item) =>
-        item.purposeOfVisitCode === code ? { ...item, advisorEmail: advisorEmail } : item
+        item.purposeOfVisitCode === code
+          ? { ...item, advisorEmail: advisorEmail }
+          : item
       )
     );
   };
@@ -168,9 +322,7 @@ export default function AddCarCards({ }: Props) {
     let searchedTempCar = await searchTempCar(carNumber);
     console.log("CAR TEMP - ", searchedTempCar);
 
-    if (
-      searchedTempCar.total > 0
-    ) {
+    if (searchedTempCar.total > 0) {
       toast("Vehicle Already in the System");
     } else {
       if (prevHistory.total == 0) {
@@ -180,15 +332,9 @@ export default function AddCarCards({ }: Props) {
       } else {
         console.log("THIS IS AN OLD CAR", prevHistory.documents[0]["$id"]);
         setIsNewCar((prev) => prevHistory.documents[0]["$id"]);
-        console.log(prevHistory.documents[0].carMake)
+        console.log(prevHistory.documents[0].carMake);
         setCarMake(prevHistory.documents[0].carMake);
         setCarModel(prevHistory.documents[0].carModel);
-
-        // let foundMake = carMakes.find(
-        //   (make) => make.description == prevHistory.documents[0].carMake
-        // );
-
-        // console.log(foundMake);
       }
 
       setCurrentState((prev) => 1);
@@ -201,16 +347,24 @@ export default function AddCarCards({ }: Props) {
     console.log("ADVISORS", currentServiceAdvisors);
     console.log("po", purposeOfVisitSelections);
     console.log("po", convertToStrings(purposeOfVisitSelections));
-    console.log("po", convertStringsToArray(convertToStrings(purposeOfVisitSelections)));
-
-  }
+    console.log(
+      "po",
+      convertStringsToArray(convertToStrings(purposeOfVisitSelections))
+    );
+  };
 
   const handleContinueEnterVehicle = async () => {
     setIsButtonLoading((prev) => true);
 
-    const purposeOfVisitAndAdvisors = convertToStrings(purposeOfVisitSelections);
+    const purposeOfVisitAndAdvisors = convertToStrings(
+      purposeOfVisitSelections
+    );
 
-    if (carMake != "" && carModel != "" && purposeOfVisitSelections.length > 0) {
+    if (
+      carMake != "" &&
+      carModel != "" &&
+      purposeOfVisitSelections.length > 0
+    ) {
       if (isNewCar == null) {
         console.log("THIS IS A NEW CAR");
         try {
@@ -218,7 +372,7 @@ export default function AddCarCards({ }: Props) {
             carNumber,
             carMake,
             carModel,
-            
+
             purposeOfVisitAndAdvisors
           );
           console.log(newCar);
@@ -246,7 +400,7 @@ export default function AddCarCards({ }: Props) {
             carMake,
             carModel,
             purposeOfVisitAndAdvisors,
-            isNewCar!,
+            isNewCar!
           );
           toast("New Vehicle Entered \u2705");
           setTimeout(() => {
@@ -326,48 +480,81 @@ export default function AddCarCards({ }: Props) {
           <div>
             <div>
               <label className="block mb-2 font-medium">Purpose of Visit</label>
+
               {purposeOfVisits.map((pov, index) => (
                 <div key={index} className="mb-4">
-                  {/* Aligning checkbox and label */}
-                  <div className="flex items-center mb-2">
-                    <Checkbox
-                      id={`checkbox-${pov.code}`}
-                      className="mr-2 cursor-pointer"
-                      checked={dropdownVisible[pov.code] || false}
-                      onCheckedChange={() => handleCheckboxChange(pov.code)} // Use code for checkbox change
-                    />
-                    <label htmlFor={`checkbox-${pov.code}`} className="cursor-pointer">
-                      {pov.description} {/* Keep the description for user clarity */}
-                    </label>
+                  {/* Aligning radio buttons and labels */}
+                  <div className="flex flex-col mb-2">
+                    {pov.code === 1 ? (
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`checkbox-${pov.code}`}
+                          className="mr-2 cursor-pointer"
+                          checked={checkboxStates[pov.code] || false}
+                          onCheckedChange={(checked) =>
+                            handleCheckboxToggle(pov.code, Boolean(checked))
+                          }
+                        />
+                        <label
+                          htmlFor={`checkbox-${pov.code}`}
+                          className="cursor-pointer"
+                        >
+                          {pov.description}
+                        </label>
+                      </div>
+                    ) : (
+                      <RadioGroup
+                        value={String(selectedPurposeCode)}
+                        onValueChange={(value) =>
+                          handleRadioChange(Number(value))
+                        }
+                        className="space-y-2"
+                      >
+                        <RadioGroupItem
+                          key={pov.code}
+                          id={`radio-${pov.code}`}
+                          value={String(pov.code)}
+                        >
+                          {pov.description}
+                        </RadioGroupItem>
+                      </RadioGroup>
+                    )}
                   </div>
 
-                  {/* Only show the dropdown if the checkbox is selected */}
-                  {dropdownVisible[pov.code] && (
+                  {/* Only show the dropdown if the radio button is selected */}
+                  {(checkboxStates[pov.code] || dropdownVisible[pov.code]) && (
                     <Select
-                      onValueChange={(advisorEmail) => handleServiceAdvisorChange(pov.code, advisorEmail)}
+                      onValueChange={(advisorEmail) =>
+                        handleServiceAdvisorChange(pov.code, advisorEmail)
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Service Advisor" />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* {serviceAdvisors
-                          .find((item) => item.purposeOfVisitCode === pov.code)
-                          ?.advisors.map((advisor, index) => (
-                            <SelectItem key={index} value={advisor.email}>
-                              {advisor.name}
-                            </SelectItem>
-                          ))} */}
-                          {advisorsByPurpose[pov.code]?.map((advisor, index) => (
-                        <SelectItem key={index} value={advisor.email}>
-                          {advisor.name}
-                        </SelectItem>
-                      ))}
+                        {advisorsByPurpose[pov.code]?.map((advisor, index) => (
+                          <SelectItem key={index} value={advisor.email}>
+                            {advisor.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   )}
                 </div>
               ))}
 
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedPurposeCode(undefined); // Clear the selected radio
+                  setDropdownVisible({}); // Hide all dropdowns
+                  setPurposeOfVisitSelections([]); // Clear all selections
+                  setCheckboxStates({});
+                }}
+              >
+                Clear All
+              </Button>
             </div>
           </div>
           <Button
@@ -375,7 +562,7 @@ export default function AddCarCards({ }: Props) {
             // disabled={
             //   !(carMake != "" && carModel != "" && purposeOfVisit != "")
             // }
-            onClick={handleContinueEnterVehicle}
+            onClick={handleLog}
           >
             {isButtonLoading ? (
               <Image src={loader} width={50} height={50} alt="Logo" />
@@ -388,3 +575,44 @@ export default function AddCarCards({ }: Props) {
     </div>
   );
 }
+// {purposeOfVisits.map((pov, index) => (
+//   <div key={index} className="mb-4">
+//     {/* Aligning checkbox and label */}
+//     <div className="flex items-center mb-2">
+
+//       <Checkbox
+//         id={`checkbox-${pov.code}`}
+//         className="mr-2 cursor-pointer"
+//         checked={dropdownVisible[pov.code] || false}
+//         onCheckedChange={() => handleCheckboxChange(pov.code)} // Use code for checkbox change
+//       />
+//       <label
+//         htmlFor={`checkbox-${pov.code}`}
+//         className="cursor-pointer"
+//       >
+//         {pov.description}{" "}
+//         {/* Keep the description for user clarity */}
+//       </label>
+//     </div>
+
+//     {/* Only show the dropdown if the checkbox is selected */}
+//     {dropdownVisible[pov.code] && (
+//       <Select
+//         onValueChange={(advisorEmail) =>
+//           handleServiceAdvisorChange(pov.code, advisorEmail)
+//         }
+//       >
+//         <SelectTrigger className="w-full">
+//           <SelectValue placeholder="Select Service Advisor" />
+//         </SelectTrigger>
+//         <SelectContent>
+//           {advisorsByPurpose[pov.code]?.map((advisor, index) => (
+//             <SelectItem key={index} value={advisor.email}>
+//               {advisor.name}
+//             </SelectItem>
+//           ))}
+//         </SelectContent>
+//       </Select>
+//     )}
+//   </div>
+// ))}

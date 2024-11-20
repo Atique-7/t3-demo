@@ -27,8 +27,8 @@ export const carMakes = [
 ];
 
 export const purposeOfVisits = [
-  { code: 0, description: "General visit" },
   { code: 1, description: "Bodyshop" },
+  { code: 0, description: "General visit" },
   { code: 2, description: "Paid service" },
   { code: 3, description: "Running Repair" },
 ];

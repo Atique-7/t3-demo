@@ -53,7 +53,7 @@ export default function page() {
     await fetch(`http://localhost:3000/tally/updateInvoices`, {
     // await fetch(`https://t3-next-dev.vercel.app/tally/updateInvoices`, {
       method: "POST",
-      body: JSON.stringify({ data: { lastSync: "18-Nov-24 08:19:15" } }),
+      body: JSON.stringify({ data: { lastSync: "18-Nov-24 00:00:00" } }),
     }).then((result: any) => {
       result.json().then((invoiceDetails: any) => {
         console.log("HELLOOO", invoiceDetails);

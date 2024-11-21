@@ -11,6 +11,7 @@ import {
 } from "@/lib/definitions";
 import {
   createTaxObj,
+  preciseOperation,
   roundToTwoDecimals,
   splitInsuranceAmt,
   stringToObj,
@@ -109,23 +110,41 @@ export async function POST(request: NextRequest) {
               part.subTotalCust = splitPartSubTotal.customerAmt;
               part.cgstAmtCust = splitPartCGST.customerAmt;
               part.sgstAmtCust = splitPartSGST.customerAmt;
-              part.totalTaxCust =
-                splitPartCGST.customerAmt + splitPartSGST.customerAmt;
+              part.totalTaxCust = preciseOperation(
+                "add",
+                splitPartCGST.customerAmt,
+                splitPartSGST.customerAmt
+              );
 
-              partsTotal = partsTotal + part.amountCust;
-              totalTax = totalTax + part.totalTaxCust;
-              totalSubtotal = totalSubtotal + part.subTotalCust;
+              partsTotal = preciseOperation("add", partsTotal, part.amountCust);
+
+              totalTax = preciseOperation("add", totalTax, part.totalTaxCust);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                part.subTotalCust
+              );
             } else {
               part.amountIns = splitPartAmount.insuranceAmt;
               part.subTotalIns = splitPartSubTotal.insuranceAmt;
               part.cgstAmtIns = splitPartCGST.insuranceAmt;
               part.sgstAmtIns = splitPartSGST.insuranceAmt;
-              part.totalTaxIns =
-                splitPartCGST.insuranceAmt + splitPartSGST.insuranceAmt;
+              part.totalTaxIns = preciseOperation(
+                "add",
+                splitPartCGST.insuranceAmt,
+                splitPartSGST.insuranceAmt
+              );
 
-              partsTotal = partsTotal + part.amountIns;
-              totalTax = totalTax + part.totalTaxIns;
-              totalSubtotal = totalSubtotal + part.subTotalIns;
+              partsTotal = preciseOperation("add", partsTotal, part.amountIns);
+
+              totalTax = preciseOperation("add", totalTax, part.totalTaxIns);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                part.subTotalIns
+              );
             }
 
             if (
@@ -143,35 +162,47 @@ export async function POST(request: NextRequest) {
               if (insuranceInvoiceTypeCOPY == "Customer") {
                 part.discountAmtCust = splitPartDiscAmt.customerAmt;
 
-                totalDiscount = totalDiscount + part.discountAmtCust;
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  part.discountAmtCust
+                );
               } else {
                 part.discountAmtIns = splitPartDiscAmt.insuranceAmt;
 
-                totalDiscount = totalDiscount + part.discountAmtIns;
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  part.discountAmtIns
+                );
               }
             }
           } else {
             if (insuranceInvoiceTypeCOPY == "Customer") {
-              partsTotal = partsTotal + part.amount;
-              totalTax = totalTax + part.totalTax;
+              partsTotal = preciseOperation("add", partsTotal, part.amount);
 
-              totalSubtotal = totalSubtotal + part.subTotal;
-              // totalDiscount = totalDiscount + part.discountAmt
+              totalTax = preciseOperation("add", totalTax, part.totalTax);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                part.subTotal
+              );
+
+              // totalDiscount = totalDiscount , part.discountAmt
 
               if (
                 part.discountPercentage &&
                 part.discountAmt &&
                 part.discountPercentage != 0
               ) {
-                totalDiscount = totalDiscount + part.discountAmt;
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  part.discountAmt
+                );
               }
             }
-          }
-
-          if (part.cgstAmt + part.sgstAmt == part.totalTax) {
-            console.log("YAHAN CALCULATIN THIK HAI");
-          } else {
-            console.log("DIKKAT HAI", part);
           }
         });
 
@@ -212,23 +243,49 @@ export async function POST(request: NextRequest) {
               work.subTotalCust = splitLabourSubTotal.customerAmt;
               work.cgstAmtCust = splitLabourCGST.customerAmt;
               work.sgstAmtCust = splitLabourSGST.customerAmt;
-              work.totalTaxCust =
-                splitLabourCGST.customerAmt + splitLabourSGST.customerAmt;
+              work.totalTaxCust = preciseOperation(
+                "add",
+                splitLabourCGST.customerAmt,
+                splitLabourSGST.customerAmt
+              );
 
-              labourTotal = labourTotal + work.amountCust;
-              totalTax = totalTax + work.totalTaxCust;
-              totalSubtotal = totalSubtotal + work.subTotalCust;
+              labourTotal = preciseOperation(
+                "add",
+                labourTotal,
+                work.amountCust
+              );
+
+              totalTax = preciseOperation("add", totalTax, work.totalTaxCust);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                work.subTotalCust
+              );
             } else {
               work.amountIns = splitLabourAmount.insuranceAmt;
               work.subTotalIns = splitLabourSubTotal.insuranceAmt;
               work.cgstAmtIns = splitLabourCGST.insuranceAmt;
               work.sgstAmtIns = splitLabourSGST.insuranceAmt;
-              work.totalTaxIns =
-                splitLabourCGST.insuranceAmt + splitLabourSGST.insuranceAmt;
+              work.totalTaxIns = preciseOperation(
+                "add",
+                splitLabourCGST.insuranceAmt,
+                splitLabourSGST.insuranceAmt
+              );
 
-              labourTotal = labourTotal + work.amountIns;
-              totalTax = totalTax + work.totalTaxIns;
-              totalSubtotal = totalSubtotal + work.subTotalIns;
+              labourTotal = preciseOperation(
+                "add",
+                labourTotal,
+                work.amountIns
+              );
+
+              totalTax = preciseOperation("add", totalTax, work.totalTaxIns);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                work.subTotalIns
+              );
             }
 
             if (
@@ -246,37 +303,49 @@ export async function POST(request: NextRequest) {
               if (insuranceInvoiceTypeCOPY == "Customer") {
                 work.discountAmtCust = splitWorkDiscAmt.customerAmt;
 
-                totalDiscount = totalDiscount + work.discountAmtCust;
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  work.discountAmtCust
+                );
               } else {
                 work.discountAmtIns = splitWorkDiscAmt.insuranceAmt;
 
-                totalDiscount = totalDiscount + work.discountAmtIns;
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  work.discountAmtIns
+                );
               }
             } else {
               // console.log("NOT REGISTERING");
             }
           } else {
             if (insuranceInvoiceTypeCOPY == "Customer") {
-              labourTotal = labourTotal + work.amount;
-              totalTax = totalTax + work.totalTax;
+              labourTotal = preciseOperation("add", labourTotal, work.amount);
 
-              totalSubtotal = totalSubtotal + work.subTotal;
+              totalTax = preciseOperation("add", totalTax, work.totalTax);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                work.subTotal
+              );
+
               if (
                 work.discountPercentage &&
                 work.discountAmt &&
                 work.discountPercentage != 0
               ) {
-                totalDiscount = totalDiscount + work.discountAmt;
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  work.discountAmt
+                );
               }
             }
           }
         });
-
-        partsTotal = roundToTwoDecimals(partsTotal);
-        labourTotal = roundToTwoDecimals(labourTotal);
-        totalTax = roundToTwoDecimals(totalTax);
-        totalDiscount = roundToTwoDecimals(totalDiscount);
-        totalSubtotal = roundToTwoDecimals(totalSubtotal);
 
         const keysToRetainParts: (keyof CurrentPart)[] = [
           "partId",
@@ -444,13 +513,17 @@ export async function POST(request: NextRequest) {
           })
         );
 
+        console.log("AMOUNT CHECK - ", partsTotal, labourTotal);
+
         result.parts = revisedPartsArr;
         result.labour = revisedLabourArr;
 
-        result.subTotal = roundToTwoDecimals(totalSubtotal);
-        result.amount = roundToTwoDecimals(partsTotal + labourTotal);
-        result.discountAmt = roundToTwoDecimals(totalDiscount);
-        result.totalTax = roundToTwoDecimals(totalTax);
+        result.subTotal = totalSubtotal;
+        result.amount = roundToTwoDecimals(
+          totalSubtotal - totalDiscount + totalTax
+        );
+        result.discountAmt = totalDiscount;
+        result.totalTax = totalTax;
         result.placeOfSupply = "Maharashtra";
 
         if (

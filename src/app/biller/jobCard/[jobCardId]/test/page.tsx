@@ -50,7 +50,7 @@ export default function page() {
   }, []);
 
   const getData = async () => {
-    await fetch(`http://localhost:3001/tally/updateInvoices`, {
+    await fetch(`http://localhost:3000/tally/updateInvoices`, {
       // await fetch(`https://t3-next-dev.vercel.app/tally/updateInvoices`, {
       method: "POST",
       body: JSON.stringify({ data: { lastSync: "18-Nov-24 00:00:00" } }),

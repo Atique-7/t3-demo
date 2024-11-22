@@ -49,7 +49,7 @@ export interface JobCard {
   labourTotalPreTax: number;
   labourTotalPostTax: number;
   subTotal: number;
-  discountAmt: number;
+  totalDiscountAmt: number;
   amount: number;
   jobCardNumber: number;
   insuranceDetails: string;

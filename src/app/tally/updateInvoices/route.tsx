@@ -522,7 +522,7 @@ export async function POST(request: NextRequest) {
         result.amount = roundToTwoDecimals(
           totalSubtotal - totalDiscount + totalTax
         );
-        result.discountAmt = totalDiscount;
+        result.totalDiscountAmt = totalDiscount;
         result.totalTax = totalTax;
         result.placeOfSupply = "Maharashtra";
 

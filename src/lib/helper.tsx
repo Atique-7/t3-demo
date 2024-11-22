@@ -582,18 +582,28 @@ export const getUserAccess = (user: UserType) => {
 
 export const splitInsuranceAmt = (amount: number, insurance: number) => {
   // console.log("USER ACCESS - ", user);
-  let insuranceAmt = (insurance / 100) * amount;
-  let customerAmt = amount - insuranceAmt;
-
-  insuranceAmt = roundToTwoDecimals(Number(insuranceAmt));
-  customerAmt = roundToTwoDecimals(Number(customerAmt));
+  let insuranceAmt = roundToTwoDecimals((insurance / 100) * amount);
+  let customerAmt = roundToTwoDecimals(amount - insuranceAmt);
 
   return { insuranceAmt, customerAmt };
 };
 
 export const roundToTwoDecimals = (num: number) => {
-  return Math.round(num * 100) / 100;
+  // return (Math.round(num * 100) / 100);n
+  return parseFloat(num.toFixed(2));
 };
+export function preciseOperation(operation: string, ...numbers: number[]) {
+  const result = numbers.reduce((acc, num) => {
+    if (operation === "add") {
+      return acc + num;
+    } else if (operation === "subtract") {
+      return acc - num;
+    }
+    throw new Error("Unsupported operation. Use 'add' or 'subtract'.");
+  }, 0);
+
+  return parseFloat((result + Number.EPSILON).toFixed(2));
+}
 
 export const getSubTotal = (mrp: number, quantity: number) => {
   return mrp * quantity;

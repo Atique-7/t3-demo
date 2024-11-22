@@ -247,7 +247,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     let tempJobCard = jobCard;
     if (tempJobCard) {
       tempJobCard.subTotal = amounts.subTotal;
-      tempJobCard.discountAmt = amounts.discountAmt;
+      tempJobCard.totalDiscountAmt = amounts.discountAmt;
       tempJobCard.amount = amounts.amount;
 
       setJobCard((prev) => tempJobCard);

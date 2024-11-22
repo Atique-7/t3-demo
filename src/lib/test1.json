@@ -94,7 +94,7 @@
         "customerAddress": "TESTING ADDRESS",
         "insuranceDetails": "{\"policyProvider\":\"Kotak Mahindra General Insurance Co. Ltd.\",\"policyProviderAddress\":\"A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)\",\"policyProviderGST\":\"27AAFCK7016C1ZT\",\"policyNumber\":\"6854848645\"}",
         "subTotal": 3242.04,
-        "discountAmt": 350.45,
+        "discountAmt": 538.15,
         "amount": 3384.45,
         "taxes": [
           {
@@ -137,6 +137,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 350.45,
         "totalTax": 492.86,
         "placeOfSupply": "Maharashtra"
       }
@@ -235,7 +236,7 @@
         "customerAddress": "A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)",
         "insuranceDetails": "{\"policyProvider\":\"Kotak Mahindra General Insurance Co. Ltd.\",\"policyProviderAddress\":\"A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)\",\"policyProviderGST\":\"27AAFCK7016C1ZT\",\"policyNumber\":\"6854848645\"}",
         "subTotal": 2314.78,
-        "discountAmt": 187.7,
+        "discountAmt": 538.15,
         "amount": 2722.64,
         "taxes": [
           {
@@ -278,6 +279,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 187.7,
         "totalTax": 595.56,
         "placeOfSupply": "Maharashtra"
       }
@@ -376,7 +378,7 @@
         "customerAddress": "TESTING ADDRESS",
         "insuranceDetails": "{\"policyProvider\":\"Kotak Mahindra General Insurance Co. Ltd.\",\"policyProviderAddress\":\"A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)\",\"policyProviderGST\":\"27AAFCK7016C1ZT\",\"policyNumber\":\"6854848645\"}",
         "subTotal": 3242.04,
-        "discountAmt": 350.45,
+        "discountAmt": 538.15,
         "amount": 3384.45,
         "taxes": [
           {
@@ -419,6 +421,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 350.45,
         "totalTax": 492.86,
         "placeOfSupply": "Maharashtra"
       }
@@ -517,7 +520,7 @@
         "customerAddress": "A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)",
         "insuranceDetails": "{\"policyProvider\":\"Kotak Mahindra General Insurance Co. Ltd.\",\"policyProviderAddress\":\"A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)\",\"policyProviderGST\":\"27AAFCK7016C1ZT\",\"policyNumber\":\"6854848645\"}",
         "subTotal": 2314.78,
-        "discountAmt": 187.7,
+        "discountAmt": 538.15,
         "amount": 2722.64,
         "taxes": [
           {
@@ -560,6 +563,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 187.7,
         "totalTax": 595.56,
         "placeOfSupply": "Maharashtra"
       }
@@ -658,7 +662,7 @@
         "customerAddress": "TESTING ADDRESS",
         "insuranceDetails": "{\"policyProvider\":\"Kotak Mahindra General Insurance Co. Ltd.\",\"policyProviderAddress\":\"A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)\",\"policyProviderGST\":\"27AAFCK7016C1ZT\",\"policyNumber\":\"6854848645\"}",
         "subTotal": 3242.04,
-        "discountAmt": 350.45,
+        "discountAmt": 538.15,
         "amount": 3384.45,
         "taxes": [
           {
@@ -701,6 +705,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 350.45,
         "totalTax": 492.86,
         "placeOfSupply": "Maharashtra"
       }
@@ -799,7 +804,7 @@
         "customerAddress": "A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)",
         "insuranceDetails": "{\"policyProvider\":\"Kotak Mahindra General Insurance Co. Ltd.\",\"policyProviderAddress\":\"A.K. Vaidya Marg, 8th floor, Zone IV, Kotak Towers, Bldg No-21, Infiniti IT park, off W.E.Highway, Malad (E)\",\"policyProviderGST\":\"27AAFCK7016C1ZT\",\"policyNumber\":\"6854848645\"}",
         "subTotal": 2314.78,
-        "discountAmt": 187.7,
+        "discountAmt": 538.15,
         "amount": 2722.64,
         "taxes": [
           {
@@ -842,6 +847,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 187.7,
         "totalTax": 595.56,
         "placeOfSupply": "Maharashtra"
       }
@@ -954,7 +960,7 @@
         "customerAddress": "TESTTTTT",
         "insuranceDetails": "{\"policyProvider\":\"Future Generali General Insurance\",\"policyProviderAddress\":\"Unit  No .801 802,Tower C 247 Embassy Park,LBS Marg\",\"policyProviderGST\":\"27AABCF0191R2Z8\",\"policyNumber\":\"548654865\"}",
         "subTotal": 13481,
-        "discountAmt": 1248.27,
+        "discountAmt": 2496.54,
         "amount": 15247.07,
         "taxes": [
           {
@@ -1021,6 +1027,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 1248.27,
         "totalTax": 3014.34,
         "placeOfSupply": "Maharashtra"
       }
@@ -1135,7 +1142,7 @@
         "customerAddress": "Unit  No .801 802,Tower C 247 Embassy Park,LBS Marg",
         "insuranceDetails": "{\"policyProvider\":\"Future Generali General Insurance\",\"policyProviderAddress\":\"Unit  No .801 802,Tower C 247 Embassy Park,LBS Marg\",\"policyProviderGST\":\"27AABCF0191R2Z8\",\"policyNumber\":\"548654865\"}",
         "subTotal": 11181,
-        "discountAmt": 1248.27,
+        "discountAmt": 2496.54,
         "amount": 12587.07,
         "taxes": [
           {
@@ -1202,6 +1209,7 @@
         ],
         "$databaseId": "66b10c670021dc021477",
         "$collectionId": "66e80a830013e7a81f31",
+        "totalDiscountAmt": 1248.27,
         "totalTax": 2654.34,
         "placeOfSupply": "Maharashtra"
       }

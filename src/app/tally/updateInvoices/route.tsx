@@ -426,6 +426,14 @@ export async function POST(request: NextRequest) {
               updatedObject.discountAmt = part.discountAmt as number;
             }
 
+            if (
+              !updatedObject.discountPercentage ||
+              !updatedObject.discountAmt
+            ) {
+              updatedObject.discountPercentage = 0;
+              updatedObject.discountAmt = 0;
+            }
+
             return updatedObject;
           })
         );
@@ -509,11 +517,20 @@ export async function POST(request: NextRequest) {
               updatedObject.discountAmt = work.discountAmt as number;
             }
 
+            if (
+              !updatedObject.discountPercentage ||
+              !updatedObject.discountAmt
+            ) {
+              updatedObject.discountPercentage = 0;
+              updatedObject.discountAmt = 0;
+            }
+            console.log("UPDATED OBJECT - ", updatedObject);
+
             return updatedObject;
           })
         );
 
-        console.log("AMOUNT CHECK - ", partsTotal, labourTotal);
+        // console.log("AMOUNT CHECK - ", partsTotal, labourTotal);
 
         result.parts = revisedPartsArr;
         result.labour = revisedLabourArr;

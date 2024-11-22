@@ -44,7 +44,7 @@ export default function Sidebar({ home }: any) {
     await logoutUser();
     deleteCookie("user");
     router.push("/");
-    setIsLoggingOut((prev) => false);
+    // setIsLoggingOut((prev) => false);
   };
 
   return (

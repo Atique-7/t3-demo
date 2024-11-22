@@ -464,6 +464,12 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
   return (
     <div className="flex flex-col w-[90%] mt-5 space-y-8">
+      {/* Overlay to disable page */}
+      {buttonLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <Image src={loader} width={100} height={100} alt="Loading" />
+        </div>
+      )}
       {!(parts && jobCard && car && user) ? (
         <JobCardsPageSkeleton />
       ) : (

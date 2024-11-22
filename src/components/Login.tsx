@@ -18,57 +18,64 @@ function Login({}: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isUserPresent, setIsUserPresent] = useState(true);
 
   const login = async () => {
     setIsSigningIn((prev) => true);
+    setIsUserPresent((prev) => true);
 
     const user = await loginUser(email, password);
-    const userDetails = user?.userDetails;
 
-    console.log("THESE ARE THE USER DETAILS - ", userDetails);
-    setCookie("user", JSON.stringify(userDetails));
-    console.log("COOKIE SET", userDetails);
+    if (user) {
+      console.log("USER HAI");
 
-    const userAccess = userDetails.labels[0];
-    //const allUsers = await listAllUsers();
+      const userDetails = user?.userDetails;
 
-    if (userAccess === "service") {
-      // console.log("lkkkkkkk", allUsers);
-      // setCookie("users", allUsers);
+      console.log("THESE ARE THE USER DETAILS - ", userDetails);
+      setCookie("user", JSON.stringify(userDetails));
+      console.log("COOKIE SET", userDetails);
+
+      const userAccess = userDetails.labels[0];
+      //const allUsers = await listAllUsers();
+
+      let redirectURL = "/";
+
+      switch (userAccess) {
+        case "parts":
+          redirectURL = "/parts";
+          break;
+        case "biller":
+          redirectURL = "/biller";
+          break;
+
+        case "security":
+          redirectURL = "/security";
+          break;
+        case "service":
+          redirectURL = "/service";
+          break;
+        case "admin":
+          redirectURL = "/admin";
+          break;
+
+        default:
+          break;
+      }
+
+      console.log("REDIRECTING TO - ", redirectURL);
+      router.push(redirectURL);
+      // setIsSigningIn((prev) => false);
+    } else {
+      console.log("USER NAHI HAI");
+      setIsUserPresent((prev) => false);
+      setIsSigningIn((prev) => false);
     }
-    let redirectURL = "/";
-
-    switch (userAccess) {
-      case "parts":
-        redirectURL = "/parts";
-        break;
-      case "biller":
-        redirectURL = "/biller";
-        break;
-
-      case "security":
-        redirectURL = "/security";
-        break;
-      case "service":
-        redirectURL = "/service";
-        break;
-      case "admin":
-        redirectURL = "/admin";
-        break;
-
-      default:
-        break;
-    }
-
-    console.log("REDIRECTING TO - ", redirectURL);
-    router.push(redirectURL);
-    setIsSigningIn((prev) => false);
   };
 
-  const logout = async () => {
-    await logoutUser();
-    deleteCookie("userId");
-  };
+  // const logout = async () => {
+  //   await logoutUser();
+  //   deleteCookie("userId");
+  // };
 
   return (
     <div className="flex flex-col justify-center items-center h-dvh">
@@ -107,11 +114,13 @@ function Login({}: Props) {
           handleButtonPress={login}
           isLoading={isSigningIn}
         />
-        <PrimaryButton
-          title={"clear session"}
-          handleButtonPress={logout}
-          isLoading={isSigningIn}
-        />
+        {isUserPresent ? (
+          <></>
+        ) : (
+          <>
+            <div className="text-red-600">Please Check Credentials Again</div>
+          </>
+        )}
       </div>
     </div>
   );

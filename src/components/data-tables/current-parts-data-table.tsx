@@ -49,6 +49,7 @@ interface DataTableProps<TData, TValue> {
   user: UserType;
   currentJobCardStatus?: number;
   isInsuranceDetails: boolean;
+  disable?: boolean;
 }
 
 export function CurrentPartsDataTable<TData, TValue>({
@@ -61,6 +62,7 @@ export function CurrentPartsDataTable<TData, TValue>({
   user,
   currentJobCardStatus,
   isInsuranceDetails,
+  disable = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -335,6 +337,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                           handleAllDiscount(Number(event.target.value))
                         }
                         className="max-w-sm"
+                        disabled={disable}
                       />
                       <X onClick={removeAllDiscount} />
                     </div>
@@ -343,6 +346,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                       variant="outline"
                       className="border border-red-500 text-red-500"
                       onClick={() => setIsDiscount((prev) => true)}
+                      disabled={disable}
                     >
                       <Percent />
                     </Button>
@@ -366,6 +370,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                           handleAllInsurance(Number(event.target.value))
                         }
                         className="max-w-sm"
+                        disabled={disable}
                       />
                       <X onClick={removeAllInsurance} />
                     </div>
@@ -380,6 +385,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                           toast("Add Insurance Details to Proceed");
                         }
                       }}
+                      disabled={disable}
                     >
                       <Shield />
                     </Button>
@@ -472,6 +478,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                         variant="link"
                         size="icon"
                         onClick={() => handleQuantityUpdate(row, -1)}
+                        disabled={disable}
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
@@ -480,6 +487,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                         variant="link"
                         size="icon"
                         onClick={() => handleQuantityUpdate(row, 1)}
+                        disabled={disable}
                       >
                         <Plus className="h-3 w-3" />
                       </Button>
@@ -497,6 +505,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                           handleDiscount(row, Number(event.target.value))
                         }
                         className="w-10"
+                        disabled={disable}
                       />
                     </TableCell>
                   )}
@@ -534,6 +543,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                           handleInsurance(row, Number(event.target.value))
                         }
                         className="w-10"
+                        disabled={disable}
                       />
                     </TableCell>
                   )}
@@ -543,6 +553,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                       variant="outline"
                       size="icon"
                       onClick={() => deleteRow(row)}
+                      disabled={disable}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -566,6 +577,7 @@ export function CurrentPartsDataTable<TData, TValue>({
               <Button
                 variant="link"
                 onClick={() => setIsAddingParts((prev) => false)}
+                disabled={disable}
               >
                 <X />
               </Button>
@@ -574,6 +586,7 @@ export function CurrentPartsDataTable<TData, TValue>({
             <Button
               variant="link"
               onClick={() => setIsAddingParts((prev) => true)}
+              disabled={disable}
             >
               <div className="flex flex-row space-x-3 text-red-500 items-center">
                 <div>+ Add Parts</div>

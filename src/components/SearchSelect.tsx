@@ -43,11 +43,17 @@ const convertedData = [
   },
 ];
 
-export function SearchSelect({ data, type, setDataValue, disabled, value }: any) {
+export function SearchSelect({
+  data,
+  type,
+  setDataValue,
+  disabled,
+  value,
+}: any) {
   const [open, setOpen] = React.useState(false);
   //const [value, setValue] = React.useState("");
 
-  const [internalValue, setInternalValue] = React.useState(value || "");  // Use prop value as initial state
+  const [internalValue, setInternalValue] = React.useState(value || ""); // Use prop value as initial state
 
   // Update the internal value when the external value changes
   React.useEffect(() => {
@@ -85,10 +91,12 @@ export function SearchSelect({ data, type, setDataValue, disabled, value }: any)
             <CommandGroup>
               {convertedData.map((dataItem: any) => (
                 <CommandItem
+                  onClick={(event) => event.stopPropagation()}
                   key={dataItem.value}
                   value={dataItem.value}
                   onSelect={(currentValue) => {
-                    const newValue = currentValue === internalValue ? "" : currentValue;
+                    const newValue =
+                      currentValue === internalValue ? "" : currentValue;
                     setInternalValue(newValue);
                     //setValue(currentValue === value ? "" : currentValue);
                     setDataValue(currentValue);
@@ -97,7 +105,7 @@ export function SearchSelect({ data, type, setDataValue, disabled, value }: any)
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "mr-2 h-4 w-4 ",
                       value === dataItem.value ? "opacity-100" : "opacity-0"
                     )}
                   />

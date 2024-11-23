@@ -23,6 +23,7 @@ import {
   calcAllAmts,
   createTaxObj,
   invoiceTypes,
+  jobCardStatusKey,
   objToStringArr,
   policyProviders,
   policyProvidersDict,
@@ -61,6 +62,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchSelect } from "@/components/SearchSelect";
+import { SearchSelectNEW } from "@/components/SearchSelectNew";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import loader from "../../../../../public/assets/t3-loader.gif";
@@ -74,7 +76,13 @@ import {
 
 // Define the structure for the Car object
 
-export default function jobCard({ params }: { params: { jobCardId: any } }) {
+export default function jobCard({
+  params,
+  disable = false,
+}: {
+  params: { jobCardId: any };
+  disable: boolean;
+}) {
   const pathname = usePathname();
   console.log("THIS IS THE PATHNAME - ", pathname);
 
@@ -484,7 +492,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
               </Link>
             </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
-              {currentJobCardStatus! > 2 && (
+              {currentJobCardStatus! > 2 && !disable && (
                 <div>
                   <Select
                     onValueChange={(value) => {
@@ -512,91 +520,123 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                 </div>
               )}
 
-              {currentJobCardStatus == 1 && (
-                <Button
-                  variant="outline"
-                  className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
-                  size="lg"
-                  onClick={() => saveCurrentPartsAndLbour()}
-                >
-                  Save
-                </Button>
+              {disable && (
+                <span className="px-8 py-2 bg-red-500 text-white rounded-md">
+                  {jobCardStatusKey.find(
+                    (item) => item.code === currentJobCardStatus
+                  )?.description || "Status not found"}
+                </span>
               )}
-              {currentJobCardStatus == 2 && (
-                <Button
-                  variant="outline"
-                  className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
-                    buttonLoading ? "opacity-50" : ""
-                  }`}
-                  size="lg"
-                  onClick={generateQuote}
-                  disabled={buttonLoading}
-                >
-                  {buttonLoading ? (
-                    <>
-                      <Image src={loader} width={50} height={50} alt="Logo" />
-                    </>
-                  ) : (
-                    <>Generate Quote</>
+
+              {!disable && (
+                <>
+                  {currentJobCardStatus == 1 && (
+                    <Button
+                      variant="outline"
+                      className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                      size="lg"
+                      onClick={() => saveCurrentPartsAndLbour()}
+                    >
+                      Save
+                    </Button>
                   )}
-                </Button>
-              )}
-              {currentJobCardStatus == 3 && (
-                <Button
-                  variant="outline"
-                  className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
-                    buttonLoading ? "opacity-50" : ""
-                  }`}
-                  size="lg"
-                  onClick={generateProFormaInvoice}
-                  disabled={buttonLoading}
-                >
-                  {buttonLoading ? (
-                    <>
-                      <Image src={loader} width={50} height={50} alt="Logo" />
-                    </>
-                  ) : (
-                    <>Generate Pro-Forma Invoice</>
+                  {currentJobCardStatus == 2 && (
+                    <Button
+                      variant="outline"
+                      className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
+                        buttonLoading ? "opacity-50" : ""
+                      }`}
+                      size="lg"
+                      onClick={generateQuote}
+                      disabled={buttonLoading}
+                    >
+                      {buttonLoading ? (
+                        <>
+                          <Image
+                            src={loader}
+                            width={50}
+                            height={50}
+                            alt="Logo"
+                          />
+                        </>
+                      ) : (
+                        <>Generate Quote</>
+                      )}
+                    </Button>
                   )}
-                </Button>
-              )}
-              {currentJobCardStatus == 4 && (
-                <Button
-                  variant="outline"
-                  className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
-                    buttonLoading ? "opacity-50" : ""
-                  }`}
-                  size="lg"
-                  onClick={generateTaxInvoice}
-                  disabled={buttonLoading}
-                >
-                  {buttonLoading ? (
-                    <>
-                      <Image src={loader} width={50} height={50} alt="Logo" />
-                    </>
-                  ) : (
-                    <>Generate Tax Invoice</>
+                  {currentJobCardStatus == 3 && (
+                    <Button
+                      variant="outline"
+                      className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
+                        buttonLoading ? "opacity-50" : ""
+                      }`}
+                      size="lg"
+                      onClick={generateProFormaInvoice}
+                      disabled={buttonLoading}
+                    >
+                      {buttonLoading ? (
+                        <>
+                          <Image
+                            src={loader}
+                            width={50}
+                            height={50}
+                            alt="Logo"
+                          />
+                        </>
+                      ) : (
+                        <>Generate Pro-Forma Invoice</>
+                      )}
+                    </Button>
                   )}
-                </Button>
-              )}
-              {currentJobCardStatus == 5 && (
-                <Button
-                  variant="outline"
-                  className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
-                    buttonLoading ? "opacity-50" : ""
-                  }`}
-                  size="lg"
-                  // onClick={generateTaxInvoice}
-                  disabled={buttonLoading}
-                >
-                  {buttonLoading ? (
-                    <>
-                      <Image src={loader} width={50} height={50} alt="Logo" />
-                    </>
-                  ) : (
-                    <>Generate Gate Pass</>
+                  {currentJobCardStatus == 4 && (
+                    <Button
+                      variant="outline"
+                      className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
+                        buttonLoading ? "opacity-50" : ""
+                      }`}
+                      size="lg"
+                      onClick={generateTaxInvoice}
+                      disabled={buttonLoading}
+                    >
+                      {buttonLoading ? (
+                        <>
+                          <Image
+                            src={loader}
+                            width={50}
+                            height={50}
+                            alt="Logo"
+                          />
+                        </>
+                      ) : (
+                        <>Generate Tax Invoice</>
+                      )}
+                    </Button>
                   )}
-                </Button>
+                  {currentJobCardStatus == 5 && (
+                    <Button
+                      variant="outline"
+                      className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
+                        buttonLoading ? "opacity-50" : ""
+                      }`}
+                      size="lg"
+                      // onClick={generateTaxInvoice}
+                      disabled={buttonLoading}
+                    >
+                      {buttonLoading ? (
+                        <>
+                          <Image
+                            src={loader}
+                            width={50}
+                            height={50}
+                            alt="Logo"
+                          />
+                        </>
+                      ) : (
+                        <>Generate Gate Pass</>
+                      )}
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -648,13 +688,14 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                     <Button
                       variant="outline"
                       className="border bordre-red-500 text-red-500"
+                      disabled={disable}
                     >
                       {isInsuranceDetails
                         ? "Edit Insurance Details"
                         : "Add Insurance Details"}
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
+                  <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
                     <DialogHeader>
                       <DialogTitle>Insurance Details</DialogTitle>
                       <DialogDescription>
@@ -667,12 +708,11 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                           Policy Provider
                         </Label>
                         <div className="col-span-3">
-                          <SearchSelect
-                            id="policyProvider"
+                          <SearchSelectNEW
                             data={policyProviders}
-                            type="Policy Providers"
-                            setDataValue={setPolicyProvider}
-                            value={policyProvider}
+                            placeholder="Select a provider"
+                            value={policyProvider || ""}
+                            onChange={setPolicyProvider}
                           />
                         </div>
                       </div>
@@ -717,6 +757,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
               user={user}
               currentJobCardStatus={currentJobCardStatus}
               isInsuranceDetails={isInsuranceDetails}
+              disable={disable}
             />
             <CurrentLabourDataTable
               columns={currentLabourColumns}
@@ -728,6 +769,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
               user={user}
               currentJobCardStatus={currentJobCardStatus}
               isInsuranceDetails={isInsuranceDetails}
+              disable={disable}
             />
           </div>
         </>

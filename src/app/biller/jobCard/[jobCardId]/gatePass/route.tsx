@@ -3,6 +3,8 @@ import {
   getJobCardById,
   getTempCarById,
   imagekit,
+  updateJobCardGatePassDetails,
+  updateTempCarById,
   //updateJobCardGatePass,
 } from "@/lib/appwrite";
 import {
@@ -78,13 +80,12 @@ export async function POST(
     console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 
     // Create a new ReadableStream from the buffer for the response
-    // let result = await updateJobCardGatePass(jobCard.$id, pdfUrl);
+    let result = await updateJobCardGatePassDetails(jobCard.$id, pdfUrl);
+    await updateTempCarById(jobCard.carId, 2);
 
-    // console.log("This is the result - ", result);
+    console.log("This is the result - ", result);
 
-    // return NextResponse.json(result, { status: 201 });
-
-    // return;
+    return NextResponse.json(pdfUrl, { status: 201 });
   } catch (error) {
     console.log("Failed");
     console.log(error);

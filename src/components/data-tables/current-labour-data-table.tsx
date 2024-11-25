@@ -510,7 +510,7 @@ export function CurrentLabourDataTable<TData, TValue>({
                               row.getValue("mrp"),
                               row.getValue("quantity"),
                               row.getValue("gst"),
-                              row.getValue("discount"),
+                              row.getValue("discountPercentage"),
                               "value"
                             )
                           ),

@@ -420,6 +420,24 @@ export const getTempCarById = async (id: string) => {
   }
 };
 
+export const updateTempCarById = async (id: string, carStatus: number) => {
+  // console.log("Hitting Backend");
+  try {
+    let result = await databases.updateDocument(
+      config.databaseId,
+      config.tempCarsCollectionId,
+      id,
+      {
+        carStatus,
+      }
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const getAllParts = async () => {
   // console.log("Hitting Backend");
 
@@ -553,6 +571,26 @@ export const updateJobCardInsuranceDetails = async (
         // insuranceDetails,
 
         insuranceDetails,
+      } // data (optional)
+    );
+    return true;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+export const updateJobCardGatePassDetails = async (
+  id: string,
+  gatePassPDF?: string
+) => {
+  try {
+    await databases.updateDocument(
+      config.databaseId,
+      config.jobCardsCollectionId, // collectionId
+      id, // documentId
+      {
+        gatePassPDF,
       } // data (optional)
     );
     return true;

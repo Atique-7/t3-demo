@@ -114,8 +114,7 @@ export default function jobCard({
 
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  const [isInvoiceCounterIncreased, setIsInvoiceCounterIncreased] =
-    useState(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(disable);
 
   useEffect(() => {
     // console.log("THERE WAS AN EDIT");
@@ -161,6 +160,10 @@ export default function jobCard({
       setCurrentLabour(prevLabour);
 
       const carObj = await getTempCarById(jobCardObj.carId);
+      if (carObj) {
+        const status = carObj.carStatus;
+        if (status === 2) setIsDisabled(true);
+      }
       // console.log("This is the car details - ", carObj);
 
       if (jobCardObj.insuranceDetails) {
@@ -288,7 +291,7 @@ export default function jobCard({
 
     console.log("JOB CARD OBJ = ", jobCard);
 
-    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    //await fetch(`http://localhost:3000${pathname}/invoice`, {
     await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
@@ -305,12 +308,13 @@ export default function jobCard({
       // Set a short timeout before refreshing the page
       setTimeout(() => {
         window.location.reload(); // Refreshes the page to get the latest data
-      }, 1000);
+      }, 500);
 
       // result.json().then((invoiceDetails: any) => {
       //   openInNewTab(invoiceDetails.invoiceUrl);
       // });
       result.json().then((invoices: any) => {
+        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
@@ -347,14 +351,16 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.reload(); // Refreshes the page to get the latest data
+      // }, 500);
+      console.log(result);
 
       // result.json().then((invoiceDetails: any) => {
       //   openInNewTab(invoiceDetails.invoiceUrl);
       // });
       result.json().then((invoices: any) => {
+        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
@@ -394,12 +400,13 @@ export default function jobCard({
       // Set a short timeout before refreshing the page
       setTimeout(() => {
         window.location.reload(); // Refreshes the page to get the latest data
-      }, 1000);
+      }, 500);
 
       // result.json().then((invoiceDetails: any) => {
       //   openInNewTab(invoiceDetails.invoiceUrl);
       // });
       result.json().then((invoices: any) => {
+        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
@@ -407,6 +414,48 @@ export default function jobCard({
 
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(5);
+
+      // if (!isInvoiceCounterIncreased) {
+      //   setInvoiceCounter((prev) => prev + 1);
+      // }
+      //setIsInvoiceCounterIncreased(true);
+
+      toast("Tax Invoice Generated \u2705");
+    });
+  };
+
+  const generateGatePass = async () => {
+    setButtonLoading((prev) => true);
+    await saveCurrentPartsAndLbour(6);
+
+    //await fetch(`http://localhost:3000${pathname}/gatePass`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/gatePass`, {
+      method: "POST",
+      body: JSON.stringify({
+        jobCard,
+        car,
+        currentParts,
+        currentLabour,
+        currentJobCardStatus,
+        invoiceCounter,
+      }),
+    }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setIsDisabled(true);
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 500);
+
+      // result.json().then((invoiceDetails: any) => {
+      //   openInNewTab(invoiceDetails.invoiceUrl);
+      // });
+      result.json().then((invoice: any) => {
+        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoice);
+        openInNewTab(invoice);
+      });
+
+      setButtonLoading((prev) => false);
+      setCurrentJobCardStatus(6);
 
       // if (!isInvoiceCounterIncreased) {
       //   setInvoiceCounter((prev) => prev + 1);
@@ -466,6 +515,7 @@ export default function jobCard({
           new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
       );
       const selectedInvoice = filteredInvoices[0];
+      console.log("UIUGPUGUGPPPPPPPP", filteredInvoices);
       openInNewTab(selectedInvoice.invoiceUrl);
     }
   };
@@ -619,7 +669,7 @@ export default function jobCard({
                         buttonLoading ? "opacity-50" : ""
                       }`}
                       size="lg"
-                      onClick={generateTaxInvoice}
+                      onClick={generateGatePass}
                       disabled={buttonLoading}
                     >
                       {buttonLoading ? (
@@ -688,7 +738,7 @@ export default function jobCard({
                     <Button
                       variant="outline"
                       className="border bordre-red-500 text-red-500"
-                      disabled={disable}
+                      disabled={isDisabled}
                     >
                       {isInsuranceDetails
                         ? "Edit Insurance Details"
@@ -757,7 +807,7 @@ export default function jobCard({
               user={user}
               currentJobCardStatus={currentJobCardStatus}
               isInsuranceDetails={isInsuranceDetails}
-              disable={disable}
+              disable={isDisabled}
             />
             <CurrentLabourDataTable
               columns={currentLabourColumns}
@@ -769,7 +819,7 @@ export default function jobCard({
               user={user}
               currentJobCardStatus={currentJobCardStatus}
               isInsuranceDetails={isInsuranceDetails}
-              disable={disable}
+              disable={isDisabled}
             />
           </div>
         </>

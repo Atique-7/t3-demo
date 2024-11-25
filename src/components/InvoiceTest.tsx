@@ -556,7 +556,7 @@ export const InvoicePDF = ({
                   )}
                 </>
               ) : (
-                <>-</>
+                <Text>-</Text>
               )}
             </View>
             <View style={styles.detailTable}>

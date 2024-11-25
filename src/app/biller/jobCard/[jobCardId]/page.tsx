@@ -288,8 +288,8 @@ export default function jobCard({
 
     console.log("JOB CARD OBJ = ", jobCard);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -332,8 +332,8 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    //await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -376,8 +376,8 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(5);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    //await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -619,7 +619,7 @@ export default function jobCard({
                         buttonLoading ? "opacity-50" : ""
                       }`}
                       size="lg"
-                      // onClick={generateTaxInvoice}
+                      onClick={generateTaxInvoice}
                       disabled={buttonLoading}
                     >
                       {buttonLoading ? (

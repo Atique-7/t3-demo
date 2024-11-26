@@ -6,7 +6,12 @@ import { ArrowUpDown, Divide } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { convertStringsToArray, convertToStrings, getButtonText, jobCardStatusKey } from "../lib/helper";
+import {
+  convertStringsToArray,
+  convertToStrings,
+  getButtonText,
+  jobCardStatusKey,
+} from "../lib/helper";
 
 import {
   JobCard,
@@ -294,7 +299,16 @@ export const labourColumns: ColumnDef<Labour>[] = [
   },
 ];
 
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -304,9 +318,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SearchSelect } from "@/components/SearchSelect";
-import { config, databases, listAllUsers } from "./appwrite";
+import { config, databases, deleteTempCar, listAllUsers } from "./appwrite";
 import { toast } from "sonner";
-
 
 export const tempCarsColumns: ColumnDef<TempCar>[] = [
   {
@@ -331,7 +344,9 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
     accessorKey: "purposeOfVisitAndAdvisors",
     header: "POV",
     cell: ({ row }) => {
-      const povs = convertStringsToArray(row.original.purposeOfVisitAndAdvisors)
+      const povs = convertStringsToArray(
+        row.original.purposeOfVisitAndAdvisors
+      );
       return povs.map((pov: any) => pov.description).join(", ") || "No POV";
     },
     filterFn: (row, columnId, filterValue) => {
@@ -348,9 +363,11 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
       const token = getCookie("user");
       const parsedToken = JSON.parse(String(token));
       const userAccess = parsedToken.labels[0];
-      
+
       const advisorEmail = parsedToken.email;
-      const purposeOfVisitAndAdvisors = convertStringsToArray(tempCar.purposeOfVisitAndAdvisors);
+      const purposeOfVisitAndAdvisors = convertStringsToArray(
+        tempCar.purposeOfVisitAndAdvisors
+      );
       const advisorInfo = purposeOfVisitAndAdvisors.find(
         (pov: any) => pov.advisorEmail === advisorEmail
       );
@@ -367,34 +384,36 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
         setSelectedAdvisor(advisorEmail);
         setOpen(false);
       };
-      
+
       useEffect(() => {
         const fetchUsers = async () => {
           const users = await listAllUsers();
-          const advisorsMap = users.filter((user: any) => {
-            const { advisorRoleId } = user.prefs;
-            return advisorRoleId === String(advisorInfo.purposeOfVisitCode);
-          }).map((user: any) => ({
-            email: user.email,
-            name: user.name,
-          }));
+          const advisorsMap = users
+            .filter((user: any) => {
+              const { advisorRoleId } = user.prefs;
+              return advisorRoleId === String(advisorInfo?.purposeOfVisitCode);
+            })
+            .map((user: any) => ({
+              email: user.email,
+              name: user.name,
+            }));
           setAllAdvisors(advisorsMap);
         };
         fetchUsers();
       }, [advisorInfo]);
-      
 
       const handleSave = async () => {
         // Find and update the specific advisor entry in the purposeOfVisitAndAdvisors array
-        const updatedPurposeOfVisitAndAdvisors = purposeOfVisitAndAdvisors.map((pov: any) => {
-          if (pov.advisorEmail === advisorInfo.advisorEmail) {
-            return { ...pov, advisorEmail: selectedAdvisor }; // Update the advisor's email
+        const updatedPurposeOfVisitAndAdvisors = purposeOfVisitAndAdvisors.map(
+          (pov: any) => {
+            if (pov.advisorEmail === advisorInfo.advisorEmail) {
+              return { ...pov, advisorEmail: selectedAdvisor }; // Update the advisor's email
+            }
+            return pov; // Leave other items unchanged
           }
-          return pov; // Leave other items unchanged
-        });
-        console.log(updatedPurposeOfVisitAndAdvisors)
-        console.log(tempCar.purposeOfVisitAndAdvisors)
-
+        );
+        console.log(updatedPurposeOfVisitAndAdvisors);
+        console.log(tempCar.purposeOfVisitAndAdvisors);
 
         // Call Appwrite's updateDocument method to update the tempCar with the new advisor email
         try {
@@ -403,7 +422,9 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
             config.tempCarsCollectionId, // collectionId
             tempCar.$id, // documentId
             {
-              purposeOfVisitAndAdvisors: convertToStrings(updatedPurposeOfVisitAndAdvisors), // Updated array
+              purposeOfVisitAndAdvisors: convertToStrings(
+                updatedPurposeOfVisitAndAdvisors
+              ), // Updated array
             }
           );
           // Close the dialog after saving
@@ -418,10 +439,28 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
         }
       };
 
+      const handleCarExit = async () => {
+        let tempCarId = tempCar.$id;
+
+        const result = await deleteTempCar(tempCarId);
+        if (result) {
+          setTimeout(() => {
+            window.location.reload(); // Refreshes the page to get the latest data
+          }, 700);
+
+          toast("Car removed from Garage \u2705");
+        }
+      };
 
       switch (userAccess) {
         case "security":
-          return <></>;
+          return (
+            <div className="p-2">
+              <Button className="bg-red-500 text-white" onClick={handleCarExit}>
+                Exit Car
+              </Button>
+            </div>
+          );
         case "service":
           return (
             <div className="flex justify-center items-center">
@@ -481,28 +520,39 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
               } */}
               {userAccess === "admin" && advisorInfo.open === false && (
                 <div className="p-2">
-                  <Dialog open={open} onOpenChange={setOpen} >
+                  <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="border border-red-500 text-red-500">
+                      <Button
+                        variant="outline"
+                        className="border border-red-500 text-red-500"
+                      >
                         Change Advisor
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                       <DialogHeader>
                         <DialogTitle>Change Advisor</DialogTitle>
-                        <DialogDescription>Select a new advisor from the list below</DialogDescription>
+                        <DialogDescription>
+                          Select a new advisor from the list below
+                        </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <Select
                           value={selectedAdvisor}
                           onValueChange={(value) => setSelectedAdvisor(value)}
                         >
-                          <SelectTrigger id="advisorSelect" className="col-span-3">
+                          <SelectTrigger
+                            id="advisorSelect"
+                            className="col-span-3"
+                          >
                             <SelectValue placeholder="Select an advisor" />
                           </SelectTrigger>
                           <SelectContent>
                             {allAdvisors.map((advisor) => (
-                              <SelectItem key={advisor.email} value={advisor.email}>
+                              <SelectItem
+                                key={advisor.email}
+                                value={advisor.email}
+                              >
                                 {advisor.name}
                               </SelectItem>
                             ))}
@@ -510,7 +560,10 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
                         </Select>
                       </div>
                       <DialogFooter>
-                        <Button className="bg-red-500 text-white" onClick={handleSave}>
+                        <Button
+                          className="bg-red-500 text-white"
+                          onClick={handleSave}
+                        >
                           Save
                         </Button>
                         <DialogClose asChild>

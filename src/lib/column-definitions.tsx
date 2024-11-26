@@ -457,7 +457,7 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
           return (
             <div className="p-2">
               <Button className="bg-red-500 text-white" onClick={handleCarExit}>
-                Exit Car
+                CheckOut
               </Button>
             </div>
           );

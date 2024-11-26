@@ -562,7 +562,7 @@ export default function AddCarCards({}: Props) {
             // disabled={
             //   !(carMake != "" && carModel != "" && purposeOfVisit != "")
             // }
-            onClick={handleLog}
+            onClick={handleContinueEnterVehicle}
           >
             {isButtonLoading ? (
               <Image src={loader} width={50} height={50} alt="Logo" />

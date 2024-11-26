@@ -108,6 +108,12 @@ export default function CreateJobCard({
 
   return (
     <div className="flex flex-col w-[87%] lg:w-[90%] mt-32 lg:mt-10">
+      {/* Overlay to disable page */}
+      {isButtonLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <Image src={loader} width={100} height={100} alt="Loading" />
+        </div>
+      )}
       {!currTempCar ? (
         <PartsPageSkeleton />
       ) : (

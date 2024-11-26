@@ -280,7 +280,6 @@ export default function jobCard({
     setCurrentJobCardStatus(2);
 
     if (isDone) {
-      // console.log("IT IS DONE");
       toast("Job Card has been updated \u2705");
     }
   };
@@ -308,13 +307,9 @@ export default function jobCard({
       // Set a short timeout before refreshing the page
       setTimeout(() => {
         window.location.reload(); // Refreshes the page to get the latest data
-      }, 500);
+      }, 1000);
 
-      // result.json().then((invoiceDetails: any) => {
-      //   openInNewTab(invoiceDetails.invoiceUrl);
-      // });
       result.json().then((invoices: any) => {
-        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
@@ -322,11 +317,6 @@ export default function jobCard({
 
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(3);
-
-      // if (!isInvoiceCounterIncreased) {
-      //   setInvoiceCounter((prev) => prev + 1);
-      // }
-      //setIsInvoiceCounterIncreased(true);
 
       toast("Quote Generated \u2705");
     });
@@ -351,16 +341,11 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      // setTimeout(() => {
-      //   window.location.reload(); // Refreshes the page to get the latest data
-      // }, 500);
-      console.log(result);
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
 
-      // result.json().then((invoiceDetails: any) => {
-      //   openInNewTab(invoiceDetails.invoiceUrl);
-      // });
       result.json().then((invoices: any) => {
-        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
@@ -368,11 +353,6 @@ export default function jobCard({
 
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(4);
-
-      // if (!isInvoiceCounterIncreased) {
-      //   setInvoiceCounter((prev) => prev + 1);
-      // }
-      //setIsInvoiceCounterIncreased(true);
 
       toast("Pro-Forma Invoice Generated \u2705");
     });
@@ -397,16 +377,11 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      // Set a short timeout before refreshing the page
       setTimeout(() => {
         window.location.reload(); // Refreshes the page to get the latest data
-      }, 500);
+      }, 1000);
 
-      // result.json().then((invoiceDetails: any) => {
-      //   openInNewTab(invoiceDetails.invoiceUrl);
-      // });
       result.json().then((invoices: any) => {
-        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
@@ -414,11 +389,6 @@ export default function jobCard({
 
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(5);
-
-      // if (!isInvoiceCounterIncreased) {
-      //   setInvoiceCounter((prev) => prev + 1);
-      // }
-      //setIsInvoiceCounterIncreased(true);
 
       toast("Tax Invoice Generated \u2705");
     });
@@ -440,15 +410,13 @@ export default function jobCard({
         invoiceCounter,
       }),
     }).then((result: any) => {
-      // Set a short timeout before refreshing the page
+      // Disable the page, this happens automatically at refresh but its a precaution.
       setIsDisabled(true);
+      // Set a short timeout before refreshing the page
       setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
-      }, 500);
+        window.location.reload();
+      }, 1000);
 
-      // result.json().then((invoiceDetails: any) => {
-      //   openInNewTab(invoiceDetails.invoiceUrl);
-      // });
       result.json().then((invoice: any) => {
         console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoice);
         openInNewTab(invoice);
@@ -456,11 +424,6 @@ export default function jobCard({
 
       setButtonLoading((prev) => false);
       setCurrentJobCardStatus(6);
-
-      // if (!isInvoiceCounterIncreased) {
-      //   setInvoiceCounter((prev) => prev + 1);
-      // }
-      //setIsInvoiceCounterIncreased(true);
 
       toast("Tax Invoice Generated \u2705");
     });
@@ -505,7 +468,6 @@ export default function jobCard({
 
   const handleInvoicePDF = (selectedValue: string) => {
     console.log("SELECTED PDF - ", selectedValue);
-    console.log(jobCardInvoices);
     if (jobCardInvoices) {
       const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
         (invoice: Invoice) => invoice.invoiceType == selectedValue
@@ -515,7 +477,6 @@ export default function jobCard({
           new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
       );
       const selectedInvoice = filteredInvoices[0];
-      console.log("UIUGPUGUGPPPPPPPP", filteredInvoices);
       openInNewTab(selectedInvoice.invoiceUrl);
     }
   };

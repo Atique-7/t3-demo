@@ -247,44 +247,49 @@ export default function AddCarCards({}: Props) {
 
     setSelectedPurposeCode(code); // Update the selected code state
 
-    // setPurposeOfVisitSelections(() => {
-    //   const povDescription = purposeOfVisits.find(
-    //     (item) => item.code === code
-    //   )?.description;
-
-    //   return [
-    //     {
-    //       purposeOfVisitCode: code,
-    //       description: povDescription,
-    //       advisorEmail: "",
-    //       open: false,
-    //     },
-    //   ];
-    // });
     setPurposeOfVisitSelections((prev) => {
-      const existingSelection = prev.find(
-        (item) => item.purposeOfVisitCode === code
+      // const existingSelection = prev.find(
+      //   (item) => item.purposeOfVisitCode === code
+      // );
+
+      const retainedSelections = prev.filter(
+        (item) => item.purposeOfVisitCode === 1
       );
 
-      if (!existingSelection) {
-        // Append the new selection if it doesn't already exist
-        const povDescription = purposeOfVisits.find(
-          (item) => item.code === code
-        )?.description;
+      // if (!existingSelection) {
+      //   // Append the new selection if it doesn't already exist
+      //   const povDescription = purposeOfVisits.find(
+      //     (item) => item.code === code
+      //   )?.description;
 
-        return [
-          ...prev,
-          {
-            purposeOfVisitCode: code,
-            description: povDescription,
-            advisorEmail: "",
-            open: false,
-          },
-        ];
-      }
+      //   return [
+      //     ...prev,
+      //     {
+      //       purposeOfVisitCode: code,
+      //       description: povDescription,
+      //       advisorEmail: "",
+      //       open: false,
+      //     },
+      //   ];
+      // }
+
+      const povDescription = purposeOfVisits.find(
+        (item) => item.code === code
+      )?.description;
+
+      // Add the new radio selection to the retained values
+      return [
+        ...retainedSelections,
+        {
+          purposeOfVisitCode: code,
+          description: povDescription,
+          advisorEmail: "",
+          open: false,
+        },
+      ];
 
       // If the selection already exists, leave the state unchanged
-      return prev;
+      //return prev;
     });
 
     setCurrentServiceAdvisors(() => {
@@ -437,6 +442,12 @@ export default function AddCarCards({}: Props) {
 
   return (
     <div className="flex flex-col w-full space-y-5">
+      {/* Overlay to disable page */}
+      {isButtonLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <Image src={loader} width={100} height={100} alt="Loading" />
+        </div>
+      )}
       <div className="flex w-full flex-col space-y-5">
         <Input
           id="carNumber"

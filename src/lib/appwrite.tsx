@@ -738,3 +738,33 @@ export const inputPartsAppwrite = async (partsArr: any[]) => {
     }
   });
 };
+
+export const inputLabourAppwrite = async (labourArr: any[]) => {
+  // console.log("The Parts are -", partsArr);
+
+  labourArr.map(async (work, index) => {
+    console.log(work);
+    try {
+      let labourResult = await databases.createDocument(
+        config.databaseId,
+        config.labourCollectionId,
+        ID.unique(),
+        {
+          labourName: String(work.labourName),
+          labourCode: String(work.labourCode),
+          hsn: String(work.hsn),
+          category: String(work.category),
+          mrp: Number(work.mrp),
+          gst: Number(work.gst),
+          cgst: Number(work.cgst),
+          sgst: Number(work.sgst),
+        }
+      );
+      console.log("The created part is - ", labourResult);
+      // return carsResult;
+    } catch (error: any) {
+      console.log(error.message);
+      // return null;
+    }
+  });
+};

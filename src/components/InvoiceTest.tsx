@@ -9,7 +9,11 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { CurrentLabour, CurrentPart } from "@/lib/definitions";
-import { roundToTwoDecimals, splitInsuranceAmt } from "@/lib/helper";
+import {
+  createTaxObj,
+  roundToTwoDecimals,
+  splitInsuranceAmt,
+} from "@/lib/helper";
 import { convertStringsToArray } from "@/lib/helper";
 
 Font.register({
@@ -214,7 +218,9 @@ export const InvoicePDF = ({
     insuranceDetails = JSON.parse(jobCard.insuranceDetails);
   }
 
-  // console.log("THESE ARE THE PARTS - ", liabilityType, parts);
+  const taxObj = createTaxObj(parts, labour);
+
+  console.log("THESE ARE THE TAXES - ", taxObj);
 
   parts.map((part: CurrentPart) => {
     if (isInsurance && invoiceType != "Quote") {
@@ -939,6 +945,78 @@ export const InvoicePDF = ({
               </View>
               <View style={styles.tableCell}>
                 <Text style={styles.tableData}>{labourTotal}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.partsTable}>
+            <View style={styles.tableTitleRow}>
+              <Text style={styles.tableTitle}>Taxes</Text>
+            </View>
+            <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeader}>
+                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                  Tax Type
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                  Tax Rate
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                  Tax Name
+                </Text>
+              </View>
+              <View style={styles.tableHeader}>
+                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                  Tax Amount
+                </Text>
+              </View>
+            </View>
+            {taxObj.map((obj: any, index) => (
+              <View key={index} style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{obj.taxType}.</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{obj.taxRate}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{obj.taxName}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{obj.taxAmt}</Text>
+                </View>
+              </View>
+            ))}
+            <View style={[styles.tableRow, styles.tableFooterRow]}>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}></Text>
+              </View>
+              <View style={styles.tableEmptyCell}>
+                <Text style={styles.tableData}>Tax Total</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableData}>{totalTax}</Text>
               </View>
             </View>
           </View>

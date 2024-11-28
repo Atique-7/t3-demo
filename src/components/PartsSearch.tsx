@@ -43,11 +43,15 @@ const SearchComponent = ({
   useEffect(() => {
     if (items) {
       const results = items.filter((item) => {
-        const value: any = item.partNumber;
-        if (typeof value === "string") {
-          return value.toLowerCase().includes(searchTerm.toLowerCase());
-        }
-        return false; // Handle non-string values as needed
+        const partNumber = item.partNumber;
+        const partName = item.partName;
+        return (
+          (typeof partNumber === "string" &&
+            partNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (typeof partName === "string" &&
+            partName.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+        // return false; // Handle non-string values as needed
       });
       setSearchResults(results);
       setIsLoading((prev) => false);

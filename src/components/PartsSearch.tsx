@@ -1,13 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { Input } from "./ui/input";
 import { CurrentPart, Part } from "@/lib/definitions";
-import {
-  createTempPartObj,
-  taxAmtHelper,
-  updateTempPartObjQuantity,
-} from "@/lib/helper";
+import { createTempPartObj, updateTempPartObjQuantity } from "@/lib/helper";
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import loader from "../../public/assets/t3-loader.gif";
 
-export default function PartsSearch({
+const SearchComponent = ({
   items,
   currentParts,
   setCurrentParts,
@@ -17,26 +14,55 @@ export default function PartsSearch({
   currentParts: CurrentPart[] | null;
   setCurrentParts: any;
   setIsEdited: any;
-}) {
-  const [searchTerm, setSearchTerm] = useState("");
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState(""); // Immediate input value
+  const [searchTerm, setSearchTerm] = useState(""); // Debounced search term
   const [searchResults, setSearchResults] = useState<Part[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Custom debounce function
+  const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  // Debounced version of setSearchTerm
+  const debouncedSetSearchTerm = useRef(
+    debounce((value: string) => {
+      setSearchTerm(value);
+    }, 300) // Adjust debounce delay (in milliseconds) as needed
+  ).current;
+
+  // Update search results whenever the searchTerm changes
   useEffect(() => {
     if (items) {
-      const searchResults = items.filter((item) => {
-        const value: any = item.partNumber;
-        if (typeof value === "string") {
-          return value.toLowerCase().includes(searchTerm.toLowerCase());
-        }
-        return false; // Handle non-string values as needed
+      const results = items.filter((item) => {
+        const partNumber = item.partNumber;
+        const partName = item.partName;
+        return (
+          (typeof partNumber === "string" &&
+            partNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (typeof partName === "string" &&
+            partName.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+        // return false; // Handle non-string values as needed
       });
-      setSearchResults(searchResults);
+      setSearchResults(results);
+      setIsLoading((prev) => false);
     }
   }, [items, searchTerm]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+    setIsLoading((prev) => true);
+    const value = event.target.value;
+    setInputValue(value); // Update input field immediately
+    debouncedSetSearchTerm(value); // Debounced update for searchTerm
     searchInputRef.current?.focus(); // Keep focus on the input field
   };
 
@@ -74,29 +100,42 @@ export default function PartsSearch({
 
   return (
     <div>
-      <Input
+      <input
         type="text"
-        value={searchTerm}
+        ref={searchInputRef}
+        value={inputValue} // Controlled value
         onChange={handleSearch}
         placeholder="Search"
-        ref={searchInputRef}
+        aria-label="Search Input"
         className="focus:border-red-400 focus:border-2 w-[308px]"
       />
-      {searchTerm && (
-        <ul className="flex flex-col border border-gray-200 rounded-lg p-3 mt-2 divide-y-2 divide-solid w-[308px] h-fit max-h-[400px]">
-          {searchResults.map((item) => (
-            <li
-              key={item.partNumber}
-              className="p-2 text-wrap cursor-pointer"
-              onClick={() => handleSelect(item)}
-            >
-              <span className="font-medium">{item.partName}</span>
-              <span className="mx-2">-</span>
-              <span>{item.partNumber}</span>
-            </li>
-          ))}
-        </ul>
+      {isLoading ? (
+        <>
+          <div>
+            <Image src={loader} width={50} height={50} alt="Logo" />
+          </div>
+        </>
+      ) : (
+        <>
+          {searchTerm && (
+            <ul className="flex flex-col border border-gray-200 rounded-lg p-3 mt-2 divide-y-2 divide-solid w-[308px] h-fit max-h-[400px] overflow-scroll">
+              {searchResults.map((item) => (
+                <li
+                  key={item.partNumber}
+                  className="p-2 text-wrap cursor-pointer"
+                  onClick={() => handleSelect(item)}
+                >
+                  <span className="font-medium">{item.partName}</span>
+                  <span className="mx-2">-</span>
+                  <span>{item.partNumber}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );
-}
+};
+
+export default SearchComponent;

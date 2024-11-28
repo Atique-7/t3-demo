@@ -54,7 +54,7 @@ export default function Security({}: Props) {
       ) : (
         <>
           <Link
-            className="absolute z-10 bottom-10 right-10 bg-red-500 p-4 rounded-xl"
+            className="fixed z-20 bottom-7 right-7 bg-red-500 p-3 rounded-xl border-2 border-black"
             href={`${pathname}/addCar`}
           >
             <Plus size={40} color="white" />

@@ -16,6 +16,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { InvoicePDF } from "@/components/InvoiceTest";
 import { renderToStream } from "@react-pdf/renderer";
 import { CurrentLabour, CurrentPart, Invoice } from "@/lib/definitions";
+import { Console } from "console";
 
 export async function POST(
   request: NextRequest,
@@ -33,15 +34,6 @@ export async function POST(
       invoiceSeries,
       invoiceCode,
     } = await request.json();
-
-    // console.log(
-    //   "VALUES",
-    //   jobCard,
-    //   car,
-    //   currentParts,
-    //   currentLabour,
-    //   currentJobCardStatus
-    // );
 
     const foundIndexParts = currentParts.findIndex(
       (part: CurrentPart) =>
@@ -135,16 +127,23 @@ export async function POST(
         uniqueStr2 += characters.charAt(randomIndex);
       }
 
+      console.log(
+        `/Invoices/${invoiceTypeString?.slice(
+          0,
+          -8
+        )}/InsuranceInvoices/Insurance`
+      );
+
       // Upload the buffer to ImageKit
       const uploadResponse1 = await imagekit.upload({
         file: buffer1, // Buffer object
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr1}_Customer.pdf`, // Name of the file
-        // folder: `/Invoices/${invoiceTypeString?.slice(
-        //   0,
-        //   -8
-        // )}/InsuranceInvoices/Customer`, // Optional folder
+        folder: `/Invoices/${invoiceTypeString?.slice(
+          0,
+          -8
+        )}/InsuranceInvoices/Customer`, // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
@@ -154,10 +153,10 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr2}_Insurance.pdf`, // Name of the file
-        // folder: `/Invoices/${invoiceTypeString?.slice(
-        //   0,
-        //   -8
-        // )}/InsuranceInvoices/Insurance`, // Optional folder
+        folder: `/Invoices/${invoiceTypeString?.slice(
+          0,
+          -8
+        )}/InsuranceInvoices/Insurance`, // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
@@ -235,7 +234,7 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr}.pdf`, // Name of the file
-        //folder: `/Invoices/${invoiceTypeString}`, // Optional folder
+        folder: `/Invoices/${invoiceTypeString}`, // Optional folder
         useUniqueFileName: true, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });

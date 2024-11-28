@@ -140,10 +140,10 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr1}_Customer.pdf`, // Name of the file
-        folder: `/Invoices/${invoiceTypeString?.slice(
-          0,
-          -8
-        )}/InsuranceInvoices/Customer`, // Optional folder
+        // folder: `/Invoices/${invoiceTypeString?.slice(
+        //   0,
+        //   -8
+        // )}/InsuranceInvoices/Customer`, // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
@@ -153,10 +153,10 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr2}_Insurance.pdf`, // Name of the file
-        folder: `/Invoices/${invoiceTypeString?.slice(
-          0,
-          -8
-        )}/InsuranceInvoices/Insurance`, // Optional folder
+        // folder: `/Invoices/${invoiceTypeString?.slice(
+        //   0,
+        //   -8
+        // )}/InsuranceInvoices/Insurance`, // Optional folder
         useUniqueFileName: false, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });
@@ -234,7 +234,7 @@ export async function POST(
         fileName: `${
           params.jobCardId
         }_${invoiceTypeString?.toLowerCase()}_${uniqueStr}.pdf`, // Name of the file
-        folder: `/Invoices/${invoiceTypeString}`, // Optional folder
+        //folder: `/Invoices/${invoiceTypeString}`, // Optional folder
         useUniqueFileName: true, // Ensure file name uniqueness
         isPrivateFile: false, // If you want a public URL
       });

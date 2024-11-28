@@ -194,20 +194,21 @@ export const currentPartsColumns: ColumnDef<CurrentPart>[] = [
     accessorKey: "hsn",
     header: "HSN",
   },
-  {
-    accessorKey: "mrp",
-    header: "MRP",
-    cell: ({ row }) => {
-      const price: number = row.getValue("mrp");
-      return <div>&#8377;{price}</div>;
-    },
-  },
+
   {
     accessorKey: "gst",
     header: "GST",
     cell: ({ row }) => {
       const gst: number = row.getValue("gst");
       return <div>{gst}%</div>;
+    },
+  },
+  {
+    accessorKey: "mrp",
+    header: "MRP",
+    cell: ({ row }) => {
+      const price: number = row.getValue("mrp");
+      return <div>&#8377;{price}</div>;
     },
   },
   {

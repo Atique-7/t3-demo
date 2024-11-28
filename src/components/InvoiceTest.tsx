@@ -201,6 +201,9 @@ export const InvoicePDF = ({
   let partsTotal = 0;
   let labourTotal = 0;
 
+  let partsSubtotal = 0;
+  let labourSubtotal = 0;
+
   let totalTax = 0;
   let totalDiscount = 0;
 
@@ -251,6 +254,7 @@ export const InvoicePDF = ({
           partsTotal = partsTotal + part.amountCust;
           totalTax = totalTax + part.totalTaxCust;
           totalSubtotal = totalSubtotal + part.subTotalCust;
+          partsSubtotal = partsSubtotal + part.subTotalCust;
         } else {
           part.amountIns = splitPartAmount.insuranceAmt;
           part.subTotalIns = splitPartSubTotal.insuranceAmt;
@@ -261,6 +265,7 @@ export const InvoicePDF = ({
           partsTotal = partsTotal + part.amountIns;
           totalTax = totalTax + part.totalTaxIns;
           totalSubtotal = totalSubtotal + part.subTotalIns;
+          partsSubtotal = partsSubtotal + part.subTotalIns;
         }
 
         if (
@@ -289,6 +294,7 @@ export const InvoicePDF = ({
           totalTax = totalTax + part.totalTax;
 
           totalSubtotal = totalSubtotal + part.subTotal;
+          partsSubtotal = partsSubtotal + part.subTotal;
           // totalDiscount = totalDiscount + part.discountAmt
 
           if (
@@ -304,6 +310,7 @@ export const InvoicePDF = ({
       partsTotal = partsTotal + part.amount;
       totalTax = totalTax + part.totalTax;
       totalSubtotal = totalSubtotal + part.subTotal;
+      partsSubtotal = partsSubtotal + part.subTotal;
 
       if (
         part.discountPercentage &&
@@ -353,6 +360,7 @@ export const InvoicePDF = ({
           labourTotal = labourTotal + work.amountCust;
           totalTax = totalTax + work.totalTaxCust;
           totalSubtotal = totalSubtotal + work.subTotalCust;
+          labourSubtotal = labourSubtotal + work.subTotalCust;
         } else {
           work.amountIns = splitLabourAmount.insuranceAmt;
           work.subTotalIns = splitLabourSubTotal.insuranceAmt;
@@ -363,6 +371,7 @@ export const InvoicePDF = ({
           labourTotal = labourTotal + work.amountIns;
           totalTax = totalTax + work.totalTaxIns;
           totalSubtotal = totalSubtotal + work.subTotalIns;
+          labourSubtotal = labourSubtotal + work.subTotalIns;
         }
 
         if (
@@ -395,6 +404,8 @@ export const InvoicePDF = ({
           totalTax = totalTax + work.totalTax;
 
           totalSubtotal = totalSubtotal + work.subTotal;
+          labourSubtotal = labourSubtotal + work.subTotal;
+
           if (
             work.discountPercentage &&
             work.discountAmt &&
@@ -408,6 +419,7 @@ export const InvoicePDF = ({
       labourTotal = labourTotal + work.amount;
       totalTax = totalTax + work.totalTax;
       totalSubtotal = totalSubtotal + work.subTotal;
+      labourSubtotal = labourSubtotal + work.subTotal;
 
       if (
         work.discountPercentage &&
@@ -424,6 +436,8 @@ export const InvoicePDF = ({
   totalTax = roundToTwoDecimals(totalTax);
   totalDiscount = roundToTwoDecimals(totalDiscount);
   totalSubtotal = roundToTwoDecimals(totalSubtotal);
+  partsSubtotal = roundToTwoDecimals(partsSubtotal);
+  labourSubtotal = roundToTwoDecimals(labourSubtotal);
 
   console.log("HELLOOO PRINTING", {
     partsTotal,
@@ -729,15 +743,19 @@ export const InvoicePDF = ({
                         part.insurancePercentage != 0 ? (
                           <>
                             {liabilityType == "Customer" ? (
-                              <>{part.amountCust}</>
+                              <>
+                                {roundToTwoDecimals(Number(part.subTotalCust))}
+                              </>
                             ) : (
-                              <>{part.amountIns}</>
+                              <>
+                                {roundToTwoDecimals(Number(part.subTotalIns))}
+                              </>
                             )}
                           </>
                         ) : (
                           <>
                             {liabilityType == "Customer" ? (
-                              <>{part.amount}</>
+                              <>{roundToTwoDecimals(Number(part.subTotal))}</>
                             ) : (
                               <>0</>
                             )}
@@ -745,7 +763,7 @@ export const InvoicePDF = ({
                         )}
                       </>
                     ) : (
-                      <>{part.amount}</>
+                      <>{roundToTwoDecimals(Number(part.subTotal))}</>
                     )}
                   </Text>
                 </View>
@@ -777,7 +795,7 @@ export const InvoicePDF = ({
                 <Text style={styles.tableData}>SubTotal</Text>
               </View>
               <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{partsTotal}</Text>
+                <Text style={styles.tableData}>{partsSubtotal}</Text>
               </View>
             </View>
           </View>
@@ -868,15 +886,19 @@ export const InvoicePDF = ({
                         work.insurancePercentage != 0 ? (
                           <>
                             {liabilityType == "Customer" ? (
-                              <>{work.amountCust}</>
+                              <>
+                                {roundToTwoDecimals(Number(work.subTotalCust))}
+                              </>
                             ) : (
-                              <>{work.amountIns}</>
+                              <>
+                                {roundToTwoDecimals(Number(work.subTotalIns))}
+                              </>
                             )}
                           </>
                         ) : (
                           <>
                             {liabilityType == "Customer" ? (
-                              <>{work.amount}</>
+                              <>{roundToTwoDecimals(Number(work.subTotal))}</>
                             ) : (
                               <>0</>
                             )}
@@ -884,7 +906,7 @@ export const InvoicePDF = ({
                         )}
                       </>
                     ) : (
-                      <>{work.amount}</>
+                      <>{roundToTwoDecimals(Number(work.subTotal))}</>
                     )}
                   </Text>
                 </View>

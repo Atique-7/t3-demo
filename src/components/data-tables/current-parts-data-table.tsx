@@ -29,9 +29,11 @@ import PartsSearch from "@/components/PartsSearch";
 import {
   getUserAccess,
   removeTempPartObjDiscount,
+  roundToTwoDecimals,
   splitInsuranceAmt,
   taxAmtHelper,
   updateTempPartObjDiscount,
+  updateTempPartObjMRP,
   updateTempPartObjQuantity,
 } from "@/lib/helper";
 import { CurrentPart, Part, UserType } from "@/lib/definitions";
@@ -120,6 +122,37 @@ export function CurrentPartsDataTable<TData, TValue>({
       } else {
         updatedObj = updateTempPartObjQuantity(toUpdateQty, -1);
       }
+
+      setCurrentParts([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+      setIsEdited(true);
+    } else {
+      console.log("Some Error has Occured");
+    }
+  };
+
+  const handleMRPUpdate = (row: any, mrp: number) => {
+    const partNumberRow = row.getValue("partNumber");
+    const foundPart = parts?.find((a) => a.partNumber == partNumberRow);
+    const newMaxMRP = foundPart!.mrp * 1.25;
+
+    if (mrp > newMaxMRP) {
+      console.log({ foundPart, newMaxMRP });
+      toast("Price can only be increased upto 25%");
+      return;
+    }
+    let arrayFirstHalf = currentParts!.slice(0, row.index);
+    let arraySecondHalf = currentParts!.slice(row.index + 1);
+
+    const partNumber = row.getValue("partNumber");
+
+    let toUpdateMRP = currentParts?.find(
+      (part) => part.partNumber == partNumber
+    );
+
+    let updatedObj;
+
+    if (toUpdateMRP) {
+      updatedObj = updateTempPartObjMRP(toUpdateMRP, mrp);
 
       setCurrentParts([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
       setIsEdited(true);
@@ -294,11 +327,11 @@ export function CurrentPartsDataTable<TData, TValue>({
       <div className="flex flex-col space-y-4">
         <div className="text-blue-500">
           <span className="font-bold"> I : </span>
-          {Math.round(splitAmts.insuranceAmt * 100) / 100}
+          {roundToTwoDecimals(splitAmts.insuranceAmt)}
         </div>
         <div className="text-red-500">
           <span className="font-bold"> C : </span>
-          {Math.round(splitAmts.customerAmt * 100) / 100}
+          {roundToTwoDecimals(splitAmts.customerAmt)}
         </div>{" "}
       </div>
     );
@@ -404,6 +437,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                   if (
                     header.id != "quantity" &&
                     header.id != "amount" &&
+                    header.id != "mrp" &&
                     header.id != "discountPercentage" &&
                     header.id != "insurancePercentage"
                   ) {
@@ -419,6 +453,9 @@ export function CurrentPartsDataTable<TData, TValue>({
                     );
                   }
                 })}
+                <TableHead key={"handleMrp"} className="text-center">
+                  Basic Price
+                </TableHead>
                 <TableHead key={"handleQuantity"} className="text-center">
                   Quantity
                 </TableHead>
@@ -434,16 +471,6 @@ export function CurrentPartsDataTable<TData, TValue>({
                     Insurance %
                   </TableHead>
                 )}
-                {/* {isInsurance && (
-                  <TableHead key={"INSURANCE_AMOUNT"} className="text-center">
-                    Insurance Amt
-                  </TableHead>
-                )}
-                {isInsurance && (
-                  <TableHead key={"CUSTOMER_AMOUNT"} className="text-center">
-                    Customer Amt
-                  </TableHead>
-                )} */}
                 <TableHead key={"DELETE"}> </TableHead>
               </TableRow>
             ))}
@@ -460,6 +487,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                       cell.column.id != "quantity" &&
                       cell.column.id != "insurancePercentage" &&
                       cell.column.id != "amount" &&
+                      cell.column.id != "mrp" &&
                       cell.column.id != "discountPercentage"
                     ) {
                       return (
@@ -472,6 +500,22 @@ export function CurrentPartsDataTable<TData, TValue>({
                       );
                     }
                   })}
+                  <TableCell
+                    key={"MRP"}
+                    className="flex justify-center items-center h-full"
+                  >
+                    <Input
+                      placeholder="%"
+                      value={row.getValue("mrp") || 0}
+                      onChange={(event) => {
+                        if (event.target.value != "") {
+                          handleMRPUpdate(row, Number(event.target.value));
+                        }
+                      }}
+                      className="w-20"
+                      disabled={disable}
+                    />
+                  </TableCell>
                   <TableCell key={"handleQuantity"} className="space-x-2">
                     <div className="flex flex-row justify-evenly w-full items-center space-x-2">
                       <Button
@@ -527,7 +571,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                         )}
                       </>
                     ) : (
-                      <>{row.getValue("amount")}</>
+                      <>{roundToTwoDecimals(row.getValue("amount"))}</>
                     )}
                   </TableCell>
                   {(isInsurance || isAlreadyInsurance) && (

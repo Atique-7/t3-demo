@@ -81,7 +81,26 @@ export async function POST(
 
     // Create a new ReadableStream from the buffer for the response
     let result = await updateJobCardGatePassDetails(jobCard.$id, pdfUrl);
-    await updateTempCarById(jobCard.carId, 2);
+
+    const tempCar = await getTempCarById(jobCard.carId);
+    const allJobCardIds = tempCar.allJobCardIds;
+
+    const checkGatePasses = async (allJobCardIds: any[]): Promise<boolean> => {
+      if (allJobCardIds.length > 1) {
+        for (const jobCardId of allJobCardIds) {
+          const jobcard = await getJobCardById(jobCardId);
+          const gatePass = jobcard.gatePassPDF;
+          if (gatePass === null) {
+            return false; // Return false immediately if any gatePass is null
+          }
+        }
+      }
+      return true; // Return true if all gatePasses are non-null
+    };
+
+    if ((await checkGatePasses(allJobCardIds)) === true) {
+      await updateTempCarById(jobCard.carId, 2);
+    }
 
     console.log("This is the result - ", result);
 

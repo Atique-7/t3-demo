@@ -101,16 +101,20 @@ export default function AddCarCards({}: Props) {
 
       users.forEach((user: any) => {
         const { advisorRoleId } = user.prefs;
+
         if (advisorRoleId) {
-          if (advisorRoleId in advisorsMap) {
-            advisorsMap[advisorRoleId].push({
-              name: user.name,
-              email: user.email,
-            });
-          } else {
-            advisorsMap[advisorRoleId] = [
-              { name: user.name, email: user.email },
-            ];
+          const roleIds = JSON.parse(advisorRoleId);
+          for (let i = 0; i < roleIds.length; i++) {
+            const roleId = roleIds[i];
+            console.log(roleId);
+            if (roleId in advisorsMap) {
+              advisorsMap[roleId].push({
+                name: user.name,
+                email: user.email,
+              });
+            } else {
+              advisorsMap[roleId] = [{ name: user.name, email: user.email }];
+            }
           }
         }
       });

@@ -392,6 +392,9 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
           const advisorsMap = users
             .filter((user: any) => {
               const { advisorRoleId } = user.prefs;
+              const roleIds = JSON.parse(advisorRoleId);
+              for (let roleId in roleIds) {
+              }
               return advisorRoleId === String(advisorInfo?.purposeOfVisitCode);
             })
             .map((user: any) => ({

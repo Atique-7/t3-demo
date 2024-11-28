@@ -131,6 +131,10 @@ export function CurrentPartsDataTable<TData, TValue>({
   };
 
   const handleMRPUpdate = (row: any, mrp: number) => {
+    if (isNaN(mrp) || mrp <= 0) {
+      console.error("Invalid MRP value:", mrp);
+      return;
+    }
     const partNumberRow = row.getValue("partNumber");
     const foundPart = parts?.find((a) => a.partNumber == partNumberRow);
     const newMaxMRP = foundPart!.mrp * 1.25;
@@ -506,7 +510,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                   >
                     <Input
                       placeholder="%"
-                      value={row.getValue("mrp") || 0}
+                      value={row.getValue("mrp") ?? 0}
                       onChange={(event) => {
                         if (event.target.value != "") {
                           handleMRPUpdate(row, Number(event.target.value));

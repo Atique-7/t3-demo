@@ -57,7 +57,7 @@ export default function Parts({}: Props) {
 
   return (
     <div className="flex flex-col w-[90%] mt-10">
-      {!(name && numberOfCarsInProgress) ? (
+      {!(name && currentJobCards) ? (
         <PartsPageSkeleton />
       ) : (
         <div>

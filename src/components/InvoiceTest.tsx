@@ -126,6 +126,8 @@ const styles = StyleSheet.create({
   tableData: {
     fontSize: 11,
     padding: 5,
+    display: "flex",
+    flexWrap: "wrap",
   },
   tableDataEmphasized: {
     fontFamily: "Open Sans",
@@ -862,7 +864,18 @@ export const InvoicePDF = ({
                   <Text style={styles.tableData}>{index + 1}.</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.labourCode}</Text>
+                  <Text
+                    style={[
+                      styles.tableData,
+                      {
+                        display: "flex",
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                      },
+                    ]}
+                  >
+                    {work.labourCode}
+                  </Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>{work.labourName}</Text>
@@ -871,7 +884,7 @@ export const InvoicePDF = ({
                   <Text style={styles.tableData}>{work.gst}</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.labourCode}</Text>
+                  <Text style={styles.tableData}>{work.hsn}</Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>{work.quantity}</Text>
@@ -944,7 +957,7 @@ export const InvoicePDF = ({
                 <Text style={styles.tableData}>SubTotal</Text>
               </View>
               <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{labourTotal}</Text>
+                <Text style={styles.tableData}>{labourSubtotal}</Text>
               </View>
             </View>
           </View>

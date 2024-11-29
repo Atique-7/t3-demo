@@ -24,7 +24,7 @@ export async function POST(
   try {
     const { jobCard, car } = await request.json();
 
-    console.log("VALUES", jobCard, car);
+    // console.log("VALUES", jobCard, car);
 
     const stream = await renderToStream(
       <JobCardPDF

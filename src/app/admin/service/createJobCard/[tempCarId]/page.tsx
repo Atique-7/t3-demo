@@ -93,7 +93,8 @@ export default function CreateJobCard({
         customerAddress,
         sendToPartsManager,
         String(currTempCar.carsTableId),
-        Number(currentCounter!)
+        Number(currentCounter!),
+        ""
       );
 
       if (newJobCard) {

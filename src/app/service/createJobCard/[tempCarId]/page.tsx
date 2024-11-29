@@ -8,13 +8,14 @@ import ImageCard from "@/components/ImageCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import AddDiagnosis from "@/components/AddDiagnosis";
 import { Checkbox } from "@/components/ui/checkbox";
 import { objToStringArr } from "@/lib/helper";
 import { toast } from "sonner";
 import loader from "../../../../../public/assets/t3-loader.gif";
 import Image from "next/image";
+import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 
 type Props = {};
 
@@ -26,6 +27,7 @@ export default function CreateJobCard({
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentCounter = searchParams.get("currentCounter");
+  const pathname = usePathname();
 
   const [currTempCar, setCurrTempCar] = useState<TempCar>();
   const [images, setImages] = useState<ImageObj[]>([]);
@@ -47,6 +49,8 @@ export default function CreateJobCard({
   const [sendToPartsManager, setSendToPartsManager] = useState(true);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+
+  const [jobCardPdfURL, setJobCardPdfURL] = useState("");
 
   const imageTypes: string[] = [
     "Fuel",
@@ -81,6 +85,23 @@ export default function CreateJobCard({
     console.log("Current Images - ", carImages);
 
     if (currTempCar) {
+      const tempJobCard = {
+        carId: currTempCar.$id,
+        carNumber: currTempCar.carNumber,
+        images: images,
+        carOdometer: carOdometer,
+        carFuel: carFuel,
+        diagnosis: carDiagnosis,
+        customerName: customerName,
+        customerPhone: customerPhone,
+        customerAddress: customerAddress,
+        sendToPartsManager: sendToPartsManager,
+        carsTableId: String(currTempCar.carsTableId),
+        jobCardNumber: Number(currentCounter!),
+      };
+
+      // const jobCardPDF = generateJobCardPDF({{}, currTempCar})
+
       let newJobCard = await createJobCard(
         currTempCar.$id,
         currTempCar.carNumber,
@@ -93,7 +114,8 @@ export default function CreateJobCard({
         customerAddress,
         sendToPartsManager,
         String(currTempCar.carsTableId),
-        Number(currentCounter!)
+        Number(currentCounter!),
+        jobCardPdfURL
       );
 
       if (newJobCard) {
@@ -104,6 +126,30 @@ export default function CreateJobCard({
       }
     }
     setIsButtonLoading((prev) => false);
+  };
+
+  const generateJobCardPDF = async ({ jobCard, car }: any) => {
+    await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
+      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+      method: "POST",
+      body: JSON.stringify({
+        jobCard,
+        car,
+      }),
+    }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
+
+      result.json().then((jobCard: any) => {
+        setJobCardPdfURL(jobCard);
+      });
+    });
+  };
+
+  const openInNewTab = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (

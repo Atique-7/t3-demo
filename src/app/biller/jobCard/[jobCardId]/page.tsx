@@ -97,8 +97,6 @@ export default function jobCard({
 
   const [policyProvider, setPolicyProvider] = useState<string>();
   const [policyNumber, setPolicyNumber] = useState<string>();
-  const [policyProviderGST, setPolicyProviderAddressGST] = useState<string>();
-  const [policyProviderAddress, setPolicyProviderAddress] = useState<string>();
 
   const [isInsuranceDetails, setIsInsuranceDetails] = useState(false);
 
@@ -461,6 +459,27 @@ export default function jobCard({
       setIsInsuranceDetails(true);
     }
   };
+  const generateJobCardPDF = async ({ jobCard, car }: any) => {
+    await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
+      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+      method: "POST",
+      body: JSON.stringify({
+        jobCard,
+        car,
+      }),
+    }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
+
+      result.json().then((invoices: any) => {
+        invoices.map((invoice: any) => {
+          openInNewTab(invoice.invoiceUrl);
+        });
+      });
+    });
+  };
 
   const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -501,6 +520,16 @@ export default function jobCard({
                 </div>
                 <div>Back to All Job cards</div>
               </Link>
+            </div>
+            <div>
+              <Button
+                variant="outline"
+                className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                size="lg"
+                onClick={() => generateJobCardPDF({ jobCard, car })}
+              >
+                JobCardPDF
+              </Button>
             </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
               {currentJobCardStatus! > 2 && !disable && (

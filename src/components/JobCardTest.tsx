@@ -9,7 +9,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 import { CurrentLabour, CurrentPart } from "@/lib/definitions";
-import { roundToTwoDecimals } from "@/lib/helper";
+import { roundToTwoDecimals, stringToObj } from "@/lib/helper";
 
 Font.register({
   family: "Open Sans",
@@ -49,6 +49,10 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 30,
+  },
+  Maruti_Logo: {
+    width: 100,
+    height: 100,
   },
   addressBlock: {
     display: "flex",
@@ -190,113 +194,248 @@ const styles = StyleSheet.create({
   gatePassDate: {
     marginBottom: 30,
   },
+  logoView: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  imageHeading: {
+    fontSize: 12,
+  },
+  imageArr: {
+    display: "flex",
+  },
+  carImages: {
+    width: "100%",
+    height: "100%",
+  },
+  diagnosisTable: {
+    width: "auto",
+    height: "auto",
+    // backgroundColor: "#E11D48",
+    borderWidth: 1.5,
+    borderColor: "#000000",
+  },
 });
 
-export const GatePassPDF = ({
+export const JobCardPDF = ({
   jobCard,
-  parts,
-  labour,
   logo,
+  marutiLogo,
   car,
-  currentDate,
   invoiceType,
-  invoiceNumber,
-}: any) => (
-  <Document>
-    {jobCard && car && parts && labour && (
-      <Page size="A4" style={styles.page}>
-        <View style={styles.addressRow}>
-          <Image style={styles.logo} src={logo} alt-text={".."}/>
-          <View style={styles.addressBlock}>
-            <Text style={styles.workShopName}>CHANMUNDA MOTORS PVT. LTD.</Text>
-            <Text style={styles.workShopAddress}>
-              21/1-1, RAM BAUGH, OFF S V ROAD, <br />
-              BORIVALI WEST, MUMBAI SUBURBAN
+}: any) => {
+  const imagesArr = stringToObj(jobCard.images);
+  // const diagnosisStrings = stringToObj(jobCard.diagnosis);
+  // jobCard.images = stringToObj(jobCard.images);
+  console.log(jobCard.diagnosis);
+
+  return (
+    <Document>
+      {jobCard && car && (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.addressRow}>
+            <View style={styles.logoView}>
+              <Image
+                style={styles.Maruti_Logo}
+                src={marutiLogo}
+                alt-text={".."}
+              />
+              <Image style={styles.logo} src={logo} alt-text={".."} />
+            </View>
+            <View style={styles.addressBlock}>
+              <Text style={styles.workShopName}>
+                CHANMUNDA MOTORS PVT. LTD.
+              </Text>
+              <Text style={styles.workShopAddress}>
+                21/1-1, RAM BAUGH, OFF S V ROAD, <br />
+                BORIVALI WEST, MUMBAI SUBURBAN
+              </Text>
+              <Text style={styles.workShopGST}>GST NO: 27AAACC1903H1Z4</Text>
+            </View>
+          </View>
+          <View style={styles.invoiceTypeRow}>
+            <Text style={[styles.invoiceType, styles.gatePassHeading]}>
+              {invoiceType}
             </Text>
-            <Text style={styles.workShopGST}>GST NO: 27AAACC1903H1Z4</Text>
           </View>
-        </View>
-        <View style={styles.invoiceTypeRow}>
-          <Text style={[styles.invoiceType, styles.gatePassHeading]}>
-            {invoiceType}
-          </Text>
-        </View>
-        <View style={styles.detailTablesRow}>
-          <View style={styles.detailTable}>
-            <View style={styles.tableTitleRow}>
-              <Text style={styles.tableTitle}>Customer Details</Text>
+          <View style={styles.detailTablesRow}>
+            <View style={styles.detailTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Customer Details</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Name:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{jobCard.customerName}</Text>
+                </View>
+              </View>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Mobile:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>
+                    {" "}
+                    {jobCard?.customerPhone}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Address:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>
+                    {" "}
+                    {jobCard?.customerAddress}
+                  </Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Name:
-                </Text>
+            <View style={styles.detailTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Vehicle Details</Text>
               </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{jobCard.customerName}</Text>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Registration:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}> {jobCard?.carNumber}</Text>
+                </View>
+              </View>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Make:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}> {car?.carMake}</Text>
+                </View>
+              </View>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Model:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{car?.carModel}</Text>
+                </View>
               </View>
             </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Mobile:
-                </Text>
+            <View style={styles.detailTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Invoice Details</Text>
               </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}> {jobCard?.customerPhone}</Text>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Job Card No:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{jobCard.jobCardNumber}</Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Address:
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>
-                  {" "}
-                  {jobCard?.customerAddress}
-                </Text>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCell}>
+                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                    Service Type:
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{jobCard.purposeOfVisit}</Text>
+                </View>
               </View>
             </View>
           </View>
-          <View style={styles.detailTable}>
-            <View style={styles.tableTitleRow}>
-              <Text style={styles.tableTitle}>Vehicle Details</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Registration:
-                </Text>
+          <View style={styles.footerRow}>
+            <View style={styles.observationTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Car Images</Text>
               </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}> {jobCard?.carNumber}</Text>
-              </View>
-            </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Make:
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}> {car?.carMake}</Text>
+              <View style={styles.imageArr}>
+                {imagesArr.map((a) => (
+                  <>
+                    <Text style={styles.imageHeading}>{a.imageType}</Text>
+                    <Image
+                      style={styles.carImages}
+                      src={a.thumbnailURL}
+                      alt-text={".."}
+                    />
+                  </>
+                ))}
               </View>
             </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Model:
-                </Text>
+            <View style={styles.observationTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Diagnosis</Text>
               </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{car?.carModel}</Text>
+              <View style={styles.observationRow}>
+                <View style={styles.diagnosisTable}>
+                  <View style={styles.tableRow}>
+                    <View style={styles.tableCell}>
+                      <Text
+                        style={[styles.tableData, styles.tableDataEmphasized]}
+                      >
+                        Car Odometer
+                      </Text>
+                    </View>
+                    <View style={styles.tableCell}>
+                      <Text style={styles.tableData}>
+                        {jobCard.carOdometer}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <View style={styles.tableCell}>
+                      <Text
+                        style={[styles.tableData, styles.tableDataEmphasized]}
+                      >
+                        Car Fuel
+                      </Text>
+                    </View>
+                    <View style={styles.tableCell}>
+                      <Text style={styles.tableData}>{jobCard.carFuel}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <View style={styles.tableCell}>
+                      <Text
+                        style={[styles.tableData, styles.tableDataEmphasized]}
+                      >
+                        Diagnosis
+                      </Text>
+                    </View>
+                    <View style={styles.tableCell}>
+                      <ul>
+                        {jobCard.diagnosis.map((a: any) => (
+                          <li>
+                            <Text style={styles.tableData}>{`. ${a}`}</Text>
+                          </li>
+                        ))}
+                      </ul>
+                    </View>
+                  </View>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </Page>
-    )}
-  </Document>
-);
+        </Page>
+      )}
+    </Document>
+  );
+};

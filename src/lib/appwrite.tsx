@@ -16,6 +16,7 @@ import {
   purposeOfVisits,
 } from "./helper";
 import { Part } from "./definitions";
+import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -197,7 +198,8 @@ export const createJobCard = async (
   customerAddress: string,
   sendToPartsManager: boolean,
   carsTableId: string,
-  jobCardNumber: number
+  jobCardNumber: number,
+  jobCardPDF: string
 ) => {
   try {
     const token = getCookie("user");
@@ -238,6 +240,7 @@ export const createJobCard = async (
         carOdometer,
         customerAddress,
         purposeOfVisit,
+        jobCardPDF,
       }
     );
 

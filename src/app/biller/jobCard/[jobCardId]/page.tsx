@@ -288,8 +288,8 @@ export default function jobCard({
 
     console.log("JOB CARD OBJ = ", jobCard);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -324,8 +324,8 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -360,8 +360,8 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(5);
 
-    await fetch(`http://localhost:3000${pathname}/invoice`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/invoice`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -396,8 +396,8 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(6);
 
-    await fetch(`http://localhost:3000${pathname}/gatePass`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/gatePass`, {
+    // await fetch(`http://localhost:3000${pathname}/gatePass`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/gatePass`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,
@@ -460,8 +460,8 @@ export default function jobCard({
     }
   };
   const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/jobCardPDF`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,

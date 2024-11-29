@@ -6,6 +6,7 @@ import {
 } from "@/lib/appwrite";
 import {
   base64Logo,
+  base64MarutiLogo,
   invoiceTypes,
   streamToBuffer,
   stringToObj,
@@ -13,6 +14,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { renderToStream } from "@react-pdf/renderer";
 import { GatePassPDF } from "@/components/GatePassTest";
+import { JobCardPDF } from "@/components/JobCardTest";
 
 export async function POST(
   request: NextRequest,
@@ -20,34 +22,17 @@ export async function POST(
 ) {
   //   console.log("BODY", request.body);
   try {
-    const {
-      jobCard,
-      car,
-      currentParts,
-      currentLabour,
-      currentJobCardStatus,
-      invoiceCounter,
-    } = await request.json();
+    const { jobCard, car } = await request.json();
 
-    console.log(
-      "VALUES",
-      jobCard,
-      car,
-      currentParts,
-      currentLabour,
-      currentJobCardStatus
-    );
+    // console.log("VALUES", jobCard, car);
 
     const stream = await renderToStream(
-      <GatePassPDF
+      <JobCardPDF
         jobCard={jobCard}
-        parts={currentParts}
-        labour={currentLabour}
         logo={base64Logo}
+        marutiLogo={base64MarutiLogo}
         car={car}
-        currentDate={new Date()}
         invoiceType={"Job Card"}
-        invoiceNumber={invoiceCounter}
       />
     );
 
@@ -65,8 +50,8 @@ export async function POST(
     // Upload the buffer to ImageKit
     const uploadResponse = await imagekit.upload({
       file: buffer, // Buffer object
-      fileName: `${params.jobCardId}_gatePass_${uniqueStr}.pdf`, // Name of the file
-      folder: "/JobCards/", // Optional folder
+      fileName: `${params.jobCardId}_jobCard_${uniqueStr}.pdf`, // Name of the file
+      folder: "/pdfs/", // Optional folder
       useUniqueFileName: false, // Ensure file name uniqueness
       isPrivateFile: false, // If you want a public URL
     });
@@ -82,6 +67,7 @@ export async function POST(
     //console.log("This is the result - ", result);
 
     //return NextResponse.json(result, { status: 201 });
+    return NextResponse.json([pdfUrl], { status: 201 });
 
     // return;
   } catch (error) {

@@ -129,8 +129,8 @@ export default function CreateJobCard({
   };
 
   const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
-      // await fetch(`https://t3-next-dev.vercel.app${pathname}/invoice`, {
+    // await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
+    await fetch(`https://t3-next-dev.vercel.app${pathname}/jobCardPDF`, {
       method: "POST",
       body: JSON.stringify({
         jobCard,

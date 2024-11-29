@@ -646,12 +646,16 @@ export const createTempPartObj = (item: Part) => {
 
 export const createTempPartZeroObj = (item: CurrentPart) => {
   if (item) {
-    (item.mrp = 0),
-      (item.subTotal = 0),
-      (item.totalTax = 0),
-      (item.amount = 0),
-      (item.cgstAmt = 0);
+    // (item.mrp = 0),
+    //   (item.subTotal = 0),
+    //   (item.totalTax = 0),
+    //   (item.amount = 0),
+    //   (item.cgstAmt = 0);
     item.sgstAmt = 0;
+    item.mrp = 0;
+    item.subTotal = 0;
+    item.totalTax = 0;
+    item.cgstAmt = 0;
 
     return item;
   }

@@ -644,6 +644,19 @@ export const createTempPartObj = (item: Part) => {
   }
 };
 
+export const createTempPartZeroObj = (item: CurrentPart) => {
+  if (item) {
+    (item.mrp = 0),
+      (item.subTotal = 0),
+      (item.totalTax = 0),
+      (item.amount = 0),
+      (item.cgstAmt = 0);
+    item.sgstAmt = 0;
+
+    return item;
+  }
+};
+
 export const createTempLabourObj = (item: Labour) => {
   if (item) {
     let tempSubTotal = roundToTwoDecimals(getSubTotal(item.mrp, 1));

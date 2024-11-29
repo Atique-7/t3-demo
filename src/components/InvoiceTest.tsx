@@ -199,6 +199,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  signBlock: {
+    display: "flex",
+    flexDirection: "column",
+    width: "40%",
+  },
+  signName: {
+    fontSize: 12,
+    fontFamily: "Open Sans",
+    fontWeight: "black",
+    marginTop: 20,
+    // alignSelf: "flex-end",
+  },
+  signAddress: {
+    fontSize: 12,
+    fontFamily: "Open Sans",
+    fontWeight: "thin",
+    // marginTop: 60,
+    alignSelf: "flex-end",
+  },
+
+  signFooter: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    // marginBottom: 20,
+  },
 });
 
 export const InvoicePDF = ({
@@ -457,658 +485,745 @@ export const InvoicePDF = ({
   partsSubtotal = roundToTwoDecimals(partsSubtotal);
   labourSubtotal = roundToTwoDecimals(labourSubtotal);
 
-  console.log("HELLOOO PRINTING", {
-    partsTotal,
-    labourTotal,
-    totalTax,
-    totalDiscount,
-    totalSubtotal,
-  });
-
   return (
     <Document>
       {jobCard && car && parts && labour && (
-        <Page size="A4" style={styles.page}>
-          <View style={styles.addressRow}>
-            <View style={styles.logoView}>
-              <Image
-                style={styles.Maruti_Logo}
-                src={marutiLogo}
-                alt-text={".."}
-              />
-              <Image style={styles.logo} src={logo} alt-text={".."} />
+        <>
+          <Page size="A4" style={styles.page}>
+            <View style={styles.addressRow}>
+              <View style={styles.logoView}>
+                <Image
+                  style={styles.Maruti_Logo}
+                  src={marutiLogo}
+                  alt-text={".."}
+                />
+                <Image style={styles.logo} src={logo} alt-text={".."} />
+              </View>
+              <View style={styles.addressBlock}>
+                <Text style={styles.workShopName}>
+                  CHAMUNDA MOTORS PVT. LTD.
+                </Text>
+                <Text style={styles.workShopAddress}>
+                  21/1-1, RAM BAUGH, OFF S V ROAD, <br />
+                  BORIVALI WEST, MUMBAI SUBURBAN
+                </Text>
+                <Text style={styles.workShopGST}>GST NO: 27AAACC1903H1Z4</Text>
+              </View>
             </View>
-            <View style={styles.addressBlock}>
-              <Text style={styles.workShopName}>CHAMUNDA MOTORS PVT. LTD.</Text>
-              <Text style={styles.workShopAddress}>
-                21/1-1, RAM BAUGH, OFF S V ROAD, <br />
-                BORIVALI WEST, MUMBAI SUBURBAN
+            <View style={styles.invoiceTypeRow}>
+              <Text style={styles.invoiceType}>
+                {isInsurance ? <Text>{liabilityType}</Text> : <></>}
+                <Text> </Text>
+                {invoiceType}
               </Text>
-              <Text style={styles.workShopGST}>GST NO: 27AAACC1903H1Z4</Text>
             </View>
-          </View>
-          <View style={styles.invoiceTypeRow}>
-            <Text style={styles.invoiceType}>
-              {isInsurance ? <Text>{liabilityType}</Text> : <></>}
-              <Text> </Text>
-              {invoiceType}
-            </Text>
-          </View>
-          <View style={styles.detailTablesRow}>
-            <View style={styles.detailTable}>
-              <View style={styles.tableTitleRow}>
-                <Text style={styles.tableTitle}>Customer Details</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Name:
-                  </Text>
+            <View style={styles.detailTablesRow}>
+              <View style={styles.detailTable}>
+                <View style={styles.tableTitleRow}>
+                  <Text style={styles.tableTitle}>Customer Details</Text>
                 </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {/* {jobCard.customerName} */}
-                    {isInsurance && invoiceType != "Quote" ? (
-                      <>
-                        {liabilityType == "Customer" ? (
-                          <>{jobCard.customerName}</>
-                        ) : (
-                          <>{insuranceDetails.policyProvider}</>
-                        )}
-                      </>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Name:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {/* {jobCard.customerName} */}
+                      {isInsurance && invoiceType != "Quote" ? (
+                        <>
+                          {liabilityType == "Customer" ? (
+                            <>{jobCard.customerName}</>
+                          ) : (
+                            <>{insuranceDetails.policyProvider}</>
+                          )}
+                        </>
+                      ) : (
+                        <>{jobCard.customerName}</>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Mobile:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {isInsurance && invoiceType != "Quote" ? (
+                        <>
+                          {liabilityType == "Customer" ? (
+                            <>{jobCard.customerPhone}</>
+                          ) : (
+                            <>-</>
+                          )}
+                        </>
+                      ) : (
+                        <>{jobCard.customerPhone}</>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Address:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {isInsurance && invoiceType != "Quote" ? (
+                        <>
+                          {liabilityType == "Customer" ? (
+                            <>{jobCard.customerAddress}</>
+                          ) : (
+                            <>{insuranceDetails.policyProviderAddress}</>
+                          )}
+                        </>
+                      ) : (
+                        <>{jobCard.customerName}</>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+                {isInsurance && invoiceType != "Quote" ? (
+                  <>
+                    {liabilityType == "Customer" ? (
+                      <></>
                     ) : (
-                      <>{jobCard.customerName}</>
-                    )}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Mobile:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {isInsurance && invoiceType != "Quote" ? (
                       <>
-                        {liabilityType == "Customer" ? (
-                          <>{jobCard.customerPhone}</>
-                        ) : (
-                          <>-</>
-                        )}
-                      </>
-                    ) : (
-                      <>{jobCard.customerPhone}</>
-                    )}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Address:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {isInsurance && invoiceType != "Quote" ? (
-                      <>
-                        {liabilityType == "Customer" ? (
-                          <>{jobCard.customerAddress}</>
-                        ) : (
-                          <>{insuranceDetails.policyProviderAddress}</>
-                        )}
-                      </>
-                    ) : (
-                      <>{jobCard.customerName}</>
-                    )}
-                  </Text>
-                </View>
-              </View>
-              {isInsurance && invoiceType != "Quote" ? (
-                <>
-                  {liabilityType == "Customer" ? (
-                    <></>
-                  ) : (
-                    <>
-                      <View style={styles.tableRow}>
-                        <View style={styles.tableCell}>
-                          <Text
-                            style={[
-                              styles.tableData,
-                              styles.tableDataEmphasized,
-                            ]}
-                          >
-                            GST Number:
-                          </Text>
+                        <View style={styles.tableRow}>
+                          <View style={styles.tableCell}>
+                            <Text
+                              style={[
+                                styles.tableData,
+                                styles.tableDataEmphasized,
+                              ]}
+                            >
+                              GST Number:
+                            </Text>
+                          </View>
+                          <View style={styles.tableCell}>
+                            <Text style={styles.tableData}>
+                              {insuranceDetails.policyProviderGST}
+                            </Text>
+                          </View>
                         </View>
-                        <View style={styles.tableCell}>
-                          <Text style={styles.tableData}>
-                            {insuranceDetails.policyProviderGST}
-                          </Text>
-                        </View>
-                      </View>
-                    </>
-                  )}
-                </>
-              ) : (
-                <Text>-</Text>
-              )}
-            </View>
-            <View style={styles.detailTable}>
-              <View style={styles.tableTitleRow}>
-                <Text style={styles.tableTitle}>Vehicle Details</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Registration:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}> {jobCard?.carNumber}</Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Make:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}> {car?.carMake}</Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Model:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{car?.carModel}</Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.detailTable}>
-              <View style={styles.tableTitleRow}>
-                <Text style={styles.tableTitle}>Invoice Details</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Invoice No:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{invoiceNumber}</Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Invoice Date:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {currentDate.toLocaleDateString()}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Job Card No:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{jobCard.jobCardNumber}</Text>
-                </View>
-              </View>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Service Type:
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{jobCard.purposeOfVisit}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View style={styles.partsTable}>
-            <View style={styles.tableTitleRow}>
-              <Text style={styles.tableTitle}>Parts</Text>
-            </View>
-            <View style={styles.tableHeaderRow}>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Sr. No.
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Part No.
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Name
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Tax %
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  HSN
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Quantity
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  MRP
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Disc %
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Amount
-                </Text>
-              </View>
-            </View>
-            {parts.map((part: CurrentPart, index: number) => (
-              <View key={index} style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{index + 1}.</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.partNumber}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.partName}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.gst}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.hsn}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.quantity}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{part.mrp}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {part.discountPercentage}
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {isInsurance && invoiceType != "Quote" ? (
-                      <>
-                        {part.insurancePercentage &&
-                        part.insurancePercentage != 0 ? (
-                          <>
-                            {liabilityType == "Customer" ? (
-                              <>
-                                {roundToTwoDecimals(Number(part.subTotalCust))}
-                              </>
-                            ) : (
-                              <>
-                                {roundToTwoDecimals(Number(part.subTotalIns))}
-                              </>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {liabilityType == "Customer" ? (
-                              <>{roundToTwoDecimals(Number(part.subTotal))}</>
-                            ) : (
-                              <>0</>
-                            )}
-                          </>
-                        )}
                       </>
-                    ) : (
-                      <>{roundToTwoDecimals(Number(part.subTotal))}</>
                     )}
-                  </Text>
+                  </>
+                ) : (
+                  <Text>-</Text>
+                )}
+              </View>
+              <View style={styles.detailTable}>
+                <View style={styles.tableTitleRow}>
+                  <Text style={styles.tableTitle}>Vehicle Details</Text>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Registration:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}> {jobCard?.carNumber}</Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Make:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}> {car?.carMake}</Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Model:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{car?.carModel}</Text>
+                  </View>
                 </View>
               </View>
-            ))}
-            <View style={[styles.tableRow, styles.tableFooterRow]}>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}>SubTotal</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{partsSubtotal}</Text>
+              <View style={styles.detailTable}>
+                <View style={styles.tableTitleRow}>
+                  <Text style={styles.tableTitle}>Invoice Details</Text>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Invoice No:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{invoiceNumber}</Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Invoice Date:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {currentDate.toLocaleDateString()}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Job Card No:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {jobCard.jobCardNumber}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Service Type:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {jobCard.purposeOfVisit}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.partsTable}>
-            <View style={styles.tableTitleRow}>
-              <Text style={styles.tableTitle}>Labour</Text>
-            </View>
-            <View style={styles.tableHeaderRow}>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Sr. No.
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Labour Code
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Name
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Tax %
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  HSN
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Quantity
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  MRP
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Disc %
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Amount
-                </Text>
-              </View>
-            </View>
-            {labour.map((work: CurrentLabour, index: number) => (
-              <View key={index} style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{index + 1}.</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text
-                    style={[
-                      styles.tableData,
-                      {
-                        display: "flex",
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                      },
-                    ]}
-                  >
-                    {work.labourCode}
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.labourName}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.gst}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.hsn}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.quantity}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{work.mrp}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {work.discountPercentage}
-                  </Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {isInsurance && invoiceType != "Quote" ? (
-                      <>
-                        {work.insurancePercentage &&
-                        work.insurancePercentage != 0 ? (
-                          <>
-                            {liabilityType == "Customer" ? (
-                              <>
-                                {roundToTwoDecimals(Number(work.subTotalCust))}
-                              </>
-                            ) : (
-                              <>
-                                {roundToTwoDecimals(Number(work.subTotalIns))}
-                              </>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {liabilityType == "Customer" ? (
-                              <>{roundToTwoDecimals(Number(work.subTotal))}</>
-                            ) : (
-                              <>0</>
-                            )}
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <>{roundToTwoDecimals(Number(work.subTotal))}</>
-                    )}
-                  </Text>
-                </View>
-              </View>
-            ))}
-            <View style={[styles.tableRow, styles.tableFooterRow]}>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}>SubTotal</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{labourSubtotal}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.partsTable}>
-            <View style={styles.tableTitleRow}>
-              <Text style={styles.tableTitle}>Taxes</Text>
-            </View>
-            <View style={styles.tableHeaderRow}>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Tax Type
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Tax Rate
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Tax Name
-                </Text>
-              </View>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                  Tax Amount
-                </Text>
-              </View>
-            </View>
-            {taxObj.map((obj: any, index) => (
-              <View key={index} style={styles.tableRow}>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{obj.taxType}.</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{obj.taxRate}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{obj.taxName}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{obj.taxAmt}</Text>
-                </View>
-              </View>
-            ))}
-            <View style={[styles.tableRow, styles.tableFooterRow]}>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}></Text>
-              </View>
-              <View style={styles.tableEmptyCell}>
-                <Text style={styles.tableData}>Tax Total</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{totalTax}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.footerRow}>
-            <View style={styles.observationTable}>
+            <View style={styles.partsTable}>
               <View style={styles.tableTitleRow}>
-                <Text style={styles.tableTitle}>Observation and Remarks</Text>
+                <Text style={styles.tableTitle}>Parts</Text>
               </View>
-              <View style={styles.observationRow}>
-                <Text style={styles.tableData}>
-                  {/* {roundToTwoDecimals(labourTotal + partsTotal)} */}-
-                </Text>
-              </View>
-            </View>
-            <View style={styles.totalsTable}>
-              <View style={styles.totalsTableRow}>
-                <View style={styles.totalsTableHeadingCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Total Taxable Value:
+              <View style={styles.tableHeaderRow}>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Sr. No.
                   </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Part No.
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Name
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax %
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    HSN
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Quantity
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Rate
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Disc %
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Amount
+                  </Text>
+                </View>
+              </View>
+              {parts.map((part: CurrentPart, index: number) => (
+                <View key={index} style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{index + 1}.</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{part.partNumber}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{part.partName}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{part.gst}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{part.hsn}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{part.quantity}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{part.mrp}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {part.discountPercentage}
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {isInsurance && invoiceType != "Quote" ? (
+                        <>
+                          {part.insurancePercentage &&
+                          part.insurancePercentage != 0 ? (
+                            <>
+                              {liabilityType == "Customer" ? (
+                                <>
+                                  {roundToTwoDecimals(
+                                    Number(part.subTotalCust)
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  {roundToTwoDecimals(Number(part.subTotalIns))}
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {liabilityType == "Customer" ? (
+                                <>{roundToTwoDecimals(Number(part.subTotal))}</>
+                              ) : (
+                                <>0</>
+                              )}
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <>{roundToTwoDecimals(Number(part.subTotal))}</>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+              <View style={[styles.tableRow, styles.tableFooterRow]}>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}>SubTotal</Text>
                 </View>
                 <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {roundToTwoDecimals(totalSubtotal - totalDiscount)}
+                  <Text style={styles.tableData}>{partsSubtotal}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.partsTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Labour</Text>
+              </View>
+              <View style={styles.tableHeaderRow}>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Sr. No.
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Labour Code
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Name
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax %
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    HSN
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Quantity
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Rate
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Disc %
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Amount
                   </Text>
                 </View>
               </View>
-              <View style={styles.totalsTableRow}>
-                <View style={styles.totalsTableHeadingCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    Total GST Amount:
+              {labour.map((work: CurrentLabour, index: number) => (
+                <View key={index} style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{index + 1}.</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[
+                        styles.tableData,
+                        {
+                          display: "flex",
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                        },
+                      ]}
+                    >
+                      {work.labourCode}
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{work.labourName}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{work.gst}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{work.hsn}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{work.quantity}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{work.mrp}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {work.discountPercentage}
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {isInsurance && invoiceType != "Quote" ? (
+                        <>
+                          {work.insurancePercentage &&
+                          work.insurancePercentage != 0 ? (
+                            <>
+                              {liabilityType == "Customer" ? (
+                                <>
+                                  {roundToTwoDecimals(
+                                    Number(work.subTotalCust)
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  {roundToTwoDecimals(Number(work.subTotalIns))}
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {liabilityType == "Customer" ? (
+                                <>{roundToTwoDecimals(Number(work.subTotal))}</>
+                              ) : (
+                                <>0</>
+                              )}
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <>{roundToTwoDecimals(Number(work.subTotal))}</>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+              <View style={[styles.tableRow, styles.tableFooterRow]}>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}>SubTotal</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text style={styles.tableData}>{labourSubtotal}</Text>
+                </View>
+              </View>
+            </View>
+          </Page>
+          <Page size="A4" style={styles.page}>
+            <View style={styles.partsTable}>
+              <View style={styles.tableTitleRow}>
+                <Text style={styles.tableTitle}>Taxes</Text>
+              </View>
+              <View style={styles.tableHeaderRow}>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax Type
                   </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax Rate
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax Name
+                  </Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax Amount
+                  </Text>
+                </View>
+              </View>
+              {taxObj.map((obj: any, index) => (
+                <View key={index} style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {obj.taxType == "GOODS" ? (
+                        <>
+                          <Text style={styles.tableData}>PARTS</Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text style={styles.tableData}>LABOUR</Text>
+                        </>
+                      )}
+                      .
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{obj.taxRate}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{obj.taxName}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{obj.taxAmt}</Text>
+                  </View>
+                </View>
+              ))}
+              <View style={[styles.tableRow, styles.tableFooterRow]}>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}></Text>
+                </View>
+                <View style={styles.tableEmptyCell}>
+                  <Text style={styles.tableData}>Tax Total</Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text style={styles.tableData}>{totalTax}</Text>
                 </View>
               </View>
-              <View style={styles.totalsTableRow}>
-                <View style={styles.totalsTableHeadingCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    TOTAL:
-                  </Text>
+            </View>
+            <View style={styles.footerRow}>
+              <View style={styles.observationTable}>
+                <View style={styles.tableTitleRow}>
+                  <Text style={styles.tableTitle}>Observation and Remarks</Text>
                 </View>
-                <View style={styles.tableCell}>
+                <View style={styles.observationRow}>
                   <Text style={styles.tableData}>
-                    {roundToTwoDecimals(labourTotal + partsTotal)}
+                    {/* {roundToTwoDecimals(labourTotal + partsTotal)} */}-
                   </Text>
                 </View>
               </View>
-              <View style={styles.totalsTableRow}>
-                <View style={styles.totalsTableHeadingCell}>
-                  <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                    TOTAL (rounded off):
-                  </Text>
+              <View style={styles.totalsTable}>
+                <View style={styles.totalsTableRow}>
+                  <View style={styles.totalsTableHeadingCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Total Taxable Value:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {roundToTwoDecimals(totalSubtotal - totalDiscount)}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>
-                    {Math.round(roundToTwoDecimals(labourTotal + partsTotal))}
+                <View style={styles.totalsTableRow}>
+                  <View style={styles.totalsTableHeadingCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Total GST Amount:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{totalTax}</Text>
+                  </View>
+                </View>
+                <View style={styles.totalsTableRow}>
+                  <View style={styles.totalsTableHeadingCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      TOTAL:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {roundToTwoDecimals(labourTotal + partsTotal)}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.totalsTableRow}>
+                  <View style={styles.totalsTableHeadingCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      TOTAL (rounded off):
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>
+                      {Math.round(roundToTwoDecimals(labourTotal + partsTotal))}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={styles.addressRow}>
+              <View style={[styles.signBlock, { marginTop: 20 }]}>
+                <Text style={[styles.signName, { marginTop: 60 }]}>
+                  For CHAMUNDA MOTORS PVT. LTD.
+                </Text>
+                <Text
+                  style={[
+                    styles.signAddress,
+                    { marginTop: 60, alignSelf: "flex-start" },
+                  ]}
+                >
+                  (Authorized Signatory)
+                </Text>
+              </View>
+              <View
+                style={[
+                  styles.signBlock,
+                  { marginTop: 20, alignSelf: "flex-end" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.signName,
+                    { marginTop: 60, alignSelf: "flex-end" },
+                  ]}
+                >
+                  CHAMUNDA MOTORS PVT. LTD.
+                </Text>
+                <View>
+                  <Text style={styles.signAddress}> PUNJAB NATIONAL BANK</Text>
+                  <Text style={styles.signAddress}>
+                    S. V. ROAD BORIVALI - WEST
+                  </Text>
+                  <Text style={styles.signAddress}>
+                    Ac No. : 02874010000070
+                  </Text>
+                  <Text style={styles.signAddress}>
+                    IFSC CODE : PUNB0028710
                   </Text>
                 </View>
               </View>
             </View>
-          </View>
-        </Page>
+          </Page>
+        </>
       )}
     </Document>
   );

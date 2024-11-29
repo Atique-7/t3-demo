@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Minus, Percent, Plus, Shield, Trash2, X } from "lucide-react";
 import PartsSearch from "@/components/PartsSearch";
 import {
+  createTempPartZeroObj,
   getUserAccess,
   removeTempPartObjDiscount,
   roundToTwoDecimals,
@@ -131,19 +132,8 @@ export function CurrentPartsDataTable<TData, TValue>({
   };
 
   const handleMRPUpdate = (row: any, mrp: number) => {
-    if (isNaN(mrp) || mrp <= 0) {
-      console.error("Invalid MRP value:", mrp);
-      return;
-    }
-    const partNumberRow = row.getValue("partNumber");
-    const foundPart = parts?.find((a) => a.partNumber == partNumberRow);
-    const newMaxMRP = foundPart!.mrp * 1.25;
+    let updatedObj;
 
-    if (mrp > newMaxMRP) {
-      console.log({ foundPart, newMaxMRP });
-      toast("Price can only be increased upto 25%");
-      return;
-    }
     let arrayFirstHalf = currentParts!.slice(0, row.index);
     let arraySecondHalf = currentParts!.slice(row.index + 1);
 
@@ -153,15 +143,33 @@ export function CurrentPartsDataTable<TData, TValue>({
       (part) => part.partNumber == partNumber
     );
 
-    let updatedObj;
+    if (mrp == 0) {
+      if (toUpdateMRP) {
+        updatedObj = createTempPartZeroObj(toUpdateMRP);
+        console.log("INVALID VALUE - ", updatedObj);
 
-    if (toUpdateMRP) {
-      updatedObj = updateTempPartObjMRP(toUpdateMRP, mrp);
-
-      setCurrentParts([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
-      setIsEdited(true);
+        setCurrentParts([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+        setIsEdited(true);
+      }
     } else {
-      console.log("Some Error has Occured");
+      const partNumberRow = row.getValue("partNumber");
+      const foundPart = parts?.find((a) => a.partNumber == partNumberRow);
+      const newMaxMRP = foundPart!.mrp * 1.25;
+
+      if (mrp > newMaxMRP) {
+        console.log({ foundPart, newMaxMRP });
+        toast("Price can only be increased upto 25%");
+        return;
+      }
+
+      if (toUpdateMRP) {
+        updatedObj = updateTempPartObjMRP(toUpdateMRP, mrp);
+
+        setCurrentParts([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+        setIsEdited(true);
+      } else {
+        console.log("Some Error has Occured");
+      }
     }
   };
 
@@ -510,11 +518,14 @@ export function CurrentPartsDataTable<TData, TValue>({
                   >
                     <Input
                       placeholder="%"
-                      value={row.getValue("mrp") ?? 0}
+                      value={row.getValue("mrp") || 0}
+                      type="number"
                       onChange={(event) => {
-                        if (event.target.value != "") {
-                          handleMRPUpdate(row, Number(event.target.value));
-                        }
+                        // if (event.target.value != "") {
+                        //   handleMRPUpdate(row, Number(event.target.value));
+                        // }
+                        handleMRPUpdate(row, Number(event.target.value));
+                        console.log(event.target.value);
                       }}
                       className="w-20"
                       disabled={disable}

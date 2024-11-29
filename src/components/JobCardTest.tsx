@@ -206,8 +206,8 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   carImages: {
-    width: "100%",
-    height: "100%",
+    width: "auto",
+    height: "auto",
   },
   diagnosisTable: {
     width: "auto",

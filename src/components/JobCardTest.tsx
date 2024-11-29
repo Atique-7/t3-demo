@@ -368,15 +368,15 @@ export const JobCardPDF = ({
                 <Text style={styles.tableTitle}>Car Images</Text>
               </View>
               <View style={styles.imageArr}>
-                {imagesArr.map((a) => (
-                  <>
+                {imagesArr.map((a, index) => (
+                  <View key={index}>
                     <Text style={styles.imageHeading}>{a.imageType}</Text>
                     <Image
                       style={styles.carImages}
                       src={a.thumbnailURL}
                       alt-text={".."}
                     />
-                  </>
+                  </View>
                 ))}
               </View>
             </View>
@@ -422,8 +422,8 @@ export const JobCardPDF = ({
                     </View>
                     <View style={styles.tableCell}>
                       <ul>
-                        {jobCard.diagnosis.map((a: any) => (
-                          <li>
+                        {jobCard.diagnosis.map((a: any, index: number) => (
+                          <li key={index}>
                             <Text style={styles.tableData}>{`. ${a}`}</Text>
                           </li>
                         ))}

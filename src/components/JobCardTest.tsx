@@ -244,9 +244,7 @@ export const JobCardPDF = ({
               <Image style={styles.logo} src={logo} alt-text={".."} />
             </View>
             <View style={styles.addressBlock}>
-              <Text style={styles.workShopName}>
-                CHANMUNDA MOTORS PVT. LTD.
-              </Text>
+              <Text style={styles.workShopName}>CHAMUNDA MOTORS PVT. LTD.</Text>
               <Text style={styles.workShopAddress}>
                 21/1-1, RAM BAUGH, OFF S V ROAD, <br />
                 BORIVALI WEST, MUMBAI SUBURBAN

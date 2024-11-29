@@ -9,6 +9,7 @@ import {
 } from "@/lib/appwrite";
 import {
   base64Logo,
+  base64MarutiLogo,
   invoiceTypes,
   streamToBuffer,
   stringToObj,
@@ -47,6 +48,7 @@ export async function POST(
         parts={currentParts}
         labour={currentLabour}
         logo={base64Logo}
+        marutiLogo={base64MarutiLogo}
         car={car}
         currentDate={new Date()}
         invoiceType={"Gate Pass"}

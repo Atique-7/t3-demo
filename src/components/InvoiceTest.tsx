@@ -190,6 +190,15 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "#000000",
   },
+  Maruti_Logo: {
+    width: 100,
+    height: 100,
+  },
+  logoView: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 });
 
 export const InvoicePDF = ({
@@ -197,6 +206,7 @@ export const InvoicePDF = ({
   parts,
   labour,
   logo,
+  marutiLogo,
   car,
   currentDate,
   invoiceType,
@@ -460,11 +470,16 @@ export const InvoicePDF = ({
       {jobCard && car && parts && labour && (
         <Page size="A4" style={styles.page}>
           <View style={styles.addressRow}>
-            <Image style={styles.logo} src={logo} alt-text={".."} />
+            <View style={styles.logoView}>
+              <Image
+                style={styles.Maruti_Logo}
+                src={marutiLogo}
+                alt-text={".."}
+              />
+              <Image style={styles.logo} src={logo} alt-text={".."} />
+            </View>
             <View style={styles.addressBlock}>
-              <Text style={styles.workShopName}>
-                CHANMUNDA MOTORS PVT. LTD.
-              </Text>
+              <Text style={styles.workShopName}>CHAMUNDA MOTORS PVT. LTD.</Text>
               <Text style={styles.workShopAddress}>
                 21/1-1, RAM BAUGH, OFF S V ROAD, <br />
                 BORIVALI WEST, MUMBAI SUBURBAN

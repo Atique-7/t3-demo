@@ -11,6 +11,7 @@ import {
   streamToBuffer,
   convertStringsToArray,
   stringToObj,
+  base64MarutiLogo,
 } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { InvoicePDF } from "@/components/InvoiceTest";
@@ -81,6 +82,7 @@ export async function POST(
           parts={currentParts}
           labour={currentLabour}
           logo={base64Logo}
+          marutiLogo={base64MarutiLogo}
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
@@ -99,6 +101,7 @@ export async function POST(
           parts={currentParts}
           labour={currentLabour}
           logo={base64Logo}
+          marutiLogo={base64MarutiLogo}
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
@@ -206,6 +209,7 @@ export async function POST(
           parts={currentParts}
           labour={currentLabour}
           logo={base64Logo}
+          marutiLogo={base64MarutiLogo}
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}

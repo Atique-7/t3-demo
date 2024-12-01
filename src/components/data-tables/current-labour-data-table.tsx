@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
+  Row,
 } from "@tanstack/react-table";
 
 import {
@@ -26,11 +27,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Minus, Percent, Plus, Shield, Trash2, X } from "lucide-react";
 import {
+  createTempLabourZeroObj,
   getUserAccess,
   removeTempLabourObjDiscount,
+  roundToTwoDecimals,
   splitInsuranceAmt,
   taxAmtHelper,
   updateTempLabourObjDiscount,
+  updateTempLabourObjMRP,
   updateTempLabourObjQuantity,
 } from "@/lib/helper";
 import { CurrentLabour, Labour, UserType } from "@/lib/definitions";
@@ -221,7 +225,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleInsurance = (row: any, insurance: number) => {
-    if (insurance > 15) {
+    if (insurance >= 100) {
       toast("Insurance percentage cannot exceed 100%");
     } else {
       let arrayFirstHalf = currentLabours!.slice(0, row.index);
@@ -273,8 +277,8 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleAllInsurance = (insurance: number) => {
-    if (insurance > 15) {
-      toast("Discount more than 15% is not allowed");
+    if (Number(insurance) > 100) {
+      toast("Discount more than 100% is not allowed");
       return;
     }
     let tempObj = currentLabours;
@@ -315,6 +319,48 @@ export function CurrentLabourDataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const handleMRPUpdate = (row: any, mrp: number) => {
+    let updatedObj;
+
+    let arrayFirstHalf = currentLabours!.slice(0, row.index);
+    let arraySecondHalf = currentLabours!.slice(row.index + 1);
+
+    const labourCode = row.getValue("labourCode");
+
+    let toUpdateMRP = currentLabours?.find(
+      (labour) => labour.labourCode === labourCode
+    );
+
+    if (mrp == 0) {
+      if (toUpdateMRP) {
+        updatedObj = createTempLabourZeroObj(toUpdateMRP);
+        console.log("INVALID VALUE - ", updatedObj);
+
+        setCurrentLabour([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+        setIsEdited(true);
+      }
+    } else {
+      const labourCodeRow = row.getValue("labourCode");
+      const foundLabour = labour?.find((a) => a.labourCode == labourCodeRow);
+      const newMaxMRP = foundLabour!.mrp * 1.25;
+
+      if (mrp > newMaxMRP) {
+        console.log({ foundLabour, newMaxMRP });
+        toast("Price can only be increased upto 25%");
+        return;
+      }
+
+      if (toUpdateMRP) {
+        updatedObj = updateTempLabourObjMRP(toUpdateMRP, mrp);
+
+        setCurrentLabour([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+        setIsEdited(true);
+      } else {
+        console.log("Some Error has Occured");
+      }
+    }
+  };
 
   return (
     <div>
@@ -401,6 +447,7 @@ export function CurrentLabourDataTable<TData, TValue>({
                   if (
                     header.id != "quantity" &&
                     header.id != "amount" &&
+                    header.id != "mrp" &&
                     header.id != "discountPercentage" &&
                     header.id != "insurancePercentage"
                   ) {
@@ -418,6 +465,9 @@ export function CurrentLabourDataTable<TData, TValue>({
                     }
                   }
                 })}
+                <TableHead key={"handleMrp"} className="text-center">
+                  Basic Price
+                </TableHead>
                 <TableHead key={"handleQuantity"} className="text-center">
                   Quantity
                 </TableHead>
@@ -450,6 +500,7 @@ export function CurrentLabourDataTable<TData, TValue>({
                       cell.column.id != "quantity" &&
                       cell.column.id != "insurancePercentage" &&
                       cell.column.id != "amount" &&
+                      cell.column.id != "mrp" &&
                       cell.column.id != "discountPercentage"
                     ) {
                       return (
@@ -462,6 +513,25 @@ export function CurrentLabourDataTable<TData, TValue>({
                       );
                     }
                   })}
+                  <TableCell
+                    key={"MRP"}
+                    className="flex justify-center items-center h-full"
+                  >
+                    <Input
+                      placeholder="%"
+                      value={row.getValue("mrp") || 0}
+                      type="number"
+                      onChange={(event) => {
+                        // if (event.target.value != "") {
+                        //   handleMRPUpdate(row, Number(event.target.value));
+                        // }
+                        handleMRPUpdate(row, Number(event.target.value));
+                        console.log(event.target.value);
+                      }}
+                      className="w-20"
+                      disabled={disable}
+                    />
+                  </TableCell>
                   <TableCell key={"handleQuantity"} className="space-x-2">
                     <div className="flex flex-row justify-evenly w-full items-center space-x-2">
                       <Button
@@ -518,7 +588,7 @@ export function CurrentLabourDataTable<TData, TValue>({
                         )}
                       </>
                     ) : (
-                      <>{row.getValue("amount")}</>
+                      <>{roundToTwoDecimals(row.getValue("amount"))}</>
                     )}
                   </TableCell>
 

@@ -6,6 +6,7 @@ import {
   getAllInvoices,
   getAllLabour,
   getAllParts,
+  getCarByCarNumber,
   getInvoicesByJobCardId,
   getJobCardById,
   getLatestInvoiceBySeries,
@@ -25,6 +26,7 @@ import {
   invoiceTypes,
   jobCardStatusKey,
   objToStringArr,
+  openInNewTab,
   policyProviders,
   policyProvidersDict,
   purposeOfVisits,
@@ -160,6 +162,9 @@ export default function jobCard({
       const jobCardObj = await getJobCardById(params.jobCardId);
       console.log("This is the Job Card - ", jobCardObj);
 
+      if (jobCardObj.jobCardStatus >= 6) {
+        setIsDisabled(true);
+      }
       const prevParts = stringToObj(jobCardObj.parts);
       console.log("Current Parts - ", prevParts);
       setCurrentParts(prevParts);
@@ -167,10 +172,12 @@ export default function jobCard({
       const prevLabour = stringToObj(jobCardObj.labour);
       setCurrentLabour(prevLabour);
 
-      const carObj = await getTempCarById(jobCardObj.carId);
+      let carObj = await getTempCarById(jobCardObj.carId);
       if (carObj) {
         const status = carObj.carStatus;
         if (status === 2) setIsDisabled(true);
+      } else {
+        carObj = await getCarByCarNumber(jobCardObj.carNumber);
       }
       // console.log("This is the car details - ", carObj);
 
@@ -484,14 +491,10 @@ export default function jobCard({
 
       result.json().then((invoices: any) => {
         invoices.map((invoice: any) => {
-          openInNewTab(invoice.invoiceUrl);
+          openInNewTab(invoice);
         });
       });
     });
-  };
-
-  const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleInvoicePDF = (selectedValue: string) => {
@@ -530,17 +533,17 @@ export default function jobCard({
                 <div>Back to All Job cards</div>
               </Link>
             </div>
-            <div>
-              <Button
-                variant="outline"
-                className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
-                size="lg"
-                onClick={() => generateJobCardPDF({ jobCard, car })}
-              >
-                JobCardPDF
-              </Button>
-            </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
+              <div>
+                <Button
+                  variant="outline"
+                  className="px-8 py-2 border border-red-500 text-red-500"
+                  size="lg"
+                  onClick={() => generateJobCardPDF({ jobCard, car })}
+                >
+                  JobCardPDF
+                </Button>
+              </div>
               {currentJobCardStatus! > 2 && !disable && (
                 <div>
                   <Select

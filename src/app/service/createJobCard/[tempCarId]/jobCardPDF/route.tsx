@@ -24,7 +24,7 @@ export async function POST(
   try {
     const { jobCard, car } = await request.json();
 
-    console.log("VALUES", jobCard, car);
+    // console.log("VALUES", jobCard, car);
 
     const stream = await renderToStream(
       <JobCardPDF
@@ -61,12 +61,6 @@ export async function POST(
 
     console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 
-    // Create a new ReadableStream from the buffer for the response
-    //let result = await updateJobCardGatePass(jobCard.$id, pdfUrl);
-
-    //console.log("This is the result - ", result);
-
-    //return NextResponse.json(result, { status: 201 });
     return NextResponse.json([pdfUrl], { status: 201 });
 
     // return;

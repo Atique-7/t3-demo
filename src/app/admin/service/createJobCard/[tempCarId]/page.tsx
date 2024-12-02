@@ -8,21 +8,38 @@ import ImageCard from "@/components/ImageCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import AddDiagnosis from "@/components/AddDiagnosis";
 import { Checkbox } from "@/components/ui/checkbox";
-import { objToStringArr } from "@/lib/helper";
+import {
+  convertStringsToArray,
+  objToStringArr,
+  openInNewTab,
+} from "@/lib/helper";
 import { toast } from "sonner";
 import loader from "../../../../../../public/assets/t3-loader.gif";
 import Image from "next/image";
+import { getCookie } from "cookies-next";
 
 type Props = {};
+
+const useDev = true;
+
+let apiUrl: string;
+
+if (useDev) {
+  apiUrl = "http://localhost:3000";
+} else {
+  apiUrl = "https://t3-next-dev.vercel.app";
+}
 
 export default function CreateJobCard({
   params,
 }: {
   params: { tempCarId: any };
 }) {
+  const pathname = usePathname();
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentCounter = searchParams.get("currentCounter");
@@ -71,6 +88,29 @@ export default function CreateJobCard({
     console.log(images);
   };
 
+  const generateJobCardPDF = async ({ jobCard, car }: any) => {
+    // await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
+    await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
+      method: "POST",
+      body: JSON.stringify({
+        jobCard,
+        car,
+      }),
+    }).then((result: any) => {
+      // Set a short timeout before refreshing the page
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 1000);
+
+      result.json().then((invoices: any) => {
+        invoices.map((invoice: any) => {
+          openInNewTab(invoice);
+          return invoice;
+        });
+      });
+    });
+  };
+
   const handleCreateJobCard = async () => {
     setIsButtonLoading((prev) => true);
 
@@ -80,29 +120,79 @@ export default function CreateJobCard({
     const carImages = objToStringArr(images);
     console.log("Current Images - ", carImages);
 
-    if (currTempCar) {
-      let newJobCard = await createJobCard(
-        currTempCar.$id,
-        currTempCar.carNumber,
-        carImages,
-        carOdometer,
-        carFuel,
-        diagnosisStrings,
-        customerName,
-        customerPhone,
-        customerAddress,
-        sendToPartsManager,
-        String(currTempCar.carsTableId),
-        Number(currentCounter!),
-        ""
-      );
+    // const jobCardPdfURL = await generateJobCardPDF({})
 
-      if (newJobCard) {
-        toast("Job Card has been Created \u2705");
+    if (currTempCar) {
+      const token = getCookie("user");
+      const parsedToken = JSON.parse(String(token));
+      const advisorEmail = parsedToken.email;
+
+      const purposeOfVisitAndAdvisors = convertStringsToArray(
+        currTempCar.purposeOfVisitAndAdvisors
+      );
+      const purposeOfVisit = purposeOfVisitAndAdvisors.find((pov: any) => {
+        if (pov.advisorEmail === advisorEmail) return true;
+      }).description;
+
+      console.log(purposeOfVisit);
+
+      const tempJobCard = {
+        carId: currTempCar.$id,
+        diagnosis: diagnosisStrings,
+        sendToPartsManager: true,
+        carNumber: currTempCar.carNumber,
+        jobCardStatus: 0,
+        customerName: customerName,
+        customerPhone: customerPhone,
+        jobCardNumber: Number(currentCounter!),
+        images: carImages,
+        carFuel: carFuel,
+        carOdometer: carOdometer,
+        customerAddress: customerAddress,
+        purposeOfVisit: purposeOfVisit,
+      };
+
+      await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
+        method: "POST",
+        body: JSON.stringify({
+          tempJobCard,
+          currTempCar,
+        }),
+      }).then((result: any) => {
+        // Set a short timeout before refreshing the page
         setTimeout(() => {
-          router.push("/service");
-        }, 2000);
-      }
+          window.location.reload(); // Refreshes the page to get the latest data
+        }, 1000);
+
+        result.json().then((invoices: any) => {
+          invoices.map(async (jobCardPdfURL: any) => {
+            openInNewTab(jobCardPdfURL);
+
+            let newJobCard = await createJobCard(
+              currTempCar.$id,
+              currTempCar.carNumber,
+              carImages,
+              carOdometer,
+              carFuel,
+              diagnosisStrings,
+              customerName,
+              customerPhone,
+              customerAddress,
+              sendToPartsManager,
+              String(currTempCar.carsTableId),
+              Number(currentCounter!),
+              jobCardPdfURL
+            );
+
+            if (newJobCard) {
+              toast("Job Card has been Created \u2705");
+              setTimeout(() => {
+                router.push("/service");
+              }, 2000);
+            }
+          });
+        });
+      });
     }
     setIsButtonLoading((prev) => false);
   };

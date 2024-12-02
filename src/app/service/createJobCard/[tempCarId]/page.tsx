@@ -11,23 +11,38 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import AddDiagnosis from "@/components/AddDiagnosis";
 import { Checkbox } from "@/components/ui/checkbox";
-import { objToStringArr } from "@/lib/helper";
+import {
+  convertStringsToArray,
+  objToStringArr,
+  openInNewTab,
+} from "@/lib/helper";
 import { toast } from "sonner";
 import loader from "../../../../../public/assets/t3-loader.gif";
 import Image from "next/image";
-import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
+import { getCookie } from "cookies-next";
 
 type Props = {};
+
+const useDev = true;
+
+let apiUrl: string;
+
+if (useDev) {
+  apiUrl = "http://localhost:3000";
+} else {
+  apiUrl = "https://t3-next-dev.vercel.app";
+}
 
 export default function CreateJobCard({
   params,
 }: {
   params: { tempCarId: any };
 }) {
+  const pathname = usePathname();
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentCounter = searchParams.get("currentCounter");
-  const pathname = usePathname();
 
   const [currTempCar, setCurrTempCar] = useState<TempCar>();
   const [images, setImages] = useState<ImageObj[]>([]);
@@ -49,8 +64,6 @@ export default function CreateJobCard({
   const [sendToPartsManager, setSendToPartsManager] = useState(true);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-
-  const [jobCardPdfURL, setJobCardPdfURL] = useState("");
 
   const imageTypes: string[] = [
     "Fuel",
@@ -84,82 +97,85 @@ export default function CreateJobCard({
     const carImages = objToStringArr(images);
     console.log("Current Images - ", carImages);
 
+    // const jobCardPdfURL = await generateJobCardPDF({})
+
     if (currTempCar) {
+      const token = getCookie("user");
+      const parsedToken = JSON.parse(String(token));
+      const advisorEmail = parsedToken.email;
+
+      const purposeOfVisitAndAdvisors = convertStringsToArray(
+        currTempCar.purposeOfVisitAndAdvisors
+      );
+      const purposeOfVisit = purposeOfVisitAndAdvisors.find((pov: any) => {
+        if (pov.advisorEmail === advisorEmail) return true;
+      }).description;
+
+      console.log(purposeOfVisit);
+
       const tempJobCard = {
         carId: currTempCar.$id,
+        diagnosis: diagnosisStrings,
+        sendToPartsManager: true,
         carNumber: currTempCar.carNumber,
-        images: images,
-        carOdometer: carOdometer,
-        carFuel: carFuel,
-        diagnosis: carDiagnosis,
+        jobCardStatus: 0,
         customerName: customerName,
         customerPhone: customerPhone,
-        customerAddress: customerAddress,
-        sendToPartsManager: sendToPartsManager,
-        carsTableId: String(currTempCar.carsTableId),
         jobCardNumber: Number(currentCounter!),
+        images: carImages,
+        carFuel: carFuel,
+        carOdometer: carOdometer,
+        customerAddress: customerAddress,
+        purposeOfVisit: purposeOfVisit,
       };
 
-      // const jobCardPDF = generateJobCardPDF({{}, currTempCar})
-
-      let newJobCard = await createJobCard(
-        currTempCar.$id,
-        currTempCar.carNumber,
-        carImages,
-        carOdometer,
-        carFuel,
-        diagnosisStrings,
-        customerName,
-        customerPhone,
-        customerAddress,
-        sendToPartsManager,
-        String(currTempCar.carsTableId),
-        Number(currentCounter!),
-        jobCardPdfURL
-      );
-
-      if (newJobCard) {
-        toast("Job Card has been Created \u2705");
+      await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
+        method: "POST",
+        body: JSON.stringify({
+          tempJobCard,
+          currTempCar,
+        }),
+      }).then((result: any) => {
+        // Set a short timeout before refreshing the page
         setTimeout(() => {
-          router.push("/service");
-        }, 2000);
-      }
+          window.location.reload(); // Refreshes the page to get the latest data
+        }, 1000);
+
+        result.json().then((invoices: any) => {
+          invoices.map(async (jobCardPdfURL: any) => {
+            openInNewTab(jobCardPdfURL);
+
+            let newJobCard = await createJobCard(
+              currTempCar.$id,
+              currTempCar.carNumber,
+              carImages,
+              carOdometer,
+              carFuel,
+              diagnosisStrings,
+              customerName,
+              customerPhone,
+              customerAddress,
+              sendToPartsManager,
+              String(currTempCar.carsTableId),
+              Number(currentCounter!),
+              jobCardPdfURL
+            );
+
+            if (newJobCard) {
+              toast("Job Card has been Created \u2705");
+              setTimeout(() => {
+                router.push("/service");
+              }, 2000);
+            }
+          });
+        });
+      });
     }
     setIsButtonLoading((prev) => false);
   };
 
-  const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    // await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
-    await fetch(`https://t3-next-dev.vercel.app${pathname}/jobCardPDF`, {
-      method: "POST",
-      body: JSON.stringify({
-        jobCard,
-        car,
-      }),
-    }).then((result: any) => {
-      // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
-      }, 1000);
-
-      result.json().then((jobCard: any) => {
-        setJobCardPdfURL(jobCard);
-      });
-    });
-  };
-
-  const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <div className="flex flex-col w-[87%] lg:w-[90%] mt-32 lg:mt-10">
-      {/* Overlay to disable page */}
-      {isButtonLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <Image src={loader} width={100} height={100} alt="Loading" />
-        </div>
-      )}
       {!currTempCar ? (
         <PartsPageSkeleton />
       ) : (

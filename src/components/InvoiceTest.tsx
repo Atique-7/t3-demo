@@ -538,7 +538,7 @@ export const InvoicePDF = ({
                           {liabilityType == "Customer" ? (
                             <>{jobCard.customerName}</>
                           ) : (
-                            <>{insuranceDetails.policyProvider}</>
+                            <>{insuranceDetails.policyProvider || ""}</>
                           )}
                         </>
                       ) : (

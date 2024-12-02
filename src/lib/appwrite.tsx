@@ -186,6 +186,22 @@ export const createTempCar = async (
   }
 };
 
+export const getCarByCarNumber = async (carNumber: string) => {
+  try {
+    let result = await databases.listDocuments(
+      config.databaseId,
+      config.carsCollectionId,
+      [Query.equal("carNumber", carNumber), Query.orderDesc("$createdAt")]
+    );
+
+    console.log("FETCHED INVOICEs ", result);
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const createJobCard = async (
   carId: string,
   carNumber: string,

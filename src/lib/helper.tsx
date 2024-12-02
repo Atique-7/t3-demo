@@ -660,6 +660,22 @@ export const createTempPartZeroObj = (item: CurrentPart) => {
     return item;
   }
 };
+export const createTempLabourZeroObj = (item: CurrentLabour) => {
+  if (item) {
+    // (item.mrp = 0),
+    //   (item.subTotal = 0),
+    //   (item.totalTax = 0),
+    //   (item.amount = 0),
+    //   (item.cgstAmt = 0);
+    item.sgstAmt = 0;
+    item.mrp = 0;
+    item.subTotal = 0;
+    item.totalTax = 0;
+    item.cgstAmt = 0;
+
+    return item;
+  }
+};
 
 export const createTempLabourObj = (item: Labour) => {
   if (item) {
@@ -806,7 +822,7 @@ export const updateTempPartObjMRP = (
 };
 
 export const updateTempLabourObjMRP = (
-  currentLabourObj: CurrentPart,
+  currentLabourObj: CurrentLabour,
   mrp: number
 ) => {
   if (currentLabourObj && mrp) {

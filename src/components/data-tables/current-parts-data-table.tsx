@@ -152,15 +152,15 @@ export function CurrentPartsDataTable<TData, TValue>({
         setIsEdited(true);
       }
     } else {
-      const partNumberRow = row.getValue("partNumber");
-      const foundPart = parts?.find((a) => a.partNumber == partNumberRow);
-      const newMaxMRP = foundPart!.mrp * 1.25;
+      // const partNumberRow = row.getValue("partNumber");
+      // const foundPart = parts?.find((a) => a.partNumber == partNumberRow);
+      // const newMaxMRP = foundPart!.mrp * 1.25;
 
-      if (mrp > newMaxMRP) {
-        console.log({ foundPart, newMaxMRP });
-        toast("Price can only be increased upto 25%");
-        return;
-      }
+      // if (mrp > newMaxMRP) {
+      //   console.log({ foundPart, newMaxMRP });
+      //   toast("Price can only be increased upto 25%");
+      //   return;
+      // }
 
       if (toUpdateMRP) {
         updatedObj = updateTempPartObjMRP(toUpdateMRP, mrp);

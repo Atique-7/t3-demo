@@ -341,15 +341,15 @@ export function CurrentLabourDataTable<TData, TValue>({
         setIsEdited(true);
       }
     } else {
-      const labourCodeRow = row.getValue("labourCode");
-      const foundLabour = labour?.find((a) => a.labourCode == labourCodeRow);
-      const newMaxMRP = foundLabour!.mrp * 1.25;
+      // const labourCodeRow = row.getValue("labourCode");
+      // const foundLabour = labour?.find((a) => a.labourCode == labourCodeRow);
+      // const newMaxMRP = foundLabour!.mrp * 1.25;
 
-      if (mrp > newMaxMRP) {
-        console.log({ foundLabour, newMaxMRP });
-        toast("Price can only be increased upto 25%");
-        return;
-      }
+      // if (mrp > newMaxMRP) {
+      //   console.log({ foundLabour, newMaxMRP });
+      //   toast("Price can only be increased upto 25%");
+      //   return;
+      // }
 
       if (toUpdateMRP) {
         updatedObj = updateTempLabourObjMRP(toUpdateMRP, mrp);

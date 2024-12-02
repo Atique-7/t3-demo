@@ -574,9 +574,15 @@ export default function AddCarCards({}: Props) {
           </div>
           <Button
             color="#EF4444"
-            // disabled={
-            //   !(carMake != "" && carModel != "" && purposeOfVisit != "")
-            // }
+            disabled={
+              isButtonLoading ||
+              carMake === "" ||
+              carModel === "" ||
+              purposeOfVisitSelections.length === 0 ||
+              purposeOfVisitSelections.some(
+                (selection) => selection.advisorEmail === ""
+              )
+            }
             onClick={handleContinueEnterVehicle}
           >
             {isButtonLoading ? (

@@ -23,7 +23,7 @@ import { getCookie } from "cookies-next";
 
 type Props = {};
 
-const useDev = true;
+const useDev = false;
 
 let apiUrl: string;
 

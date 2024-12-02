@@ -113,63 +113,28 @@ export default function CreateJobCard({
 
       console.log(purposeOfVisit);
 
-      const tempJobCard = {
-        carId: currTempCar.$id,
-        diagnosis: diagnosisStrings,
-        sendToPartsManager: true,
-        carNumber: currTempCar.carNumber,
-        jobCardStatus: 0,
-        customerName: customerName,
-        customerPhone: customerPhone,
-        jobCardNumber: Number(currentCounter!),
-        images: carImages,
-        carFuel: carFuel,
-        carOdometer: carOdometer,
-        customerAddress: customerAddress,
-        purposeOfVisit: purposeOfVisit,
-      };
+      let newJobCard = await createJobCard(
+        currTempCar.$id,
+        currTempCar.carNumber,
+        carImages,
+        carOdometer,
+        carFuel,
+        diagnosisStrings,
+        customerName,
+        customerPhone,
+        customerAddress,
+        sendToPartsManager,
+        String(currTempCar.carsTableId),
+        Number(currentCounter!),
+        "jobCardPdfURL"
+      );
 
-      await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
-        method: "POST",
-        body: JSON.stringify({
-          tempJobCard,
-          currTempCar,
-        }),
-      }).then((result: any) => {
-        // Set a short timeout before refreshing the page
+      if (newJobCard) {
+        toast("Job Card has been Created \u2705");
         setTimeout(() => {
-          window.location.reload(); // Refreshes the page to get the latest data
-        }, 1000);
-
-        result.json().then((invoices: any) => {
-          invoices.map(async (jobCardPdfURL: any) => {
-            openInNewTab(jobCardPdfURL);
-
-            let newJobCard = await createJobCard(
-              currTempCar.$id,
-              currTempCar.carNumber,
-              carImages,
-              carOdometer,
-              carFuel,
-              diagnosisStrings,
-              customerName,
-              customerPhone,
-              customerAddress,
-              sendToPartsManager,
-              String(currTempCar.carsTableId),
-              Number(currentCounter!),
-              jobCardPdfURL
-            );
-
-            if (newJobCard) {
-              toast("Job Card has been Created \u2705");
-              setTimeout(() => {
-                router.push("/service");
-              }, 2000);
-            }
-          });
-        });
-      });
+          router.push("/service");
+        }, 2000);
+      }
     }
     setIsButtonLoading((prev) => false);
   };

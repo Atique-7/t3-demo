@@ -459,6 +459,36 @@ export const invoiceTypes = [
   { code: 3, description: "Quote" },
   { code: 4, description: "Pro-Forma Invoice" },
   { code: 5, description: "Tax Invoice" },
+  { code: 6, description: "Gate Pass" },
+];
+
+export const InsuranceinvoiceTypes = [
+  { code: 3, description: "Quote", name: "Quote" },
+  {
+    code: 4,
+    description: "Customer Pro-Forma Invoice",
+    type: "Customer",
+    name: "Pro-Forma Invoice",
+  },
+  {
+    code: 4,
+    description: "Insurance Pro-Forma Invoice",
+    type: "Insurance",
+    name: "Pro-Forma Invoice",
+  },
+  {
+    code: 5,
+    description: "Customer Tax Invoice",
+    type: "Customer",
+    name: "Tax Invoice",
+  },
+  {
+    code: 5,
+    description: "Insurance Tax Invoice",
+    type: "Insurance",
+    name: "Tax Invoice",
+  },
+  { code: 6, description: "Gate Pass", name: "Gate Pass" },
 ];
 
 export const getAllCarMakes = () => {

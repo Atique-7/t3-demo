@@ -23,6 +23,7 @@ import {
   amtHelperWithoutTax,
   calcAllAmts,
   createTaxObj,
+  InsuranceinvoiceTypes,
   invoiceTypes,
   jobCardStatusKey,
   objToStringArr,
@@ -111,6 +112,7 @@ export default function jobCard({
   const [policyNumber, setPolicyNumber] = useState<string>();
 
   const [isInsuranceDetails, setIsInsuranceDetails] = useState(false);
+  const [isInsurance, setIsInsurance] = useState(false);
 
   const [isEdited, setIsEdited] = useState(false);
 
@@ -190,6 +192,22 @@ export default function jobCard({
       } else {
         setIsInsuranceDetails(false);
       }
+
+      const foundIndexParts = prevParts.findIndex(
+        (part: CurrentPart) =>
+          part.insurancePercentage && part.insurancePercentage != 0
+      );
+
+      const foundIndexLabour = prevLabour.findIndex(
+        (work: CurrentLabour) =>
+          work.insurancePercentage && work.insurancePercentage != 0
+      );
+
+      const isInsuranceConst = foundIndexParts != -1 || foundIndexLabour != -1;
+
+      console.log("IS INSURANCE - ", foundIndexParts, foundIndexLabour);
+
+      setIsInsurance(isInsuranceConst);
 
       console.log("THIS IS THE PURPOSE OF VISIT - ", jobCardObj.purposeOfVisit);
       const series = jobCardObj.purposeOfVisit === "Bodyshop" ? "BDS" : "SER";
@@ -512,6 +530,36 @@ export default function jobCard({
     }
   };
 
+  const handleInsuranceInvoicePDF = (selectedValue: any) => {
+    console.log("SELECTED PDF - ", selectedValue);
+
+    const selectedInvoice = InsuranceinvoiceTypes.find(
+      (a) => a.description == selectedValue
+    );
+    if (selectedInvoice) {
+      console.log("SELECTED OBJECT - ", selectedInvoice);
+
+      let currentInvoiceType = selectedInvoice?.name;
+      let currentInvoiceFor = selectedInvoice?.type;
+
+      if (jobCardInvoices) {
+        const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
+          (invoice: Invoice) =>
+            invoice.invoiceType == currentInvoiceType &&
+            invoice.insuranceInvoiceType == currentInvoiceFor
+        );
+        filteredInvoices?.sort(
+          (a, b) =>
+            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+        );
+        const selectedInvoice = filteredInvoices[0];
+
+        console.log("FILTE$RED INVOICES", selectedInvoice);
+        openInNewTab(selectedInvoice.invoiceUrl);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col w-[90%] mt-5 space-y-8">
       {/* Overlay to disable page */}
@@ -546,29 +594,59 @@ export default function jobCard({
               </div>
               {currentJobCardStatus! > 2 && !disable && (
                 <div>
-                  <Select
-                    onValueChange={(value) => {
-                      handleInvoicePDF(value);
-                    }}
-                  >
-                    <SelectTrigger className="w-full p-2 border border-red-500 text-red-500 rounded-lg">
-                      <SelectValue placeholder="Download" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full">
-                      {invoiceTypes.map((invoiceType, index) => (
-                        <div key={index}>
-                          {invoiceType.code <= currentJobCardStatus! && (
-                            <SelectItem
-                              key={index}
-                              value={invoiceType.description}
-                            >
-                              {invoiceType.description}
-                            </SelectItem>
-                          )}
-                        </div>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {isInsurance ? (
+                    <>
+                      <Select
+                        onValueChange={(value) => {
+                          handleInsuranceInvoicePDF(value);
+                        }}
+                      >
+                        <SelectTrigger className="w-full p-2 border border-red-500 text-red-500 rounded-lg">
+                          <SelectValue placeholder="Download" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          {InsuranceinvoiceTypes.map((invoiceType, index) => (
+                            <div key={index}>
+                              {invoiceType.code <= currentJobCardStatus! && (
+                                <SelectItem
+                                  key={index}
+                                  value={invoiceType.description}
+                                >
+                                  {invoiceType.description}
+                                </SelectItem>
+                              )}
+                            </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : (
+                    <>
+                      <Select
+                        onValueChange={(value) => {
+                          handleInvoicePDF(value);
+                        }}
+                      >
+                        <SelectTrigger className="w-full p-2 border border-red-500 text-red-500 rounded-lg">
+                          <SelectValue placeholder="Download" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          {invoiceTypes.map((invoiceType, index) => (
+                            <div key={index}>
+                              {invoiceType.code <= currentJobCardStatus! && (
+                                <SelectItem
+                                  key={index}
+                                  value={invoiceType.description}
+                                >
+                                  {invoiceType.description}
+                                </SelectItem>
+                              )}
+                            </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  )}
                 </div>
               )}
 

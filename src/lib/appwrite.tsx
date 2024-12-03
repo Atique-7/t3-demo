@@ -15,8 +15,6 @@ import {
   convertToStrings,
   purposeOfVisits,
 } from "./helper";
-import { Part } from "./definitions";
-import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -53,11 +51,8 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
-export const loginkUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string) => {
   try {
-    // Fetch all active sessions for the current user
-    const sessions = await account.listSessions();
-
     // Fetch current public IP address
     const currentIp = await fetch("https://api64.ipify.org?format=json")
       .then((res) => res.json())
@@ -67,27 +62,44 @@ export const loginkUser = async (email: string, password: string) => {
     // Log the fetched IP for debugging
     console.log("Current IP address:", currentIp);
 
-    // Track whether a matching session was found
-    let matchingSessionFound = false;
+    try {
+      // Fetch all active sessions for the current user
+      const sessions = await account.listSessions();
+      console.log("Existing sessions:", sessions);
 
-    // Check for sessions with the provided email and IP address
-    for (const session of sessions.sessions) {
-      if (
-        session.providerUid === email && // Match the session email
-        session.ip === currentIp // Match the session IP
-      ) {
-        matchingSessionFound = true;
-        console.log("Matching session found:", session);
+      let matchingSessionFound = false;
 
-        // Delete the matching session
-        console.log("Deleting session:", session.$id);
-        await account.deleteSession(session.$id);
-        break; // Exit the loop after finding and deleting the matching session
+      // Check for sessions with the provided email and IP address
+      for (const session of sessions.sessions) {
+        if (
+          session.providerUid === email && // Match the session email
+          session.ip === currentIp // Match the session IP
+        ) {
+          matchingSessionFound = true;
+          console.log("Matching session found:", session);
+
+          // Delete the matching session
+          console.log("Deleting session:", session.$id);
+          await account.deleteSession(session.$id);
+          break; // Exit the loop after finding and deleting the matching session
+        }
       }
-    }
 
-    if (!matchingSessionFound) {
-      console.log("No matching session found for the provided email and IP.");
+      if (!matchingSessionFound) {
+        console.log("No matching session found for the provided email and IP.");
+      }
+    } catch (sessionError: any) {
+      // Handle scope error or other issues with session listing
+      if (
+        sessionError.message?.includes("missing scope") ||
+        sessionError.code === 401
+      ) {
+        console.warn(
+          "Session management failed due to scope issues, proceeding with new session creation."
+        );
+      } else {
+        throw sessionError; // Rethrow if it's not a scope issue
+      }
     }
 
     // Create a new session after clearing old ones (or if no matching session exists)
@@ -109,7 +121,7 @@ export const loginkUser = async (email: string, password: string) => {
   }
 };
 
-export const loginUser = async (email: any, password: any) => {
+export const logidnUser = async (email: any, password: any) => {
   try {
     const sessionDetails = await account.createEmailPasswordSession(
       email,
@@ -155,14 +167,8 @@ export const listSessions = async () => {
 
 export const logoutUser = async () => {
   try {
-    const sessions = await account.listSessions();
-    if (sessions.total === 0) {
-      console.log("No active sessions to delete.");
-      return { success: true, message: "No active sessions." };
-    }
-
     const result = await account.deleteSessions();
-    return { success: true, sessions };
+    return { success: true, result };
   } catch (error: any) {
     console.error("Logout failed:", error);
     return { success: false, message: error.message };

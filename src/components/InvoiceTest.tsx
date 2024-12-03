@@ -260,6 +260,8 @@ export const InvoicePDF = ({
 
   const taxObj = createTaxObj(parts, labour);
 
+  console.log("INVOICE TYPE - ", invoiceType);
+
   console.log("THESE ARE THE TAXES - ", taxObj);
 
   parts.map((part: CurrentPart) => {
@@ -670,18 +672,23 @@ export const InvoicePDF = ({
                 <View style={styles.tableTitleRow}>
                   <Text style={styles.tableTitle}>Invoice Details</Text>
                 </View>
-                <View style={styles.tableRow}>
-                  <View style={styles.tableCell}>
-                    <Text
-                      style={[styles.tableData, styles.tableDataEmphasized]}
-                    >
-                      Invoice No:
-                    </Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text style={styles.tableData}>{invoiceNumber}</Text>
-                  </View>
-                </View>
+                {invoiceType == "Tax Invoice" && (
+                  <>
+                    <View style={styles.tableRow}>
+                      <View style={styles.tableCell}>
+                        <Text
+                          style={[styles.tableData, styles.tableDataEmphasized]}
+                        >
+                          Invoice No:
+                        </Text>
+                      </View>
+                      <View style={styles.tableCell}>
+                        <Text style={styles.tableData}>{invoiceNumber}</Text>
+                      </View>
+                    </View>
+                  </>
+                )}
+
                 <View style={styles.tableRow}>
                   <View style={styles.tableCell}>
                     <Text
@@ -1194,33 +1201,40 @@ export const InvoicePDF = ({
                   (Authorized Signatory)
                 </Text>
               </View>
-              <View
-                style={[
-                  styles.signBlock,
-                  { marginTop: 20, alignSelf: "flex-end" },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.signName,
-                    { marginTop: 60, alignSelf: "flex-end" },
-                  ]}
-                >
-                  CHAMUNDA MOTORS PVT. LTD.
-                </Text>
-                <View>
-                  <Text style={styles.signAddress}> PUNJAB NATIONAL BANK</Text>
-                  <Text style={styles.signAddress}>
-                    S. V. ROAD BORIVALI - WEST
-                  </Text>
-                  <Text style={styles.signAddress}>
-                    Ac No. : 02874010000070
-                  </Text>
-                  <Text style={styles.signAddress}>
-                    IFSC CODE : PUNB0028710
-                  </Text>
-                </View>
-              </View>
+              {invoiceType == "Tax Invoice" && (
+                <>
+                  <View
+                    style={[
+                      styles.signBlock,
+                      { marginTop: 20, alignSelf: "flex-end" },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.signName,
+                        { marginTop: 60, alignSelf: "flex-end" },
+                      ]}
+                    >
+                      CHAMUNDA MOTORS PVT. LTD.
+                    </Text>
+                    <View>
+                      <Text style={styles.signAddress}>
+                        {" "}
+                        PUNJAB NATIONAL BANK
+                      </Text>
+                      <Text style={styles.signAddress}>
+                        S. V. ROAD BORIVALI - WEST
+                      </Text>
+                      <Text style={styles.signAddress}>
+                        Ac No. : 02874010000070
+                      </Text>
+                      <Text style={styles.signAddress}>
+                        IFSC CODE : PUNB0028710
+                      </Text>
+                    </View>
+                  </View>
+                </>
+              )}
             </View>
           </Page>
         </>

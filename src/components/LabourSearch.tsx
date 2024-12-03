@@ -26,8 +26,15 @@ export default function LabourSearch({
     if (items) {
       const searchResults = items.filter((item) => {
         const value: any = item.labourCode;
+        const labourCode = item.labourCode;
+        const labourName = item.labourName;
         if (typeof value === "string") {
-          return value.toLowerCase().includes(searchTerm.toLowerCase());
+          return (
+            (typeof labourCode === "string" &&
+              labourCode.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (typeof labourName === "string" &&
+              labourName.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
         }
         return false; // Handle non-string values as needed
       });

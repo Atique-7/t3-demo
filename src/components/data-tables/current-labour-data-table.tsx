@@ -650,7 +650,7 @@ export function CurrentLabourDataTable<TData, TValue>({
               disabled={disable}
             >
               <div className="flex flex-row space-x-3 text-red-500 items-center">
-                <div>+ Add Parts</div>
+                <div>+ Add Labour</div>
               </div>
             </Button>
           )}

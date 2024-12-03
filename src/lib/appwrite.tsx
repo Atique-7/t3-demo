@@ -122,7 +122,8 @@ export const loginUser = async (email: any, password: any) => {
     return { userDetails, sessionDetails };
   } catch (error: any) {
     console.log("THIS IS THE ERROR", error.message);
-    return null;
+    const errorMsg = error.message;
+    return { errorMsg };
   }
 };
 

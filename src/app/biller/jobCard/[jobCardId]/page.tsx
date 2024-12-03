@@ -97,6 +97,7 @@ export default function jobCard({
   disable: boolean;
 }) {
   const pathname = usePathname();
+
   console.log("THIS IS THE PATHNAME - ", pathname);
 
   const [jobCard, setJobCard] = useState<JobCard | null>(null); // Properly typed state

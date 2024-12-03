@@ -19,6 +19,7 @@ function Login({}: Props) {
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isUserPresent, setIsUserPresent] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const login = async () => {
     setIsSigningIn(true);
@@ -26,7 +27,7 @@ function Login({}: Props) {
 
     try {
       const user = await loginUser(email, password);
-      if (user) {
+      if (user?.sessionDetails) {
         console.log("USER HAI");
         const userDetails = user?.userDetails;
 
@@ -62,6 +63,7 @@ function Login({}: Props) {
       } else {
         console.log("USER NAHI HAI");
         console.log(user);
+        setErrorMessage(user.errorMsg);
         setIsUserPresent(false);
       }
     } catch (error) {
@@ -113,7 +115,7 @@ function Login({}: Props) {
           <></>
         ) : (
           <>
-            <div className="text-red-600">Please Check Credentials Again</div>
+            <div className="text-red-600">{errorMessage}</div>
           </>
         )}
       </div>

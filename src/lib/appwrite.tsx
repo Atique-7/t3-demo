@@ -53,7 +53,7 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
-export const loginUser = async (email: string, password: string) => {
+export const loginkUser = async (email: string, password: string) => {
   try {
     // Fetch all active sessions for the current user
     const sessions = await account.listSessions();
@@ -109,22 +109,22 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-// export const loginUsejr = async (email: any, password: any) => {
-//   try {
-//     const sessionDetails = await account.createEmailPasswordSession(
-//       email,
-//       password
-//     );
-//     const userDetails = await account.get();
-//     const sesh = await account.listSessions();
-//     console.log(sesh);
+export const loginUser = async (email: any, password: any) => {
+  try {
+    const sessionDetails = await account.createEmailPasswordSession(
+      email,
+      password
+    );
+    const userDetails = await account.get();
+    const sesh = await account.listSessions();
+    console.log(sesh);
 
-//     return { userDetails, sessionDetails };
-//   } catch (error: any) {
-//     console.log("THIS IS THE ERROR", error.message);
-//     return null;
-//   }
-// };
+    return { userDetails, sessionDetails };
+  } catch (error: any) {
+    console.log("THIS IS THE ERROR", error.message);
+    return null;
+  }
+};
 
 export const listAllUsers = async () => {
   const response = await functions.createExecution("6731d19d00250e7e0b6f");

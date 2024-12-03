@@ -501,7 +501,7 @@ export default function AddCarCards({}: Props) {
                   {/* Aligning radio buttons and labels */}
                   <div className="flex flex-col mb-2">
                     {pov.code === 1 ? (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 mb-44">
                         <Checkbox
                           id={`checkbox-${pov.code}`}
                           className="mr-2 cursor-pointer"

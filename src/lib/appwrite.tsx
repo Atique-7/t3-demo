@@ -53,20 +53,78 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
-export const loginUser = async (email: any, password: any) => {
+export const loginUser = async (email: string, password: string) => {
   try {
+    // Fetch all active sessions for the current user
+    const sessions = await account.listSessions();
+
+    // Fetch current public IP address
+    const currentIp = await fetch("https://api64.ipify.org?format=json")
+      .then((res) => res.json())
+      .then((data) => data.ip)
+      .catch(() => null);
+
+    // Log the fetched IP for debugging
+    console.log("Current IP address:", currentIp);
+
+    // Track whether a matching session was found
+    let matchingSessionFound = false;
+
+    // Check for sessions with the provided email and IP address
+    for (const session of sessions.sessions) {
+      if (
+        session.providerUid === email && // Match the session email
+        session.ip === currentIp // Match the session IP
+      ) {
+        matchingSessionFound = true;
+        console.log("Matching session found:", session);
+
+        // Delete the matching session
+        console.log("Deleting session:", session.$id);
+        await account.deleteSession(session.$id);
+        break; // Exit the loop after finding and deleting the matching session
+      }
+    }
+
+    if (!matchingSessionFound) {
+      console.log("No matching session found for the provided email and IP.");
+    }
+
+    // Create a new session after clearing old ones (or if no matching session exists)
     const sessionDetails = await account.createEmailPasswordSession(
       email,
       password
     );
-    const userDetails = await account.get();
+    console.log("New session created:", sessionDetails);
 
+    // Fetch and log user details
+    const userDetails = await account.get();
+    console.log("User details:", userDetails);
     return { userDetails, sessionDetails };
   } catch (error: any) {
-    console.log("THIS IS THE ERROR", error.message);
-    return null;
+    console.error("Login failed:", error.message);
+    throw new Error(
+      error.message || "An unexpected error occurred during login."
+    );
   }
 };
+
+// export const loginUsejr = async (email: any, password: any) => {
+//   try {
+//     const sessionDetails = await account.createEmailPasswordSession(
+//       email,
+//       password
+//     );
+//     const userDetails = await account.get();
+//     const sesh = await account.listSessions();
+//     console.log(sesh);
+
+//     return { userDetails, sessionDetails };
+//   } catch (error: any) {
+//     console.log("THIS IS THE ERROR", error.message);
+//     return null;
+//   }
+// };
 
 export const listAllUsers = async () => {
   const response = await functions.createExecution("6731d19d00250e7e0b6f");
@@ -85,13 +143,29 @@ export const listSessions = async () => {
   }
 };
 
+// export const logoutUser = async () => {
+//   try {
+//     const result = await account.deleteSessions();
+//     return result;
+//   } catch (error: any) {
+//     console.log(error.message);
+//     return null;
+//   }
+// };
+
 export const logoutUser = async () => {
   try {
+    const sessions = await account.listSessions();
+    if (sessions.total === 0) {
+      console.log("No active sessions to delete.");
+      return { success: true, message: "No active sessions." };
+    }
+
     const result = await account.deleteSessions();
-    return result;
+    return { success: true, sessions };
   } catch (error: any) {
-    console.log(error.message);
-    return null;
+    console.error("Logout failed:", error);
+    return { success: false, message: error.message };
   }
 };
 

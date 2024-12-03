@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import Image from "next/image";
 import T3_Full from "../../public/assets/t3_cars_full_logo.png";
 import { setCookie, deleteCookie } from "cookies-next";
 // import { loginUser, listSessions, logoutUser } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
 import PrimaryButton from "./PrimaryButton";
-import { listAllUsers, loginUser, logoutUser } from "@/lib/appwrite";
+import { account, listAllUsers, loginUser, logoutUser } from "@/lib/appwrite";
 
 // import { checkUserAccess } from "@/helpers/auth";
 
@@ -21,61 +21,56 @@ function Login({}: Props) {
   const [isUserPresent, setIsUserPresent] = useState(true);
 
   const login = async () => {
-    setIsSigningIn((prev) => true);
-    setIsUserPresent((prev) => true);
+    setIsSigningIn(true);
+    setIsUserPresent(true);
 
-    const user = await loginUser(email, password);
+    try {
+      const user = await loginUser(email, password);
+      if (user) {
+        console.log("USER HAI");
+        const userDetails = user?.userDetails;
 
-    if (user) {
-      console.log("USER HAI");
+        console.log("THESE ARE THE USER DETAILS - ", userDetails);
+        setCookie("user", JSON.stringify(userDetails));
+        console.log("COOKIE SET", userDetails);
 
-      const userDetails = user?.userDetails;
+        const userAccess = userDetails.labels[0];
+        let redirectURL = "/";
 
-      console.log("THESE ARE THE USER DETAILS - ", userDetails);
-      setCookie("user", JSON.stringify(userDetails));
-      console.log("COOKIE SET", userDetails);
+        switch (userAccess) {
+          case "parts":
+            redirectURL = "/parts";
+            break;
+          case "biller":
+            redirectURL = "/biller";
+            break;
+          case "security":
+            redirectURL = "/security";
+            break;
+          case "service":
+            redirectURL = "/service";
+            break;
+          case "admin":
+            redirectURL = "/admin";
+            break;
+          default:
+            break;
+        }
 
-      const userAccess = userDetails.labels[0];
-      //const allUsers = await listAllUsers();
-
-      let redirectURL = "/";
-
-      switch (userAccess) {
-        case "parts":
-          redirectURL = "/parts";
-          break;
-        case "biller":
-          redirectURL = "/biller";
-          break;
-
-        case "security":
-          redirectURL = "/security";
-          break;
-        case "service":
-          redirectURL = "/service";
-          break;
-        case "admin":
-          redirectURL = "/admin";
-          break;
-
-        default:
-          break;
+        console.log("REDIRECTING TO - ", redirectURL);
+        router.push(redirectURL);
+      } else {
+        console.log("USER NAHI HAI");
+        console.log(user);
+        setIsUserPresent(false);
       }
-
-      console.log("REDIRECTING TO - ", redirectURL);
-      router.push(redirectURL);
-      // setIsSigningIn((prev) => false);
-    } else {
-      console.log("USER NAHI HAI");
-      setIsUserPresent((prev) => false);
-      setIsSigningIn((prev) => false);
+    } catch (error) {
+      console.error("Login failed:", error);
+      setIsUserPresent(false);
+    } finally {
+      setIsSigningIn(false);
     }
   };
-
-  // const logout = async () => {
-  //   await logoutUser();
-  //   deleteCookie("userId");
-  // };
 
   return (
     <div className="flex flex-col justify-center items-center h-dvh">

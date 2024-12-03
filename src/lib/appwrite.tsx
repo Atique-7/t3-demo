@@ -114,10 +114,12 @@ export const loginUser = async (email: string, password: string) => {
     console.log("User details:", userDetails);
     return { userDetails, sessionDetails };
   } catch (error: any) {
-    console.error("Login failed:", error.message);
-    throw new Error(
-      error.message || "An unexpected error occurred during login."
-    );
+    const errorMsg = error.message;
+    return { errorMsg };
+    // console.error("Login failed:", error.message);
+    // throw new Error(
+    //   error.message || "An unexpected error occurred during login."
+    // );
   }
 };
 

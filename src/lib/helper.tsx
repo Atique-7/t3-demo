@@ -221,6 +221,7 @@ export const carMakeModels = [
       "Fortuner",
       "Fortuner TRD",
       "Glanza",
+      "Innova Old",
       "Innova Crysta",
       "Innova Crysta Leadership Edition",
       "Urban Cruiser",

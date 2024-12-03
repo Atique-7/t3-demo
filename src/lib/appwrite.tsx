@@ -616,7 +616,7 @@ export const getAllLabour = async () => {
     let result = await databases.listDocuments(
       config.databaseId,
       config.labourCollectionId,
-      []
+      [Query.limit(999999)]
     );
     return result;
   } catch (error: any) {

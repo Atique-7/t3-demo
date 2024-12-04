@@ -212,7 +212,15 @@ export const carMakeModels = [
   },
   {
     company: "Tata",
-    models: ["Altroz", "Harrier", "Nexon", "Nexon EV", "Tiago", "Tigor"],
+    models: [
+      "Altroz",
+      "Harrier",
+      "Nexon",
+      "Nexon EV",
+      "Tiago",
+      "Tigor",
+      "Punch",
+    ],
   },
   {
     company: "Toyota",

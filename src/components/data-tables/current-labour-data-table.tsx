@@ -135,7 +135,7 @@ export function CurrentLabourDataTable<TData, TValue>({
       return;
     }
 
-    if (Number(discount) > 15) {
+    if (Number(discount) > 100) {
       toast("Discount More than 15% is not allowed");
       return;
     }
@@ -170,7 +170,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleDiscount = (row: any, discount: number) => {
-    if (discount > 15) {
+    if (discount > 100) {
       toast("Discount more than 15% is not allowed");
       return;
     }

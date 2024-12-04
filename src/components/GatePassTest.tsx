@@ -319,6 +319,16 @@ export const GatePassPDF = ({
                 <Text style={styles.tableData}>{jobCard.amount}</Text>
               </View>
             </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                  Gate Pass No. :
+                </Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableData}>P{jobCard.jobCardNumber}</Text>
+              </View>
+            </View>
           </View>
           <View style={styles.detailTable}>
             <View style={styles.tableTitleRow}>
@@ -352,16 +362,6 @@ export const GatePassPDF = ({
               </View>
               <View style={styles.tableCell}>
                 <Text style={styles.tableData}>{car?.carModel}</Text>
-              </View>
-            </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
-                  Invoice No:
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text style={styles.tableData}>{invoiceNumber}</Text>
               </View>
             </View>
             <View style={styles.tableRow}>

@@ -48,6 +48,7 @@ export interface JobCard {
   partsTotalPostTax: number;
   labourTotalPreTax: number;
   labourTotalPostTax: number;
+  gatePassPDF: string;
   subTotal: number;
   totalDiscountAmt: number;
   amount: number;

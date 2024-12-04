@@ -518,16 +518,23 @@ export default function jobCard({
 
   const handleInvoicePDF = (selectedValue: string) => {
     console.log("SELECTED PDF - ", selectedValue);
-    if (jobCardInvoices) {
-      const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
-        (invoice: Invoice) => invoice.invoiceType == selectedValue
-      );
-      filteredInvoices?.sort(
-        (a, b) =>
-          new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-      );
-      const selectedInvoice = filteredInvoices[0];
-      openInNewTab(selectedInvoice.invoiceUrl);
+    if (selectedValue == "Gate Pass") {
+      if (jobCard) {
+        console.log("gatePass PDF = ", jobCard.gatePassPDF);
+        openInNewTab(jobCard.gatePassPDF);
+      }
+    } else {
+      if (jobCardInvoices) {
+        const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
+          (invoice: Invoice) => invoice.invoiceType == selectedValue
+        );
+        filteredInvoices?.sort(
+          (a, b) =>
+            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+        );
+        const selectedInvoice = filteredInvoices[0];
+        openInNewTab(selectedInvoice.invoiceUrl);
+      }
     }
   };
 

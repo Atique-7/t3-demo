@@ -199,6 +199,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  signBlock: {
+    display: "flex",
+    flexDirection: "column",
+    width: "40%",
+  },
+  signName: {
+    fontSize: 12,
+    fontFamily: "Open Sans",
+    fontWeight: "black",
+    marginTop: 20,
+    // alignSelf: "flex-end",
+  },
+  signAddress: {
+    fontSize: 12,
+    fontFamily: "Open Sans",
+    fontWeight: "thin",
+    // marginTop: 60,
+    alignSelf: "flex-end",
+  },
+
+  signFooter: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    // marginBottom: 20,
+  },
 });
 
 export const GatePassPDF = ({
@@ -281,6 +309,16 @@ export const GatePassPDF = ({
                 </Text>
               </View>
             </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                  Invoice Amount:
+                </Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableData}>{jobCard.amount}</Text>
+              </View>
+            </View>
           </View>
           <View style={styles.detailTable}>
             <View style={styles.tableTitleRow}>
@@ -316,6 +354,41 @@ export const GatePassPDF = ({
                 <Text style={styles.tableData}>{car?.carModel}</Text>
               </View>
             </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                  Invoice No:
+                </Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableData}>{invoiceNumber}</Text>
+              </View>
+            </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text style={[styles.tableData, styles.tableDataEmphasized]}>
+                  Job Card No:
+                </Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableData}>{jobCard.jobCardNumber}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View style={styles.addressRow}>
+          <View style={[styles.signBlock, { marginTop: 20 }]}>
+            <Text style={[styles.signName, { marginTop: 60 }]}>
+              For CHAMUNDA MOTORS PVT. LTD.
+            </Text>
+            <Text
+              style={[
+                styles.signAddress,
+                { marginTop: 60, alignSelf: "flex-start" },
+              ]}
+            >
+              (Authorized Signatory)
+            </Text>
           </View>
         </View>
       </Page>

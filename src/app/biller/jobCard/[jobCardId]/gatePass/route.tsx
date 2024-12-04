@@ -31,6 +31,7 @@ export async function POST(
       currentLabour,
       currentJobCardStatus,
       invoiceCounter,
+      invoiceCode,
     } = await request.json();
 
     console.log(
@@ -52,7 +53,7 @@ export async function POST(
         car={car}
         currentDate={new Date()}
         invoiceType={"Gate Pass"}
-        invoiceNumber={invoiceCounter}
+        invoiceNumber={invoiceCode}
       />
     );
 

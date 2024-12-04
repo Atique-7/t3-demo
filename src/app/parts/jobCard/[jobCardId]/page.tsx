@@ -74,7 +74,11 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     console.log("Current Parts - ", currentParts);
     const parts = objToStringArr(currentParts);
 
-    if (jobCard && jobCard.jobCardStatus !== undefined && jobCard.jobCardStatus < 2) {
+    if (
+      jobCard &&
+      jobCard.jobCardStatus !== undefined &&
+      jobCard.jobCardStatus < 6
+    ) {
       const isDone = await updateJobCardById(
         params.jobCardId,
         parts,
@@ -158,13 +162,15 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
           <div className="text-xl">
             <CurrentPartsDataTable
-                columns={currentPartsColumns}
-                data={currentParts}
-                currentParts={currentParts}
-                parts={parts}
-                setCurrentParts={setCurrentParts}
-                setIsEdited={setIsEdited}
-                user={user} isInsuranceDetails={false}            />
+              columns={currentPartsColumns}
+              data={currentParts}
+              currentParts={currentParts}
+              parts={parts}
+              setCurrentParts={setCurrentParts}
+              setIsEdited={setIsEdited}
+              user={user}
+              isInsuranceDetails={false}
+            />
           </div>
         </>
       )}

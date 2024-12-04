@@ -364,6 +364,8 @@ export function CurrentPartsDataTable<TData, TValue>({
     },
   });
 
+  console.log("PRINTING TABLE ROWS - ", table.getCoreRowModel().rows);
+
   return (
     <div>
       <div className="flex flex-col rounded-md border">
@@ -488,8 +490,8 @@ export function CurrentPartsDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+            {table.getCoreRowModel().rows?.length ? (
+              table.getCoreRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}

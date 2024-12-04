@@ -51,6 +51,42 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
+// Function to check if there is an active session
+export const checkActiveSession = async () => {
+  try {
+    const session = await account.getSession("current"); // Get the current session
+    console.log("CURRENT SESSION", session);
+    return session !== null; // Return true if there is an active session
+  } catch (error: any) {
+    // If there's an error (e.g., no active session), handle it appropriately
+    if (error.code === 401) {
+      return false; // No active session
+    }
+    throw error; // Re-throw other unexpected errors
+  }
+};
+
+// Function to delete all sessions for the current user
+export const deleteSessions = async () => {
+  try {
+    // Get the list of all sessions
+    const sessions = await account.listSessions();
+    console.log(sessions);
+
+    // Delete each session
+    await Promise.all(
+      sessions.sessions.map(async (session: { $id: any }) => {
+        await account.deleteSession(session.$id);
+      })
+    );
+
+    console.log("All sessions deleted successfully");
+  } catch (error: any) {
+    console.error("Error deleting sessions:", error.message);
+    throw error; // Re-throw the error for further handling
+  }
+};
+
 export const loginUser = async (email: string, password: string) => {
   try {
     // Fetch current public IP address
@@ -98,6 +134,16 @@ export const loginUser = async (email: string, password: string) => {
           "Session management failed due to scope issues, proceeding with new session creation."
         );
       } else {
+        try {
+          // Try getting current session.
+          const activeSession = await checkActiveSession();
+          if (activeSession) {
+            // Delete the active sessions if one exists
+            await deleteSessions();
+          }
+        } catch (error: any) {
+          throw error;
+        }
         throw sessionError; // Rethrow if it's not a scope issue
       }
     }

@@ -89,6 +89,11 @@ export const deleteSessions = async () => {
 
 export const loginUser = async (email: string, password: string) => {
   try {
+    const activeSession = await checkActiveSession();
+    if (activeSession) {
+      // Delete the active sessions if one exists
+      await deleteSessions();
+    }
     // Fetch current public IP address
     const currentIp = await fetch("https://api64.ipify.org?format=json")
       .then((res) => res.json())
@@ -134,16 +139,6 @@ export const loginUser = async (email: string, password: string) => {
           "Session management failed due to scope issues, proceeding with new session creation."
         );
       } else {
-        try {
-          // Try getting current session.
-          const activeSession = await checkActiveSession();
-          if (activeSession) {
-            // Delete the active sessions if one exists
-            await deleteSessions();
-          }
-        } catch (error: any) {
-          throw error;
-        }
         throw sessionError; // Rethrow if it's not a scope issue
       }
     }

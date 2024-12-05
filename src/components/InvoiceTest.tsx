@@ -592,7 +592,7 @@ export const InvoicePDF = ({
                           )}
                         </>
                       ) : (
-                        <>{jobCard.customerName}</>
+                        <>{jobCard.customerAddress}</>
                       )}
                     </Text>
                   </View>

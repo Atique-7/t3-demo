@@ -79,7 +79,7 @@ import {
 
 // Define the structure for the Car object
 
-const useDev = false;
+const useDev = true;
 
 let apiUrl: string;
 

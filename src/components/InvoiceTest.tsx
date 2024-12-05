@@ -248,6 +248,9 @@ export const InvoicePDF = ({
   let partsSubtotal = 0;
   let labourSubtotal = 0;
 
+  let partsDiscount = 0;
+  let labourDiscount = 0;
+
   let totalTax = 0;
   let totalDiscount = 0;
 
@@ -330,10 +333,12 @@ export const InvoicePDF = ({
             part.discountAmtCust = splitPartDiscAmt.customerAmt;
 
             totalDiscount = totalDiscount + part.discountAmtCust;
+            partsDiscount = partsDiscount + part.discountAmtCust;
           } else {
             part.discountAmtIns = splitPartDiscAmt.insuranceAmt;
 
             totalDiscount = totalDiscount + part.discountAmtIns;
+            partsDiscount = partsDiscount + part.discountAmtIns;
           }
         }
       } else {
@@ -351,6 +356,7 @@ export const InvoicePDF = ({
             part.discountPercentage != 0
           ) {
             totalDiscount = totalDiscount + part.discountAmt;
+            partsDiscount = partsDiscount + part.discountAmt;
           }
         }
       }
@@ -366,6 +372,7 @@ export const InvoicePDF = ({
         part.discountPercentage != 0
       ) {
         totalDiscount = totalDiscount + part.discountAmt;
+        partsDiscount = partsDiscount + part.discountAmt;
       }
     }
   });
@@ -438,10 +445,12 @@ export const InvoicePDF = ({
             work.discountAmtCust = splitWorkDiscAmt.customerAmt;
 
             totalDiscount = totalDiscount + work.discountAmtCust;
+            labourDiscount = labourDiscount + work.discountAmt;
           } else {
             work.discountAmtIns = splitWorkDiscAmt.insuranceAmt;
 
             totalDiscount = totalDiscount + work.discountAmtIns;
+            labourDiscount = labourDiscount + work.discountAmtIns;
           }
         } else {
           // console.log("NOT REGISTERING");
@@ -460,6 +469,7 @@ export const InvoicePDF = ({
             work.discountPercentage != 0
           ) {
             totalDiscount = totalDiscount + work.discountAmt;
+            labourDiscount = labourDiscount + work.discountAmt;
           }
         }
       }
@@ -475,6 +485,7 @@ export const InvoicePDF = ({
         work.discountPercentage != 0
       ) {
         totalDiscount = totalDiscount + work.discountAmt;
+        labourDiscount = labourDiscount + work.discountAmt;
       }
     }
   });
@@ -484,8 +495,10 @@ export const InvoicePDF = ({
   totalTax = roundToTwoDecimals(totalTax);
   totalDiscount = roundToTwoDecimals(totalDiscount);
   totalSubtotal = roundToTwoDecimals(totalSubtotal);
-  partsSubtotal = roundToTwoDecimals(partsSubtotal);
-  labourSubtotal = roundToTwoDecimals(labourSubtotal);
+  partsSubtotal = roundToTwoDecimals(partsSubtotal - partsDiscount);
+  labourSubtotal = roundToTwoDecimals(labourSubtotal - labourDiscount);
+  labourDiscount = roundToTwoDecimals(labourDiscount);
+  partsDiscount = roundToTwoDecimals(partsDiscount);
 
   return (
     <Document>
@@ -821,20 +834,62 @@ export const InvoicePDF = ({
                             <>
                               {liabilityType == "Customer" ? (
                                 <>
-                                  {roundToTwoDecimals(
-                                    Number(part.subTotalCust)
+                                  {part.discountAmt &&
+                                  part.discountPercentage != 0 ? (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(part.subTotalCust) -
+                                          Number(part.discountAmtCust)
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(part.subTotalCust)
+                                      )}
+                                    </>
                                   )}
                                 </>
                               ) : (
                                 <>
-                                  {roundToTwoDecimals(Number(part.subTotalIns))}
+                                  {part.discountAmt &&
+                                  part.discountPercentage != 0 ? (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(part.subTotalIns) -
+                                          Number(part.discountAmtIns)
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(part.subTotalIns)
+                                      )}
+                                    </>
+                                  )}
                                 </>
                               )}
                             </>
                           ) : (
                             <>
                               {liabilityType == "Customer" ? (
-                                <>{roundToTwoDecimals(Number(part.subTotal))}</>
+                                <>
+                                  {part.discountAmt &&
+                                  part.discountPercentage != 0 ? (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(part.subTotal) -
+                                          Number(part.discountAmt)
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(part.subTotal)
+                                      )}
+                                    </>
+                                  )}
+                                </>
                               ) : (
                                 <>0</>
                               )}
@@ -842,7 +897,17 @@ export const InvoicePDF = ({
                           )}
                         </>
                       ) : (
-                        <>{roundToTwoDecimals(Number(part.subTotal))}</>
+                        <>
+                          {part.discountAmt && part.discountPercentage != 0 ? (
+                            <>
+                              {roundToTwoDecimals(
+                                Number(part.subTotal) - Number(part.discountAmt)
+                              )}
+                            </>
+                          ) : (
+                            <>{roundToTwoDecimals(Number(part.subTotal))}</>
+                          )}
+                        </>
                       )}
                     </Text>
                   </View>
@@ -966,20 +1031,62 @@ export const InvoicePDF = ({
                             <>
                               {liabilityType == "Customer" ? (
                                 <>
-                                  {roundToTwoDecimals(
-                                    Number(work.subTotalCust)
+                                  {work.discountAmt &&
+                                  work.discountPercentage != 0 ? (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(work.subTotalCust) -
+                                          Number(work.discountAmtCust)
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(work.subTotalCust)
+                                      )}
+                                    </>
                                   )}
                                 </>
                               ) : (
                                 <>
-                                  {roundToTwoDecimals(Number(work.subTotalIns))}
+                                  {work.discountAmt &&
+                                  work.discountPercentage != 0 ? (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(work.subTotalIns) -
+                                          Number(work.discountAmtIns)
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(work.subTotalIns)
+                                      )}
+                                    </>
+                                  )}
                                 </>
                               )}
                             </>
                           ) : (
                             <>
                               {liabilityType == "Customer" ? (
-                                <>{roundToTwoDecimals(Number(work.subTotal))}</>
+                                <>
+                                  {work.discountAmt &&
+                                  work.discountPercentage != 0 ? (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(work.subTotal) -
+                                          Number(work.discountAmt)
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {roundToTwoDecimals(
+                                        Number(work.subTotal)
+                                      )}
+                                    </>
+                                  )}
+                                </>
                               ) : (
                                 <>0</>
                               )}
@@ -987,7 +1094,17 @@ export const InvoicePDF = ({
                           )}
                         </>
                       ) : (
-                        <>{roundToTwoDecimals(Number(work.subTotal))}</>
+                        <>
+                          {work.discountAmt && work.discountPercentage != 0 ? (
+                            <>
+                              {roundToTwoDecimals(
+                                Number(work.subTotal) - Number(work.discountAmt)
+                              )}
+                            </>
+                          ) : (
+                            <>{roundToTwoDecimals(Number(work.subTotal))}</>
+                          )}
+                        </>
                       )}
                     </Text>
                   </View>

@@ -173,10 +173,10 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleDiscount = (row: any, discount: number) => {
-    // if (discount > 100) {
-    //   toast("Discount more than 15% is not allowed");
-    //   return;
-    // }
+    if (discount > 100) {
+      toast("Discount more than 100% is not possible");
+      return;
+    }
 
     const labourCode = row.getValue("labourCode");
     const toUpdateDisc = currentLabours?.find(
@@ -195,6 +195,7 @@ export function CurrentLabourDataTable<TData, TValue>({
       updatedObj = removeTempLabourObjDiscount(toUpdateDisc);
     } else {
       // Apply the discount using your helper function
+      console.log("TEST - ", toUpdateDisc, discount);
       updatedObj = updateTempLabourObjDiscount(toUpdateDisc, discount);
     }
 

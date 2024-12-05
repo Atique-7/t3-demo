@@ -737,6 +737,13 @@ export const createTempLabourZeroObj = (item: CurrentLabour) => {
   }
 };
 
+export const changeMiscName = (item: CurrentLabour, labourName: string) => {
+  if (item) {
+    item.labourName = labourName;
+    return item;
+  }
+};
+
 export const createTempLabourObj = (item: Labour) => {
   if (item) {
     let tempSubTotal = roundToTwoDecimals(getSubTotal(item.mrp, 1));

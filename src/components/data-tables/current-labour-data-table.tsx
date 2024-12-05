@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Minus, Percent, Plus, Shield, Trash2, X } from "lucide-react";
 import {
+  changeMiscName,
   createTempLabourZeroObj,
   getUserAccess,
   removeTempLabourObjDiscount,
@@ -42,6 +43,8 @@ import LabourSearch from "../LabourSearch";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
+
+const MISCELLANEOUS_LABOUR_CODE = "998800";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -362,8 +365,40 @@ export function CurrentLabourDataTable<TData, TValue>({
     }
   };
 
+  const handleMISC = (row: any, labourName: string) => {
+    let updatedObj;
+
+    let arrayFirstHalf = currentLabours!.slice(0, row.index);
+    let arraySecondHalf = currentLabours!.slice(row.index + 1);
+
+    const labourCode = row.getValue("labourCode");
+
+    let toUpdateLabourName = currentLabours?.find(
+      (labour) => labour.labourCode === labourCode
+    );
+
+    if (labourName == "") {
+      if (toUpdateLabourName) {
+        updatedObj = changeMiscName(toUpdateLabourName, "");
+        console.log("INVALID VALUE - ", updatedObj);
+
+        setCurrentLabour([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+        setIsEdited(true);
+      }
+    } else {
+      if (toUpdateLabourName) {
+        updatedObj = changeMiscName(toUpdateLabourName, labourName);
+
+        setCurrentLabour([...arrayFirstHalf, updatedObj, ...arraySecondHalf]);
+        setIsEdited(true);
+      } else {
+        console.log("Some Error has Occured");
+      }
+    }
+  };
+
   return (
-    <div>
+    <div className="">
       <div className="rounded-md border">
         <div className="flex flex-row justify-between items-center">
           <div className="font-semibold text-lg p-5">Labour</div>
@@ -491,135 +526,293 @@ export function CurrentLabourDataTable<TData, TValue>({
           <TableBody>
             {table.getCoreRowModel().rows?.length ? (
               table.getCoreRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    if (
-                      cell.column.id != "quantity" &&
-                      cell.column.id != "insurancePercentage" &&
-                      cell.column.id != "amount" &&
-                      cell.column.id != "mrp" &&
-                      cell.column.id != "discountPercentage"
-                    ) {
-                      return (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                <>
+                  {row.getValue("labourCode") == MISCELLANEOUS_LABOUR_CODE ? (
+                    <>
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                      >
+                        <TableCell
+                          key={"labourName"}
+                          className="flex justify-start items-center h-full"
+                        >
+                          <Input
+                            placeholder="labourName"
+                            value={row.getValue("labourName") || ""}
+                            type="text"
+                            onChange={(event) => {
+                              // if (event.target.value != "") {
+                              //   handleMRPUpdate(row, Number(event.target.value));
+                              // }
+                              handleMISC(row, event.target.value);
+                              console.log(event.target.value);
+                            }}
+                            className="w-full"
+                            disabled={disable}
+                          />
+                        </TableCell>
+                        {row.getVisibleCells().map((cell) => {
+                          if (
+                            cell.column.id != "labourName" &&
+                            cell.column.id != "quantity" &&
+                            cell.column.id != "insurancePercentage" &&
+                            cell.column.id != "amount" &&
+                            cell.column.id != "mrp" &&
+                            cell.column.id != "discountPercentage"
+                          ) {
+                            return (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          }
+                        })}
+                        <TableCell
+                          key={"MRP"}
+                          className="flex justify-center items-center h-full"
+                        >
+                          <Input
+                            placeholder="%"
+                            value={row.getValue("mrp") || 0}
+                            type="number"
+                            onChange={(event) => {
+                              // if (event.target.value != "") {
+                              //   handleMRPUpdate(row, Number(event.target.value));
+                              // }
+                              handleMRPUpdate(row, Number(event.target.value));
+                              console.log(event.target.value);
+                            }}
+                            className="w-20"
+                            disabled={disable}
+                          />
+                        </TableCell>
+                        <TableCell key={"handleQuantity"} className="space-x-2">
+                          <div className="flex flex-row justify-evenly w-full items-center space-x-2">
+                            <Button
+                              variant="link"
+                              size="icon"
+                              onClick={() => handleQuantityUpdate(row, -1)}
+                              disabled={disable}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <div>{row.getValue("quantity")}</div>
+                            <Button
+                              variant="link"
+                              size="icon"
+                              onClick={() => handleQuantityUpdate(row, 1)}
+                              disabled={disable}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+
+                        {(isDiscount || isAlreadyDiscount) && (
+                          <TableCell
+                            key={"DISCOUNT"}
+                            className="flex justify-center items-center h-full"
+                          >
+                            <Input
+                              placeholder="%"
+                              value={row.getValue("discountPercentage") || 0}
+                              onChange={(event) =>
+                                handleDiscount(row, Number(event.target.value))
+                              }
+                              className="w-10"
+                              disabled={disable}
+                            />
+                          </TableCell>
+                        )}
+
+                        <TableCell key={"AMOUNT"}>
+                          {isInsurance || isAlreadyInsurance ? (
+                            <>
+                              {getAmountSplit(
+                                Number(
+                                  taxAmtHelper(
+                                    row.getValue("mrp"),
+                                    row.getValue("quantity"),
+                                    row.getValue("gst"),
+                                    row.getValue("discountPercentage"),
+                                    "value"
+                                  )
+                                ),
+                                row.getValue("insurancePercentage")
+                              )}
+                            </>
+                          ) : (
+                            <>{roundToTwoDecimals(row.getValue("amount"))}</>
                           )}
                         </TableCell>
-                      );
-                    }
-                  })}
-                  <TableCell
-                    key={"MRP"}
-                    className="flex justify-center items-center h-full"
-                  >
-                    <Input
-                      placeholder="%"
-                      value={row.getValue("mrp") || 0}
-                      type="number"
-                      onChange={(event) => {
-                        // if (event.target.value != "") {
-                        //   handleMRPUpdate(row, Number(event.target.value));
-                        // }
-                        handleMRPUpdate(row, Number(event.target.value));
-                        console.log(event.target.value);
-                      }}
-                      className="w-20"
-                      disabled={disable}
-                    />
-                  </TableCell>
-                  <TableCell key={"handleQuantity"} className="space-x-2">
-                    <div className="flex flex-row justify-evenly w-full items-center space-x-2">
-                      <Button
-                        variant="link"
-                        size="icon"
-                        onClick={() => handleQuantityUpdate(row, -1)}
-                        disabled={disable}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <div>{row.getValue("quantity")}</div>
-                      <Button
-                        variant="link"
-                        size="icon"
-                        onClick={() => handleQuantityUpdate(row, 1)}
-                        disabled={disable}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
 
-                  {(isDiscount || isAlreadyDiscount) && (
-                    <TableCell
-                      key={"DISCOUNT"}
-                      className="flex justify-center items-center h-full"
-                    >
-                      <Input
-                        placeholder="%"
-                        value={row.getValue("discountPercentage") || 0}
-                        onChange={(event) =>
-                          handleDiscount(row, Number(event.target.value))
-                        }
-                        className="w-10"
-                        disabled={disable}
-                      />
-                    </TableCell>
-                  )}
-
-                  <TableCell key={"AMOUNT"}>
-                    {isInsurance || isAlreadyInsurance ? (
-                      <>
-                        {getAmountSplit(
-                          Number(
-                            taxAmtHelper(
-                              row.getValue("mrp"),
-                              row.getValue("quantity"),
-                              row.getValue("gst"),
-                              row.getValue("discountPercentage"),
-                              "value"
-                            )
-                          ),
-                          row.getValue("insurancePercentage")
+                        {(isInsurance || isAlreadyInsurance) && (
+                          <TableCell
+                            key={"INSURANCE"}
+                            className="flex justify-center items-center h-full w-fit"
+                          >
+                            <Input
+                              placeholder="%"
+                              value={row.getValue("insurancePercentage") || 0}
+                              onChange={(event) =>
+                                handleInsurance(row, Number(event.target.value))
+                              }
+                              className="w-10"
+                              disabled={disable}
+                            />
+                          </TableCell>
                         )}
-                      </>
-                    ) : (
-                      <>{roundToTwoDecimals(row.getValue("amount"))}</>
-                    )}
-                  </TableCell>
 
-                  {(isInsurance || isAlreadyInsurance) && (
-                    <TableCell
-                      key={"INSURANCE"}
-                      className="flex justify-center items-center h-full w-fit"
-                    >
-                      <Input
-                        placeholder="%"
-                        value={row.getValue("insurancePercentage") || 0}
-                        onChange={(event) =>
-                          handleInsurance(row, Number(event.target.value))
-                        }
-                        className="w-10"
-                        disabled={disable}
-                      />
-                    </TableCell>
+                        <TableCell key={"DELETE"}>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => deleteRow(row)}
+                            disabled={disable}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ) : (
+                    <>
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          if (
+                            cell.column.id != "quantity" &&
+                            cell.column.id != "insurancePercentage" &&
+                            cell.column.id != "amount" &&
+                            cell.column.id != "mrp" &&
+                            cell.column.id != "discountPercentage"
+                          ) {
+                            return (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          }
+                        })}
+                        <TableCell
+                          key={"MRP"}
+                          className="flex justify-center items-center h-full"
+                        >
+                          <Input
+                            placeholder="%"
+                            value={row.getValue("mrp") || 0}
+                            type="number"
+                            onChange={(event) => {
+                              // if (event.target.value != "") {
+                              //   handleMRPUpdate(row, Number(event.target.value));
+                              // }
+                              handleMRPUpdate(row, Number(event.target.value));
+                              console.log(event.target.value);
+                            }}
+                            className="w-20"
+                            disabled={disable}
+                          />
+                        </TableCell>
+                        <TableCell key={"handleQuantity"} className="space-x-2">
+                          <div className="flex flex-row justify-evenly w-full items-center space-x-2">
+                            <Button
+                              variant="link"
+                              size="icon"
+                              onClick={() => handleQuantityUpdate(row, -1)}
+                              disabled={disable}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <div>{row.getValue("quantity")}</div>
+                            <Button
+                              variant="link"
+                              size="icon"
+                              onClick={() => handleQuantityUpdate(row, 1)}
+                              disabled={disable}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+
+                        {(isDiscount || isAlreadyDiscount) && (
+                          <TableCell
+                            key={"DISCOUNT"}
+                            className="flex justify-center items-center h-full"
+                          >
+                            <Input
+                              placeholder="%"
+                              value={row.getValue("discountPercentage") || 0}
+                              onChange={(event) =>
+                                handleDiscount(row, Number(event.target.value))
+                              }
+                              className="w-10"
+                              disabled={disable}
+                            />
+                          </TableCell>
+                        )}
+
+                        <TableCell key={"AMOUNT"}>
+                          {isInsurance || isAlreadyInsurance ? (
+                            <>
+                              {getAmountSplit(
+                                Number(
+                                  taxAmtHelper(
+                                    row.getValue("mrp"),
+                                    row.getValue("quantity"),
+                                    row.getValue("gst"),
+                                    row.getValue("discountPercentage"),
+                                    "value"
+                                  )
+                                ),
+                                row.getValue("insurancePercentage")
+                              )}
+                            </>
+                          ) : (
+                            <>{roundToTwoDecimals(row.getValue("amount"))}</>
+                          )}
+                        </TableCell>
+
+                        {(isInsurance || isAlreadyInsurance) && (
+                          <TableCell
+                            key={"INSURANCE"}
+                            className="flex justify-center items-center h-full w-fit"
+                          >
+                            <Input
+                              placeholder="%"
+                              value={row.getValue("insurancePercentage") || 0}
+                              onChange={(event) =>
+                                handleInsurance(row, Number(event.target.value))
+                              }
+                              className="w-10"
+                              disabled={disable}
+                            />
+                          </TableCell>
+                        )}
+
+                        <TableCell key={"DELETE"}>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => deleteRow(row)}
+                            disabled={disable}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </>
                   )}
-
-                  <TableCell key={"DELETE"}>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => deleteRow(row)}
-                      disabled={disable}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                </>
               ))
             ) : (
               <></>

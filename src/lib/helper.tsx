@@ -243,6 +243,7 @@ export const carMakeModels = [
       "Urban Cruiser",
       "Vellfire",
       "Yaris",
+      "Corolla Altis",
     ],
   },
   {

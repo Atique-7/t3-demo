@@ -118,7 +118,7 @@ export const carMakeModels = [
   },
   {
     company: "Mercedes",
-    models: [""],
+    models: ["GLE", "S- Class", "E - Class", "B - Class", "G - Wagon"],
   },
   {
     company: "BMW",
@@ -179,6 +179,10 @@ export const carMakeModels = [
     models: ["Compass", "Wrangler"],
   },
   {
+    company: "Land Rover",
+    models: ["Range Rover Evoque", "Range Rover Sport"],
+  },
+  {
     company: "Kia",
     models: ["Carnival", "Seltos", "Sonet"],
   },
@@ -204,7 +208,7 @@ export const carMakeModels = [
   },
   {
     company: "Mini Cooper",
-    models: ["Mini Cooper"],
+    models: ["D - Diesel", "G - Gasoline"],
   },
   {
     company: "Nissan",
@@ -217,6 +221,14 @@ export const carMakeModels = [
   {
     company: "Skoda",
     models: ["Karoq", "Kodiaq", "Octavia", "Rapid", "Superb"],
+  },
+  {
+    company: "Mitsubishi",
+    models: ["Lancer", "Pajero"],
+  },
+  {
+    company: "Bentley",
+    models: ["S Class", "G Class"],
   },
   {
     company: "Tata",

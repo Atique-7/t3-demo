@@ -117,6 +117,10 @@ export const carMakeModels = [
     ],
   },
   {
+    company: "Mercedes",
+    models: [""],
+  },
+  {
     company: "BMW",
     models: [
       "2 Series Gran Coupe",
@@ -150,7 +154,7 @@ export const carMakeModels = [
   },
   {
     company: "Honda",
-    models: ["Amaze", "City", "Civic", "CR-V", "Jazz", "WR-V"],
+    models: ["Amaze", "City", "Civic", "CR-V", "Jazz", "WR-V", "Mobilio"],
   },
   {
     company: "Hyundai",
@@ -197,6 +201,10 @@ export const carMakeModels = [
   {
     company: "MG",
     models: ["Gloster", "Hector", "Hector Plus", "ZS", "ZSN"],
+  },
+  {
+    company: "Mini Cooper",
+    models: ["Mini Cooper"],
   },
   {
     company: "Nissan",

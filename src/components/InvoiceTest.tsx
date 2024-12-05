@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   tableHeader: {
     borderWidth: 0.5,
     borderColor: "#000000",
-    width: "100%",
+    width: "50%",
     textAlign: "center",
     fontSize: 8,
   },
@@ -624,7 +624,7 @@ export const InvoicePDF = ({
                     )}
                   </>
                 ) : (
-                  <Text>-</Text>
+                  <></>
                 )}
               </View>
               <View style={styles.detailTable}>
@@ -935,18 +935,7 @@ export const InvoicePDF = ({
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
                   <View style={styles.tableCell}>
-                    <Text
-                      style={[
-                        styles.tableData,
-                        {
-                          display: "flex",
-                          flexDirection: "row",
-                          flexWrap: "wrap",
-                        },
-                      ]}
-                    >
-                      {work.labourCode}
-                    </Text>
+                    <Text style={styles.tableData}>{work.labourCode}</Text>
                   </View>
                   <View style={styles.tableCell}>
                     <Text style={styles.tableData}>{work.labourName}</Text>
@@ -1126,7 +1115,7 @@ export const InvoicePDF = ({
                 </View>
                 <View style={styles.observationRow}>
                   <Text style={styles.tableData}>
-                    {/* {roundToTwoDecimals(labourTotal + partsTotal)} */}-
+                    {jobCard.observationRemarks}
                   </Text>
                 </View>
               </View>

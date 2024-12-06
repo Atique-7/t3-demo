@@ -580,7 +580,7 @@ export default function jobCard({
         <JobCardsPageSkeleton />
       ) : (
         <>
-          <div className="sticky top-5 flex w-full justify-between items-center shadow-md p-4 rounded-lg border border-gray-300 bg-white">
+          <div className="sticky top-5 flex w-full justify-between items-center shadow-md p-4 rounded-lg border border-gray-300 bg-white z-50">
             <div className="text-red-700">
               <Link href="/parts" className="flex space-x-4">
                 <div>

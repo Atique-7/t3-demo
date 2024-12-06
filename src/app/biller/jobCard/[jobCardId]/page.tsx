@@ -338,11 +338,12 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.reload(); // Refreshes the page to get the latest data
+      // }, 1000);
 
       result.json().then((invoices: any) => {
+        console.log(invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });

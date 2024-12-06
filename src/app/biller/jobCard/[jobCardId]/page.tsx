@@ -12,6 +12,7 @@ import {
   getLatestInvoiceBySeries,
   getTempCarById,
   updateJobCardById,
+  updateJobCardGSTDetails,
   updateJobCardInsuranceDetails,
 } from "@/lib/appwrite";
 import { CarFront, User } from "lucide-react";
@@ -79,7 +80,7 @@ import {
 
 // Define the structure for the Car object
 
-const useDev = false;
+const useDev = true;
 
 let apiUrl: string;
 
@@ -111,6 +112,8 @@ export default function jobCard({
 
   const [policyProvider, setPolicyProvider] = useState<string>();
   const [policyNumber, setPolicyNumber] = useState<string>();
+
+  const [customerGST, setCustomerGST] = useState<string>();
 
   const [isInsuranceDetails, setIsInsuranceDetails] = useState(false);
   const [isInsurance, setIsInsurance] = useState(false);
@@ -164,6 +167,8 @@ export default function jobCard({
     const getJobCardDetails = async () => {
       const jobCardObj = await getJobCardById(params.jobCardId);
       console.log("This is the Job Card - ", jobCardObj);
+
+      setCustomerGST(jobCardObj.gstin);
 
       if (jobCardObj.jobCardStatus >= 6) {
         setIsDisabled(true);
@@ -495,6 +500,17 @@ export default function jobCard({
       setIsInsuranceDetails(true);
     }
   };
+
+  const saveCustomerGST = async () => {
+    const isDone = await updateJobCardGSTDetails(params.jobCardId, customerGST);
+
+    console.log(isDone);
+    if (isDone) {
+      // console.log("IT IS DONE");
+      toast("GST Details have been Updated \u2705");
+    }
+  };
+
   const generateJobCardPDF = async ({ jobCard, car }: any) => {
     // await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
     await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
@@ -874,6 +890,51 @@ export default function jobCard({
                         type="submit"
                         className="bg-red-500"
                         onClick={saveInsuranceDetails}
+                      >
+                        Save
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="border bordre-red-500 text-red-500"
+                      disabled={isDisabled}
+                    >
+                      Edit Customer GST No.
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+                    <DialogHeader>
+                      <DialogTitle>Customer GST</DialogTitle>
+                      <DialogDescription>
+                        Customer GST Details
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="GSTIN" className="text-right">
+                          GSTIN
+                        </Label>
+                        <Input
+                          id="GSTIN"
+                          className="col-span-3"
+                          onChange={(event) =>
+                            setCustomerGST(event.target.value)
+                          }
+                          value={customerGST}
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="submit"
+                        className="bg-red-500"
+                        onClick={saveCustomerGST}
                       >
                         Save
                       </Button>

@@ -637,7 +637,29 @@ export const InvoicePDF = ({
                     )}
                   </>
                 ) : (
-                  <></>
+                  <>
+                    {jobCard.gstin && (
+                      <>
+                        <View style={styles.tableRow}>
+                          <View style={styles.tableCell}>
+                            <Text
+                              style={[
+                                styles.tableData,
+                                styles.tableDataEmphasized,
+                              ]}
+                            >
+                              GST Number:
+                            </Text>
+                          </View>
+                          <View style={styles.tableCell}>
+                            <Text style={styles.tableData}>
+                              {jobCard.gstin}
+                            </Text>
+                          </View>
+                        </View>
+                      </>
+                    )}
+                  </>
                 )}
               </View>
               <View style={styles.detailTable}>

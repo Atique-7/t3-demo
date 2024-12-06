@@ -132,7 +132,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                 <span className="font-medium ml-2 text-2xl text-gray-700">{`(${car.carMake} ${car.carModel})`}</span>
               </div>
               <div className="font-medium text-gray-500">
-                #JobCardId : {jobCard.$id}
+                #JobCardId : {jobCard.jobCardNumber}
               </div>
             </div>
           </div>

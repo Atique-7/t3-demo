@@ -338,7 +338,7 @@ export function CurrentLabourDataTable<TData, TValue>({
     const labourCode = row.getValue("labourCode");
 
     let toUpdateMRP = currentLabours?.find(
-      (labour) => labour.labourCode === labourCode
+      (labour, index) => labour.labourCode === labourCode && row.index == index
     );
 
     if (mrp == 0) {

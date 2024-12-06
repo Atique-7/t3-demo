@@ -561,7 +561,7 @@ export const searchCarHistory = async (searchTerm: string) => {
 
 export const getAllJobCards = async (statuses?: number[]) => {
   // console.log("Hitting Backend");
-  let finalQuery: any[] = [Query.orderDesc("$createdAt"), Query.limit(500)];
+  let finalQuery: any[] = [Query.orderDesc("$createdAt"), Query.limit(999999)];
   if (statuses) {
     if (statuses.length > 1) {
       let queries: any = [];

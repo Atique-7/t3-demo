@@ -142,6 +142,14 @@ export default function Sidebar({ home }: any) {
                 <ClipboardList />
               </Link>
             )}
+            {home == "/admin" && (
+              <Link
+                className="border-2 rounded-md shadow-md p-3"
+                href={`${home}/manage-jobcards`}
+              >
+                <ClipboardList />
+              </Link>
+            )}
             {home == "/biller" && (
               <Link
                 className="border-2 rounded-md shadow-md p-3"

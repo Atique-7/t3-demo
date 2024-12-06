@@ -89,11 +89,25 @@ export const deleteSessions = async () => {
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const activeSession = await checkActiveSession();
-    if (activeSession) {
-      // Delete the active sessions if one exists
-      await deleteSessions();
+    try {
+      const activeSession = await checkActiveSession();
+      if (activeSession) {
+        // Delete the active sessions if one exists
+        await deleteSessions();
+      }
+    } catch (sessionError: any) {
+      if (
+        sessionError.message?.includes("missing scope") ||
+        sessionError.code === 401
+      ) {
+        console.warn(
+          "Session management failed due to scope issues, proceeding with new session creation."
+        );
+      } else {
+        throw sessionError; // Rethrow if it's not a scope issue
+      }
     }
+
     // Fetch current public IP address
     const currentIp = await fetch("https://api64.ipify.org?format=json")
       .then((res) => res.json())
@@ -164,29 +178,68 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-export const logidnUser = async (email: any, password: any) => {
-  try {
-    const sessionDetails = await account.createEmailPasswordSession(
-      email,
-      password
-    );
-    const userDetails = await account.get();
-    const sesh = await account.listSessions();
-    console.log(sesh);
-
-    return { userDetails, sessionDetails };
-  } catch (error: any) {
-    console.log("THIS IS THE ERROR", error.message);
-    const errorMsg = error.message;
-    return { errorMsg };
-  }
-};
-
 export const listAllUsers = async () => {
   const response = await functions.createExecution("6731d19d00250e7e0b6f");
   const obj = JSON.parse(response.responseBody);
   const users = obj.users.users;
   return users;
+};
+
+export const getLastJobCardNumber = async () => {
+  try {
+    // Fetch the last created job card by sorting by creation time (descending)
+    const response = await databases.listDocuments(
+      config.databaseId,
+      config.jobCardsCollectionId,
+      [
+        Query.orderDesc("$createdAt"), // Sort by creation date in descending order
+        Query.limit(1), // Limit the result to the first document
+      ]
+    );
+
+    if (response.documents.length === 0) {
+      throw new Error("No job cards found in the database.");
+    }
+
+    const lastJobCard = response.documents[0];
+    const lastJobCardNumber = lastJobCard.jobCardNumber;
+
+    console.log("Last job card number fetched:", lastJobCardNumber);
+
+    return lastJobCardNumber;
+  } catch (error) {
+    console.error("Error fetching the last job card number:", error);
+    throw error;
+  }
+};
+
+export const validateJobCardNumber = async (
+  currentJobCardNumber: number
+): Promise<number> => {
+  try {
+    // Fetch the latest job card number
+    const latestJobCardNumber = await getLastJobCardNumber();
+
+    console.log(
+      `Current Job Card Number: ${currentJobCardNumber}, Latest Job Card Number: ${latestJobCardNumber}`
+    );
+
+    // Check if the latest job card number has increased
+    if (latestJobCardNumber >= currentJobCardNumber) {
+      console.warn(
+        `Job card number conflict detected. Updating to the latest value: ${
+          latestJobCardNumber + 1
+        }`
+      );
+      return latestJobCardNumber + 1; // Return the next available number
+    }
+
+    // If no change, return the current job card number
+    return currentJobCardNumber;
+  } catch (error: any) {
+    console.error("Error validating job card number:", error.message || error);
+    throw error;
+  }
 };
 
 export const listSessions = async () => {
@@ -212,6 +265,7 @@ export const listSessions = async () => {
 export const logoutUser = async () => {
   try {
     const result = await account.deleteSessions();
+    console.log(result);
     return { success: true, result };
   } catch (error: any) {
     console.error("Logout failed:", error);
@@ -362,6 +416,8 @@ export const createJobCard = async (
 
     console.log(purposeOfVisit);
 
+    const validatedJobCardNumber = await validateJobCardNumber(jobCardNumber);
+
     let result = await databases.createDocument(
       config.databaseId,
       config.jobCardsCollectionId,
@@ -374,7 +430,7 @@ export const createJobCard = async (
         jobCardStatus: 0,
         customerName,
         customerPhone,
-        jobCardNumber,
+        validateJobCardNumber,
         images,
         carFuel,
         carOdometer,
@@ -505,7 +561,7 @@ export const searchCarHistory = async (searchTerm: string) => {
 
 export const getAllJobCards = async (statuses?: number[]) => {
   // console.log("Hitting Backend");
-  let finalQuery: any[] = [Query.orderDesc("$createdAt"), Query.limit(99999)];
+  let finalQuery: any[] = [Query.orderDesc("$createdAt"), Query.limit(999999)];
   if (statuses) {
     if (statuses.length > 1) {
       let queries: any = [];

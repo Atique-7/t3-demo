@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
-import { Minus, Percent, Plus, Shield, Trash2, X } from "lucide-react";
+import { Check, Minus, Percent, Plus, Shield, Trash2, X } from "lucide-react";
 import {
   changeMiscName,
   createTempLabourZeroObj,
@@ -79,6 +79,11 @@ export function CurrentLabourDataTable<TData, TValue>({
   const [isAlreadyDiscount, setIsAlreadyDiscount] = useState(false);
   const [isInsurance, setIsInsurance] = useState(false);
   const [isAlreadyInsurance, setIsAlreadyInsurance] = useState(false);
+
+  const [miscUpdateState, setMiscUpdateState] = useState<{
+    row: string;
+    isEditing: true;
+  }>();
 
   useEffect(() => {
     let foundIndexDisc = currentLabours?.findIndex(
@@ -367,6 +372,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleMISC = (row: any, labourName: string) => {
+    console.log("THIS IS THE ROW - ", row);
     let updatedObj;
 
     let arrayFirstHalf = currentLabours!.slice(0, row.index);
@@ -375,7 +381,7 @@ export function CurrentLabourDataTable<TData, TValue>({
     const labourCode = row.getValue("labourCode");
 
     let toUpdateLabourName = currentLabours?.find(
-      (labour) => labour.labourCode === labourCode
+      (labour, index) => labour.labourCode === labourCode && row.index == index
     );
 
     if (labourName == "") {
@@ -526,7 +532,7 @@ export function CurrentLabourDataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getCoreRowModel().rows?.length ? (
-              table.getCoreRowModel().rows.map((row) => (
+              table.getCoreRowModel().rows.map((row, index) => (
                 <>
                   {row.getValue("labourCode") == MISCELLANEOUS_LABOUR_CODE ? (
                     <>
@@ -538,20 +544,26 @@ export function CurrentLabourDataTable<TData, TValue>({
                           key={"labourName"}
                           className="flex justify-start items-center h-full"
                         >
-                          <Input
-                            placeholder="labourName"
-                            value={row.getValue("labourName") || ""}
-                            type="text"
-                            onChange={(event) => {
-                              // if (event.target.value != "") {
-                              //   handleMRPUpdate(row, Number(event.target.value));
-                              // }
-                              handleMISC(row, event.target.value);
-                              console.log(event.target.value);
-                            }}
-                            className="w-full"
-                            disabled={disable}
-                          />
+                          <div className="flex flex-row items-center space-x-2 w-full">
+                            <Input
+                              placeholder="labourName"
+                              value={
+                                row.index == index
+                                  ? row.getValue("labourName")
+                                  : "NOOOO"
+                              }
+                              type="text"
+                              onChange={(event) => {
+                                // if (event.target.value != "") {
+                                //   handleMRPUpdate(row, Number(event.target.value));
+                                // }
+                                handleMISC(row, event.target.value);
+                                console.log(event.target.value);
+                              }}
+                              className="w-[80%]"
+                              disabled={disable}
+                            />
+                          </div>
                         </TableCell>
                         {row.getVisibleCells().map((cell) => {
                           if (

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import {
+  getAllInvoices,
   getAllParts,
   getJobCardById,
   getTempCarById,
@@ -13,13 +14,33 @@ import DetailsCard from "@/components/DetailsCard";
 import Link from "next/link";
 import JobDetailsCard from "@/components/JobDetailsCard";
 import { Button } from "@/components/ui/button";
-import { objToStringArr, stringToObj } from "@/lib/helper";
+import {
+  InsuranceinvoiceTypes,
+  invoiceTypes,
+  objToStringArr,
+  openInNewTab,
+  stringToObj,
+} from "@/lib/helper";
 import { toast } from "sonner";
-import { JobCard, Car, Part, CurrentPart, UserType } from "@/lib/definitions";
+import {
+  JobCard,
+  Car,
+  Part,
+  CurrentPart,
+  UserType,
+  Invoice,
+} from "@/lib/definitions";
 import { currentPartsColumns } from "@/lib/column-definitions";
 import { CurrentPartsDataTable } from "@/components/data-tables/current-parts-data-table";
 import JobCardsPageSkeleton from "@/components/skeletons/JobCardPageSkeleton";
 import { getCookie } from "cookies-next";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Define the structure for the Car object
 
@@ -28,6 +49,10 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   const [car, setCar] = useState<Car | null>(null); // Properly typed state
   const [parts, setParts] = useState<Part[] | null>(null);
   const [currentParts, setCurrentParts] = useState<CurrentPart[]>([]);
+
+  const [isInsurance, setIsInsurance] = useState(false);
+  const [currentJobCardStatus, setCurrentJobCardStatus] = useState<number>();
+  const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>();
 
   const [isEdited, setIsEdited] = useState(false);
 
@@ -54,6 +79,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
       console.log("This is the car details - ", carObj);
 
       setJobCard((prev) => jobCardObj);
+      setCurrentJobCardStatus((prev) => jobCardObj.jobCardStatus);
       setCar((prev) => carObj);
     };
 
@@ -63,11 +89,24 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
       setParts((prev) => partsObj.documents);
     };
 
+    const getJobCardInvoices = async () => {
+      const invoices = await getAllInvoices();
+      const jobCardInvoicesArr = invoices.documents.filter(
+        (invoice: Invoice) => invoice.jobCardId == params.jobCardId
+      );
+
+      console.log("INVOICES FOR THIS JC - ", jobCardInvoicesArr);
+
+      setJobCardInvoices(jobCardInvoicesArr);
+    };
+
     getUser();
 
     getParts();
 
     getJobCardDetails();
+
+    getJobCardInvoices();
   }, []);
 
   const saveCurrentParts = async () => {
@@ -99,6 +138,58 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     console.log("THERE WAS A CHANGE - ", currentParts);
   }, [currentParts]);
 
+  const handleInvoicePDF = (selectedValue: string) => {
+    console.log("SELECTED PDF - ", selectedValue);
+    if (selectedValue == "Gate Pass") {
+      if (jobCard) {
+        console.log("gatePass PDF = ", jobCard.gatePassPDF);
+        openInNewTab(jobCard.gatePassPDF);
+      }
+    } else {
+      if (jobCardInvoices) {
+        const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
+          (invoice: Invoice) => invoice.invoiceType == selectedValue
+        );
+        filteredInvoices?.sort(
+          (a, b) =>
+            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+        );
+        const selectedInvoice = filteredInvoices[0];
+        openInNewTab(selectedInvoice.invoiceUrl);
+      }
+    }
+  };
+
+  const handleInsuranceInvoicePDF = (selectedValue: any) => {
+    console.log("SELECTED PDF - ", selectedValue);
+
+    const selectedInvoice = InsuranceinvoiceTypes.find(
+      (a) => a.description == selectedValue
+    );
+    if (selectedInvoice) {
+      console.log("SELECTED OBJECT - ", selectedInvoice);
+
+      let currentInvoiceType = selectedInvoice?.name;
+      let currentInvoiceFor = selectedInvoice?.type;
+
+      if (jobCardInvoices) {
+        const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
+          (invoice: Invoice) =>
+            invoice.invoiceType == currentInvoiceType &&
+            invoice.insuranceInvoiceType == currentInvoiceFor
+        );
+        filteredInvoices?.sort(
+          (a, b) =>
+            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+        );
+        const selectedInvoice = filteredInvoices[0];
+
+        console.log("FILTE$RED INVOICES", selectedInvoice);
+        openInNewTab(selectedInvoice.invoiceUrl);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col w-[90%] mt-5 space-y-8">
       {!(parts && jobCard && car && user) ? (
@@ -114,14 +205,73 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                 <div>Back to All Job cards</div>
               </Link>
             </div>
-            <Button
-              variant="outline"
-              className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
-              size="lg"
-              onClick={saveCurrentParts}
-            >
-              Save
-            </Button>
+            <div className="flex flex-row space-x-5 justify-normal items-center">
+              {currentJobCardStatus! > 2 && (
+                <div>
+                  {isInsurance ? (
+                    <>
+                      <Select
+                        onValueChange={(value) => {
+                          handleInsuranceInvoicePDF(value);
+                        }}
+                      >
+                        <SelectTrigger className="w-full p-2 border border-red-500 text-red-500 rounded-lg">
+                          <SelectValue placeholder="Download" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          {InsuranceinvoiceTypes.map((invoiceType, index) => (
+                            <div key={index}>
+                              {invoiceType.code <= currentJobCardStatus! && (
+                                <SelectItem
+                                  key={index}
+                                  value={invoiceType.description}
+                                >
+                                  {invoiceType.description}
+                                </SelectItem>
+                              )}
+                            </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : (
+                    <>
+                      <Select
+                        onValueChange={(value) => {
+                          handleInvoicePDF(value);
+                        }}
+                      >
+                        <SelectTrigger className="w-full p-2 border border-red-500 text-red-500 rounded-lg">
+                          <SelectValue placeholder="Download" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          {invoiceTypes.map((invoiceType, index) => (
+                            <div key={index}>
+                              {invoiceType.code <= currentJobCardStatus! && (
+                                <SelectItem
+                                  key={index}
+                                  value={invoiceType.description}
+                                >
+                                  {invoiceType.description}
+                                </SelectItem>
+                              )}
+                            </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  )}
+                </div>
+              )}
+              <Button
+                variant="outline"
+                className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                size="lg"
+                onClick={saveCurrentParts}
+              >
+                Save
+              </Button>
+            </div>
           </div>
           <div>
             <div>
@@ -132,7 +282,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                 <span className="font-medium ml-2 text-2xl text-gray-700">{`(${car.carMake} ${car.carModel})`}</span>
               </div>
               <div className="font-medium text-gray-500">
-                #JobCardId : {jobCard.$id}
+                #JobCardId : {jobCard.jobCardNumber}
               </div>
             </div>
           </div>

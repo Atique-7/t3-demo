@@ -19,6 +19,9 @@ import { renderToStream } from "@react-pdf/renderer";
 import { CurrentLabour, CurrentPart, Invoice } from "@/lib/definitions";
 import { Console } from "console";
 
+export const maxDuration = 30; // This function can run for a maximum of 5 seconds
+export const dynamic = "force-dynamic";
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { jobCardId: any } }

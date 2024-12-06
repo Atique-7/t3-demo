@@ -1,3 +1,4 @@
+import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 import {
   getAllInvoices,
   getAllTaxInvoicesAfterDateTime,
@@ -30,10 +31,11 @@ export async function POST(request: NextRequest) {
 
     const newInvoices = result.documents;
 
+    console.log("Total Number of Invoices - ", newInvoices.length);
+
     const updatedNewInvoices = await Promise.all(
       newInvoices.map(async (invoice: Invoice, index: number) => {
         let result: JobCard = await getJobCardById(invoice.jobCardId);
-
         let partsArr = stringToObj(result.parts);
         let labourArr = stringToObj(result.labour);
         // let taxesObj = stringToObj(result.taxes);
@@ -202,6 +204,30 @@ export async function POST(request: NextRequest) {
                   part.discountAmt
                 );
               }
+            } else {
+              partsTotal = preciseOperation("add", partsTotal, part.amount);
+
+              totalTax = preciseOperation("add", totalTax, part.totalTax);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                part.subTotal
+              );
+
+              // totalDiscount = totalDiscount , part.discountAmt
+
+              if (
+                part.discountPercentage &&
+                part.discountAmt &&
+                part.discountPercentage != 0
+              ) {
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  part.discountAmt
+                );
+              }
             }
           }
         });
@@ -343,6 +369,28 @@ export async function POST(request: NextRequest) {
                   work.discountAmt
                 );
               }
+            } else {
+              labourTotal = preciseOperation("add", labourTotal, work.amount);
+
+              totalTax = preciseOperation("add", totalTax, work.totalTax);
+
+              totalSubtotal = preciseOperation(
+                "add",
+                totalSubtotal,
+                work.subTotal
+              );
+
+              if (
+                work.discountPercentage &&
+                work.discountAmt &&
+                work.discountPercentage != 0
+              ) {
+                totalDiscount = preciseOperation(
+                  "add",
+                  totalDiscount,
+                  work.discountAmt
+                );
+              }
             }
           }
         });
@@ -416,14 +464,31 @@ export async function POST(request: NextRequest) {
                 }
               }
             } else {
-              updatedObject.amount = part.amount as number;
-              updatedObject.subTotal = part.subTotal as number;
-              updatedObject.cgstAmt = part.cgstAmt as number;
-              updatedObject.sgstAmt = part.sgstAmt as number;
-              updatedObject.totalTax = part.totalTax as number;
-              updatedObject.discountPercentage =
-                part.discountPercentage as number;
-              updatedObject.discountAmt = part.discountAmt as number;
+              updatedObject.amount = roundToTwoDecimals(part.amount as number);
+              updatedObject.subTotal = roundToTwoDecimals(
+                part.subTotal as number
+              );
+              updatedObject.cgstAmt = roundToTwoDecimals(
+                part.cgstAmt as number
+              );
+              updatedObject.sgstAmt = roundToTwoDecimals(
+                part.sgstAmt as number
+              );
+              updatedObject.totalTax = roundToTwoDecimals(
+                part.totalTax as number
+              );
+
+              if (
+                updatedObject.discountPercentage &&
+                updatedObject.discountAmt
+              ) {
+                updatedObject.discountPercentage = roundToTwoDecimals(
+                  part.discountPercentage as number
+                );
+                updatedObject.discountAmt = roundToTwoDecimals(
+                  part.discountAmt as number
+                );
+              }
             }
 
             if (
@@ -507,14 +572,31 @@ export async function POST(request: NextRequest) {
                 }
               }
             } else {
-              updatedObject.amount = work.amount as number;
-              updatedObject.subTotal = work.subTotal as number;
-              updatedObject.cgstAmt = work.cgstAmt as number;
-              updatedObject.sgstAmt = work.sgstAmt as number;
-              updatedObject.totalTax = work.totalTax as number;
-              updatedObject.discountPercentage =
-                work.discountPercentage as number;
-              updatedObject.discountAmt = work.discountAmt as number;
+              updatedObject.amount = roundToTwoDecimals(work.amount as number);
+              updatedObject.subTotal = roundToTwoDecimals(
+                work.subTotal as number
+              );
+              updatedObject.cgstAmt = roundToTwoDecimals(
+                work.cgstAmt as number
+              );
+              updatedObject.sgstAmt = roundToTwoDecimals(
+                work.sgstAmt as number
+              );
+              updatedObject.totalTax = roundToTwoDecimals(
+                work.totalTax as number
+              );
+
+              if (
+                updatedObject.discountPercentage &&
+                updatedObject.discountAmt
+              ) {
+                updatedObject.discountPercentage = roundToTwoDecimals(
+                  work.discountPercentage as number
+                );
+                updatedObject.discountAmt = roundToTwoDecimals(
+                  work.discountAmt as number
+                );
+              }
             }
 
             if (
@@ -524,13 +606,11 @@ export async function POST(request: NextRequest) {
               updatedObject.discountPercentage = 0;
               updatedObject.discountAmt = 0;
             }
-            console.log("UPDATED OBJECT - ", updatedObject);
+            // console.log("UPDATED OBJECT - ", updatedObject);
 
             return updatedObject;
           })
         );
-
-        // console.log("AMOUNT CHECK - ", partsTotal, labourTotal);
 
         result.parts = revisedPartsArr;
         result.labour = revisedLabourArr;
@@ -570,19 +650,33 @@ export async function POST(request: NextRequest) {
 
         invoice.jobCardDetails = result;
 
+        console.log("Ho Gaya", index);
+
+        console.log(
+          "AMOUNT CHECK - ",
+          invoice.jobCardDetails.subTotal,
+          invoice.jobCardDetails.amount,
+          invoice.jobCardDetails.totalTax,
+          invoice.jobCardDetails.totalDiscountAmt
+        );
+
+        console.log("INVOICE FOR - ", invoice.jobCardDetails);
+
         return invoice;
       })
     );
 
     const returnInvoicesObj = { invoices: updatedNewInvoices };
 
+    // console.log("INVOICES OBJECT - ", returnInvoicesObj);
+
     return NextResponse.json(returnInvoicesObj, { status: 201 });
   } catch (error) {
     console.log("Failed");
-    console.log(error);
+    console.log("CAUGHT ERROR", error);
 
     return NextResponse.json({
-      message: "Failed",
+      message: "HELLOOO",
       status: false,
     });
   }

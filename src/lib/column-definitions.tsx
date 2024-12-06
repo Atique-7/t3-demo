@@ -25,6 +25,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { getCookie } from "cookies-next";
 
+const MISCELLANEOUS_LABOUR_CODE = "L2024-04-998800";
+
 export const jobCardColumns: ColumnDef<JobCard>[] = [
   {
     accessorKey: "carNumber",
@@ -372,6 +374,12 @@ export const currentLabourColumns: ColumnDef<CurrentLabour>[] = [
   {
     accessorKey: "labourName",
     header: "Labour Name",
+    // cell: ({ row }) => {
+    //   const labourCode = row.getValue("labourCode");
+    //   if(labourCode == MISCELLANEOUS_LABOUR_CODE){
+    //     return
+    //   }
+    // }
   },
   {
     accessorKey: "labourCode",

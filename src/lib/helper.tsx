@@ -117,6 +117,10 @@ export const carMakeModels = [
     ],
   },
   {
+    company: "Mercedes",
+    models: ["GLE", "S- Class", "E - Class", "B - Class", "G - Wagon"],
+  },
+  {
     company: "BMW",
     models: [
       "2 Series Gran Coupe",
@@ -150,7 +154,7 @@ export const carMakeModels = [
   },
   {
     company: "Honda",
-    models: ["Amaze", "City", "Civic", "CR-V", "Jazz", "WR-V"],
+    models: ["Amaze", "City", "Civic", "CR-V", "Jazz", "WR-V", "Mobilio"],
   },
   {
     company: "Hyundai",
@@ -173,6 +177,10 @@ export const carMakeModels = [
   {
     company: "Jeep",
     models: ["Compass", "Wrangler"],
+  },
+  {
+    company: "Land Rover",
+    models: ["Range Rover Evoque", "Range Rover Sport"],
   },
   {
     company: "Kia",
@@ -199,6 +207,10 @@ export const carMakeModels = [
     models: ["Gloster", "Hector", "Hector Plus", "ZS", "ZSN"],
   },
   {
+    company: "Mini Cooper",
+    models: ["D - Diesel", "G - Gasoline"],
+  },
+  {
     company: "Nissan",
     models: ["GT-R", "Kicks", "Micra", "Sunny"],
   },
@@ -209,6 +221,14 @@ export const carMakeModels = [
   {
     company: "Skoda",
     models: ["Karoq", "Kodiaq", "Octavia", "Rapid", "Superb"],
+  },
+  {
+    company: "Mitsubishi",
+    models: ["Lancer", "Pajero"],
+  },
+  {
+    company: "Bentley",
+    models: ["S Class", "G Class"],
   },
   {
     company: "Tata",
@@ -235,6 +255,7 @@ export const carMakeModels = [
       "Urban Cruiser",
       "Vellfire",
       "Yaris",
+      "Corolla Altis",
     ],
   },
   {
@@ -712,6 +733,13 @@ export const createTempLabourZeroObj = (item: CurrentLabour) => {
     item.totalTax = 0;
     item.cgstAmt = 0;
 
+    return item;
+  }
+};
+
+export const changeMiscName = (item: CurrentLabour, labourName: string) => {
+  if (item) {
+    item.labourName = labourName;
     return item;
   }
 };

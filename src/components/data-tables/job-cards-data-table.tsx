@@ -68,7 +68,7 @@ export function JobCardsDataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder="Filter Job Cards..."
+          placeholder="Filter by Car Number"
           value={
             (table.getColumn("carNumber")?.getFilterValue() as string) ?? ""
           }

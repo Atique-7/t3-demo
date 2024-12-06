@@ -285,7 +285,7 @@ export const getCurrentUser = async () => {
 
 export const getAllTempCars = async (statuses?: number[]) => {
   // console.log("Hitting Backend");
-  let finalQuery: any[] = [Query.orderDesc("$createdAt")];
+  let finalQuery: any[] = [Query.orderDesc("$createdAt"), Query.limit(999999)];
   if (statuses) {
     if (statuses.length > 1) {
       let queries: any = [];

@@ -416,7 +416,7 @@ export const createJobCard = async (
 
     console.log(purposeOfVisit);
 
-    const validatedJobCardNumber = await validateJobCardNumber(jobCardNumber);
+    const validJobCardNumber = await validateJobCardNumber(jobCardNumber);
 
     let result = await databases.createDocument(
       config.databaseId,
@@ -430,7 +430,7 @@ export const createJobCard = async (
         jobCardStatus: 0,
         customerName,
         customerPhone,
-        jobCardNumber: validateJobCardNumber,
+        jobCardNumber: validJobCardNumber,
         images,
         carFuel,
         carOdometer,

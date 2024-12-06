@@ -118,8 +118,8 @@ export function CurrentLabourDataTable<TData, TValue>({
       return deleteRow(row);
     }
 
-    const toUpdateQty = currentLabours?.find(
-      (labour) => labour.labourCode == labourCode
+    let toUpdateQty = currentLabours?.find(
+      (labour, index) => labour.labourCode === labourCode && row.index == index
     );
 
     let updatedObj;

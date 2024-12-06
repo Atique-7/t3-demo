@@ -44,6 +44,7 @@ export interface JobCard {
   customerAddress?: string;
   parts: string[];
   labour: string[];
+  observationRemarks: string;
   partsTotalPreTax: number;
   partsTotalPostTax: number;
   labourTotalPreTax: number;

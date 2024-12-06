@@ -14,6 +14,7 @@ import {
   updateJobCardById,
   updateJobCardGSTDetails,
   updateJobCardInsuranceDetails,
+  updateJobCardObservationRemarks,
 } from "@/lib/appwrite";
 import { CarFront, User } from "lucide-react";
 import DetailsCard from "@/components/DetailsCard";
@@ -114,6 +115,7 @@ export default function jobCard({
   const [policyNumber, setPolicyNumber] = useState<string>();
 
   const [customerGST, setCustomerGST] = useState<string>();
+  const [observationRemarks, setObservationRemarks] = useState<string>();
 
   const [isInsuranceDetails, setIsInsuranceDetails] = useState(false);
   const [isInsurance, setIsInsurance] = useState(false);
@@ -165,10 +167,11 @@ export default function jobCard({
     };
 
     const getJobCardDetails = async () => {
-      const jobCardObj = await getJobCardById(params.jobCardId);
+      const jobCardObj: JobCard = await getJobCardById(params.jobCardId);
       console.log("This is the Job Card - ", jobCardObj);
 
       setCustomerGST(jobCardObj.gstin);
+      setObservationRemarks(jobCardObj.observationRemarks);
 
       if (jobCardObj.jobCardStatus >= 6) {
         setIsDisabled(true);
@@ -508,6 +511,19 @@ export default function jobCard({
     if (isDone) {
       // console.log("IT IS DONE");
       toast("GST Details have been Updated \u2705");
+    }
+  };
+
+  const saveObservationRemarks = async () => {
+    const isDone = await updateJobCardObservationRemarks(
+      params.jobCardId,
+      observationRemarks
+    );
+
+    console.log(isDone);
+    if (isDone) {
+      // console.log("IT IS DONE");
+      toast("Observation and Remarks have been Updated \u2705");
     }
   };
 
@@ -946,7 +962,7 @@ export default function jobCard({
           </div>
           <div className="font-semibold text-3xl">Invoice Details</div>
 
-          <div className="flex flex-col space-y-8">
+          <div className="flex flex-col space-y-8 mb-10">
             <CurrentPartsDataTable
               columns={currentPartsColumns}
               data={currentParts}
@@ -971,6 +987,45 @@ export default function jobCard({
               isInsuranceDetails={isInsuranceDetails}
               disable={isDisabled}
             />
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border bordre-red-500 text-red-500"
+                    disabled={isDisabled}
+                  >
+                    Observation and Remarks
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+                  <DialogHeader>
+                    <DialogTitle>Observation and Remarks</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Input
+                        id="observationAndRemarks"
+                        className="col-span-3"
+                        onChange={(event) =>
+                          setObservationRemarks(event.target.value)
+                        }
+                        value={observationRemarks}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-red-500"
+                      onClick={saveObservationRemarks}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </>
       )}

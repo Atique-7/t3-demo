@@ -798,6 +798,28 @@ export const updateJobCardGSTDetails = async (id: string, gstin?: string) => {
   }
 };
 
+export const updateJobCardObservationRemarks = async (
+  id: string,
+  observationRemarks?: string
+) => {
+  try {
+    await databases.updateDocument(
+      config.databaseId,
+      config.jobCardsCollectionId, // collectionId
+      id, // documentId
+      {
+        // insuranceDetails,
+
+        observationRemarks,
+      } // data (optional)
+    );
+    return true;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const updateJobCardGatePassDetails = async (
   id: string,
   gatePassPDF?: string

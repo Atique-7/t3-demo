@@ -1254,7 +1254,9 @@ export const InvoicePDF = ({
                 </View>
                 <View style={styles.observationRow}>
                   <Text style={styles.tableData}>
-                    {jobCard.observationRemarks}
+                    {jobCard.observationRemarks && (
+                      <>{jobCard.observationRemarks}</>
+                    )}
                   </Text>
                 </View>
               </View>

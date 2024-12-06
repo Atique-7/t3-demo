@@ -430,7 +430,7 @@ export const createJobCard = async (
         jobCardStatus: 0,
         customerName,
         customerPhone,
-        validateJobCardNumber,
+        jobCardNumber: validateJobCardNumber,
         images,
         carFuel,
         carOdometer,

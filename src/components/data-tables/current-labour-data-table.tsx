@@ -184,8 +184,8 @@ export function CurrentLabourDataTable<TData, TValue>({
     }
 
     const labourCode = row.getValue("labourCode");
-    const toUpdateDisc = currentLabours?.find(
-      (labour) => labour.labourCode === labourCode
+    let toUpdateDisc = currentLabours?.find(
+      (labour, index) => labour.labourCode === labourCode && row.index == index
     );
 
     if (!toUpdateDisc) {
@@ -242,8 +242,9 @@ export function CurrentLabourDataTable<TData, TValue>({
 
       const labourCode = row.getValue("labourCode");
 
-      const toUpdateInsurance = currentLabours?.find(
-        (work) => work.labourCode == labourCode
+      let toUpdateInsurance = currentLabours?.find(
+        (labour, index) =>
+          labour.labourCode === labourCode && row.index == index
       );
 
       if (toUpdateInsurance) {

@@ -12,9 +12,11 @@ import {
 import { Button } from "./ui/button";
 import { convertStringsToArray } from "@/lib/helper";
 
-export default function JobDetailsCard({ data, diagnosis }: any) {
+export default function JobDetailsCard({ data, jobCardTotal, diagnosis }: any) {
   const [isOpen, setIsOpen] = useState(false);
-  const purposeOfVisitAndAdvisors = convertStringsToArray(data.car.purposeOfVisitAndAdvisors);
+  const purposeOfVisitAndAdvisors = convertStringsToArray(
+    data.car.purposeOfVisitAndAdvisors
+  );
 
   return (
     <div className="flex flex-col min-h-[175px] h-fit min-w-[420px] w-max border-2 border-gray-200 rounded-lg shadow-sm p-4">
@@ -29,6 +31,9 @@ export default function JobDetailsCard({ data, diagnosis }: any) {
           </div>
           <div className="font-semibold text-gray-500">
             {new Date(data.jobCard.$createdAt).toLocaleString()}
+          </div>
+          <div className="text-2xl font-bold text-black mb-4">
+            &#8377;{jobCardTotal}
           </div>
         </div>
       </div>

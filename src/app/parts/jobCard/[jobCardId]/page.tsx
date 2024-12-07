@@ -19,6 +19,7 @@ import {
   invoiceTypes,
   objToStringArr,
   openInNewTab,
+  roundToTwoDecimals,
   stringToObj,
 } from "@/lib/helper";
 import { toast } from "sonner";
@@ -53,6 +54,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   const [isInsurance, setIsInsurance] = useState(false);
   const [currentJobCardStatus, setCurrentJobCardStatus] = useState<number>();
   const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>();
+
+  const [partsTotal, setPartsTotal] = useState<number>();
 
   const [isEdited, setIsEdited] = useState(false);
 
@@ -108,6 +111,20 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
     getJobCardInvoices();
   }, []);
+
+  useEffect(() => {
+    let parts = 0;
+
+    currentParts.map((part: CurrentPart) => {
+      parts = parts + part.amount;
+    });
+
+    parts = roundToTwoDecimals(parts);
+
+    console.log("TOTALS: ", parts);
+
+    setPartsTotal(parts);
+  }, [currentParts]);
 
   const saveCurrentParts = async () => {
     console.log("Current Parts - ", currentParts);
@@ -320,6 +337,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
               setIsEdited={setIsEdited}
               user={user}
               isInsuranceDetails={false}
+              partsTotal={partsTotal}
             />
           </div>
         </>

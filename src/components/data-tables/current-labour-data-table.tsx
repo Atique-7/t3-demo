@@ -56,6 +56,7 @@ interface DataTableProps<TData, TValue> {
   user: UserType;
   currentJobCardStatus?: number;
   isInsuranceDetails: boolean;
+  labourTotal: number | undefined;
   disable?: boolean;
 }
 
@@ -69,6 +70,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   user,
   currentJobCardStatus,
   isInsuranceDetails,
+  labourTotal,
   disable = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -144,7 +146,7 @@ export function CurrentLabourDataTable<TData, TValue>({
     }
 
     if (Number(discount) > 100) {
-      toast("Discount More than 15% is not allowed");
+      toast("Discount More than 100% is not allowed");
       return;
     }
 
@@ -184,8 +186,8 @@ export function CurrentLabourDataTable<TData, TValue>({
     }
 
     const labourCode = row.getValue("labourCode");
-    const toUpdateDisc = currentLabours?.find(
-      (labour) => labour.labourCode === labourCode
+    let toUpdateDisc = currentLabours?.find(
+      (labour, index) => labour.labourCode === labourCode && row.index == index
     );
 
     if (!toUpdateDisc) {
@@ -234,7 +236,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleInsurance = (row: any, insurance: number) => {
-    if (insurance >= 100) {
+    if (insurance > 100) {
       toast("Insurance percentage cannot exceed 100%");
     } else {
       let arrayFirstHalf = currentLabours!.slice(0, row.index);
@@ -242,8 +244,9 @@ export function CurrentLabourDataTable<TData, TValue>({
 
       const labourCode = row.getValue("labourCode");
 
-      const toUpdateInsurance = currentLabours?.find(
-        (work) => work.labourCode == labourCode
+      let toUpdateInsurance = currentLabours?.find(
+        (labour, index) =>
+          labour.labourCode === labourCode && row.index == index
       );
 
       if (toUpdateInsurance) {
@@ -287,7 +290,7 @@ export function CurrentLabourDataTable<TData, TValue>({
 
   const handleAllInsurance = (insurance: number) => {
     if (Number(insurance) > 100) {
-      toast("Discount more than 100% is not allowed");
+      toast("Insurance more than 100% is not allowed");
       return;
     }
     let tempObj = currentLabours;
@@ -832,7 +835,7 @@ export function CurrentLabourDataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <div className="p-2">
+        <div className="flex p-2 justify-between items-center px-5">
           {isAddingLabour ? (
             <div className="flex px-3 space-x-3">
               <LabourSearch
@@ -860,6 +863,12 @@ export function CurrentLabourDataTable<TData, TValue>({
               </div>
             </Button>
           )}
+          <div className="font-semibold text-gray-700">
+            Total :{" "}
+            <span className="ml-2 text-xl font-bold text-black mb-4">
+              &#8377;{labourTotal}
+            </span>
+          </div>
         </div>
       </div>
     </div>

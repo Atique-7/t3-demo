@@ -775,6 +775,31 @@ export const openInNewTab = (url: string) => {
   window.open(url, "_blank", "noopener,noreferrer");
 };
 
+export const calculateJobCardAmt = (
+  currentParts: CurrentPart[],
+  currentLabour: CurrentLabour[]
+) => {
+  let partsTotal = 0;
+  let labourTotal = 0;
+  let total = 0;
+
+  currentParts.map((part: CurrentPart) => {
+    total = total + part.amount;
+    partsTotal = partsTotal + part.amount;
+  });
+
+  currentLabour.map((work: CurrentLabour) => {
+    total = total + work.amount;
+    labourTotal = labourTotal + work.amount;
+  });
+
+  return {
+    partsTotal: partsTotal,
+    labourTotal: labourTotal,
+    jobCardTotal: total,
+  };
+};
+
 export const updateTempPartObjQuantity = (
   currentPartObj: CurrentPart,
   quantity: number

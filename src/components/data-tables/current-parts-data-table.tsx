@@ -52,6 +52,7 @@ interface DataTableProps<TData, TValue> {
   user: UserType;
   currentJobCardStatus?: number;
   isInsuranceDetails: boolean;
+  partsTotal: number | undefined;
   disable?: boolean;
 }
 
@@ -65,6 +66,7 @@ export function CurrentPartsDataTable<TData, TValue>({
   user,
   currentJobCardStatus,
   isInsuranceDetails,
+  partsTotal,
   disable = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -626,7 +628,7 @@ export function CurrentPartsDataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <div className="p-2">
+        <div className="flex p-2 justify-between items-center px-5">
           {isAddingParts ? (
             <div className="flex px-3 space-x-3">
               <PartsSearch
@@ -654,6 +656,12 @@ export function CurrentPartsDataTable<TData, TValue>({
               </div>
             </Button>
           )}
+          <div className="font-semibold text-gray-700">
+            Total :{" "}
+            <span className="ml-2 text-xl font-bold text-black mb-4">
+              &#8377;{partsTotal}
+            </span>
+          </div>
         </div>
       </div>
     </div>

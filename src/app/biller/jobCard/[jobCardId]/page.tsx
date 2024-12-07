@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import {
   amtHelperWithoutTax,
   calcAllAmts,
+  calculateJobCardAmt,
   createTaxObj,
   InsuranceinvoiceTypes,
   invoiceTypes,
@@ -33,6 +34,7 @@ import {
   policyProviders,
   policyProvidersDict,
   purposeOfVisits,
+  roundToTwoDecimals,
   stringToObj,
 } from "@/lib/helper";
 import { toast } from "sonner";
@@ -130,6 +132,10 @@ export default function jobCard({
 
   const [invoiceCode, setInvoiceCode] = useState("");
 
+  const [partsTotal, setPartsTotal] = useState<number>();
+  const [labourTotal, setLabourTotal] = useState<number>();
+  const [jobCardTotal, setJobCardTotal] = useState<number>();
+
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const [isDisabled, setIsDisabled] = useState<boolean>(disable);
@@ -154,7 +160,31 @@ export default function jobCard({
   }, [isEdited]);
 
   useEffect(() => {
-    console.log("THERE WAS A CHANGE - ", currentParts, currentLabour);
+    // console.log("THERE WAS A CHANGE - ", currentParts, currentLabour);
+
+    let parts = 0;
+    let labour = 0;
+    let total = 0;
+
+    currentParts.map((part: CurrentPart) => {
+      total = total + part.amount;
+      parts = parts + part.amount;
+    });
+
+    currentLabour.map((work: CurrentLabour) => {
+      total = total + work.amount;
+      labour = labour + work.amount;
+    });
+
+    parts = roundToTwoDecimals(parts);
+    labour = roundToTwoDecimals(labour);
+    total = roundToTwoDecimals(total);
+
+    console.log("TOTALS: ", parts, labour, total);
+
+    setPartsTotal(parts);
+    setLabourTotal(labour);
+    setJobCardTotal(total);
   }, [currentParts, currentLabour]);
 
   useEffect(() => {
@@ -842,6 +872,7 @@ export default function jobCard({
             <div className="flex flex-col space-y-8">
               <JobDetailsCard
                 data={{ jobCard, car }}
+                jobCardTotal={jobCardTotal}
                 diagnosis={jobCard?.diagnosis}
               />
               {isInsuranceDetails && (
@@ -973,6 +1004,7 @@ export default function jobCard({
               user={user}
               currentJobCardStatus={currentJobCardStatus}
               isInsuranceDetails={isInsuranceDetails}
+              partsTotal={partsTotal}
               disable={isDisabled}
             />
             <CurrentLabourDataTable
@@ -985,6 +1017,7 @@ export default function jobCard({
               user={user}
               currentJobCardStatus={currentJobCardStatus}
               isInsuranceDetails={isInsuranceDetails}
+              labourTotal={labourTotal}
               disable={isDisabled}
             />
             <div>

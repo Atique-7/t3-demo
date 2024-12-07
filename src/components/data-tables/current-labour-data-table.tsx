@@ -56,6 +56,7 @@ interface DataTableProps<TData, TValue> {
   user: UserType;
   currentJobCardStatus?: number;
   isInsuranceDetails: boolean;
+  labourTotal: number | undefined;
   disable?: boolean;
 }
 
@@ -69,6 +70,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   user,
   currentJobCardStatus,
   isInsuranceDetails,
+  labourTotal,
   disable = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -833,7 +835,7 @@ export function CurrentLabourDataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <div className="p-2">
+        <div className="flex p-2 justify-between items-center px-5">
           {isAddingLabour ? (
             <div className="flex px-3 space-x-3">
               <LabourSearch
@@ -861,6 +863,12 @@ export function CurrentLabourDataTable<TData, TValue>({
               </div>
             </Button>
           )}
+          <div className="font-semibold text-gray-700">
+            Total :{" "}
+            <span className="ml-2 text-xl font-bold text-black mb-4">
+              &#8377;{labourTotal}
+            </span>
+          </div>
         </div>
       </div>
     </div>

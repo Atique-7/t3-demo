@@ -144,7 +144,7 @@ export function CurrentLabourDataTable<TData, TValue>({
     }
 
     if (Number(discount) > 100) {
-      toast("Discount More than 15% is not allowed");
+      toast("Discount More than 100% is not allowed");
       return;
     }
 
@@ -234,7 +234,7 @@ export function CurrentLabourDataTable<TData, TValue>({
   };
 
   const handleInsurance = (row: any, insurance: number) => {
-    if (insurance >= 100) {
+    if (insurance > 100) {
       toast("Insurance percentage cannot exceed 100%");
     } else {
       let arrayFirstHalf = currentLabours!.slice(0, row.index);
@@ -287,7 +287,7 @@ export function CurrentLabourDataTable<TData, TValue>({
 
   const handleAllInsurance = (insurance: number) => {
     if (Number(insurance) > 100) {
-      toast("Discount more than 100% is not allowed");
+      toast("Insurance more than 100% is not allowed");
       return;
     }
     let tempObj = currentLabours;

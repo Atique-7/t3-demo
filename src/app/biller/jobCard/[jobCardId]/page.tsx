@@ -883,143 +883,112 @@ export default function jobCard({
                   data={{ policyNumber: policyNumber }}
                 />
               )}
-
-              <div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="border bordre-red-500 text-red-500"
-                      disabled={isDisabled}
-                    >
-                      {isInsuranceDetails
-                        ? "Edit Insurance Details"
-                        : "Add Insurance Details"}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
-                    <DialogHeader>
-                      <DialogTitle>Insurance Details</DialogTitle>
-                      <DialogDescription>
-                        Enter the details of your vehicle insurance
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="policyProvider" className="text-right">
-                          Policy Provider
-                        </Label>
-                        <div className="col-span-3">
-                          <SearchSelectNEW
-                            data={policyProviders}
-                            placeholder="Select a provider"
-                            value={policyProvider || ""}
-                            onChange={setPolicyProvider}
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="policyNumber" className="text-right">
-                          Policy Number
-                        </Label>
-                        <Input
-                          id="policyNumber"
-                          className="col-span-3"
-                          onChange={(event) =>
-                            setPolicyNumber(event.target.value)
-                          }
-                          value={policyNumber}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        className="bg-red-500"
-                        onClick={saveInsuranceDetails}
-                      >
-                        Save
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="border bordre-red-500 text-red-500"
-                      disabled={isDisabled}
-                    >
-                      Edit Customer GST No.
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
-                    <DialogHeader>
-                      <DialogTitle>Customer GST</DialogTitle>
-                      <DialogDescription>
-                        Customer GST Details
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="GSTIN" className="text-right">
-                          GSTIN
-                        </Label>
-                        <Input
-                          id="GSTIN"
-                          className="col-span-3"
-                          onChange={(event) =>
-                            setCustomerGST(event.target.value)
-                          }
-                          value={customerGST}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        className="bg-red-500"
-                        onClick={saveCustomerGST}
-                      >
-                        Save
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <div className="flex justify-start space-x-5 items-center"></div>
+              <div className="flex items-center justify-start"></div>
             </div>
           </div>
-          <div className="font-semibold text-3xl">Invoice Details</div>
-
-          <div className="flex flex-col space-y-8 mb-10">
-            <CurrentPartsDataTable
-              columns={currentPartsColumns}
-              data={currentParts}
-              currentParts={currentParts}
-              parts={parts}
-              setCurrentParts={setCurrentParts}
-              setIsEdited={setIsEdited}
-              user={user}
-              currentJobCardStatus={currentJobCardStatus}
-              isInsuranceDetails={isInsuranceDetails}
-              partsTotal={partsTotal}
-              disable={isDisabled}
-            />
-            <CurrentLabourDataTable
-              columns={currentLabourColumns}
-              data={currentLabour}
-              labour={labours}
-              currentLabours={currentLabour}
-              setCurrentLabour={setCurrentLabour}
-              setIsEdited={setIsEdited}
-              user={user}
-              currentJobCardStatus={currentJobCardStatus}
-              isInsuranceDetails={isInsuranceDetails}
-              labourTotal={labourTotal}
-              disable={isDisabled}
-            />
+          <div className="flex justify-start space-x-5 items-center">
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border bordre-red-500 text-red-500"
+                    disabled={isDisabled}
+                  >
+                    {isInsuranceDetails
+                      ? "Edit Insurance Details"
+                      : "Add Insurance Details"}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+                  <DialogHeader>
+                    <DialogTitle>Insurance Details</DialogTitle>
+                    <DialogDescription>
+                      Enter the details of your vehicle insurance
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="policyProvider" className="text-right">
+                        Policy Provider
+                      </Label>
+                      <div className="col-span-3">
+                        <SearchSelectNEW
+                          data={policyProviders}
+                          placeholder="Select a provider"
+                          value={policyProvider || ""}
+                          onChange={setPolicyProvider}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="policyNumber" className="text-right">
+                        Policy Number
+                      </Label>
+                      <Input
+                        id="policyNumber"
+                        className="col-span-3"
+                        onChange={(event) =>
+                          setPolicyNumber(event.target.value)
+                        }
+                        value={policyNumber}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-red-500"
+                      onClick={saveInsuranceDetails}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border bordre-red-500 text-red-500"
+                    disabled={isDisabled}
+                  >
+                    Edit Customer GST No.
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+                  <DialogHeader>
+                    <DialogTitle>Customer GST</DialogTitle>
+                    <DialogDescription>Customer GST Details</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="GSTIN" className="text-right">
+                        GSTIN
+                      </Label>
+                      <Input
+                        id="GSTIN"
+                        className="col-span-3"
+                        onChange={(event) => setCustomerGST(event.target.value)}
+                        value={customerGST}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-red-500"
+                      onClick={saveCustomerGST}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
             <div>
               <Dialog>
                 <DialogTrigger asChild>
@@ -1059,6 +1028,36 @@ export default function jobCard({
                 </DialogContent>
               </Dialog>
             </div>
+          </div>
+          <div className="font-semibold text-3xl">Invoice Details</div>
+
+          <div className="flex flex-col space-y-8 mb-10">
+            <CurrentPartsDataTable
+              columns={currentPartsColumns}
+              data={currentParts}
+              currentParts={currentParts}
+              parts={parts}
+              setCurrentParts={setCurrentParts}
+              setIsEdited={setIsEdited}
+              user={user}
+              currentJobCardStatus={currentJobCardStatus}
+              isInsuranceDetails={isInsuranceDetails}
+              partsTotal={partsTotal}
+              disable={isDisabled}
+            />
+            <CurrentLabourDataTable
+              columns={currentLabourColumns}
+              data={currentLabour}
+              labour={labours}
+              currentLabours={currentLabour}
+              setCurrentLabour={setCurrentLabour}
+              setIsEdited={setIsEdited}
+              user={user}
+              currentJobCardStatus={currentJobCardStatus}
+              isInsuranceDetails={isInsuranceDetails}
+              labourTotal={labourTotal}
+              disable={isDisabled}
+            />
           </div>
         </>
       )}

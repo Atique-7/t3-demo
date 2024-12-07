@@ -34,6 +34,7 @@ export interface Part {
 
 // Define the structure for the JobCard object
 export interface JobCard {
+  serviceAdvisorID: any;
   carId: string;
   diagnosis: string[];
   sendToPartsManager: boolean;

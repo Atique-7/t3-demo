@@ -98,7 +98,7 @@ export function analyzeJobCards(jobCards: JobCard[]) {
   const totalAmountByAdvisor: Record<string, number> = {}; // For tracking total amount per advisor
 
   for (const jobCard of jobCards) {
-    const advisorEmail = jobCard.serviceAdvisorId;
+    const advisorEmail = jobCard.serviceAdvisorID;
     const serviceCategory = jobCard.purposeOfVisit;
     const amount = jobCard.amount || 0; // Default to 0 if no amount
 

@@ -94,151 +94,60 @@ export const jobCardColumns: ColumnDef<JobCard>[] = [
 
       const userAccess = parsedToken.labels[0];
 
-      const [tempCar, setTempCar] = useState("");
-
       const jobCard = row.original;
 
-      useEffect(() => {
-        const fetchTempcar = async (carNumber: string): Promise<any> => {
-          let tempCar = await searchTempCar(carNumber);
-          setTempCar(tempCar);
-        };
-
-        fetchTempcar(jobCard.carNumber);
-      }, []);
-
-      const carNumber = jobCard.carNumber;
-
-      // const advisorEmail = parsedToken.email;
-      // const purposeOfVisitAndAdvisors = convertStringsToArray(
-      //   tempCar.purposeOfVisitAndAdvisors
-      // );
-      // const advisorInfo = purposeOfVisitAndAdvisors.find(
-      //   (pov: any) => pov.advisorEmail === advisorEmail
-      // );
-      // const [selectedAdvisor, setSelectedAdvisor] = useState(advisorEmail);
-      // const [allAdvisors, setAllAdvisors] = useState<any[]>([]);
-
-      // const [open, setOpen] = useState(false);
-
-      // const handleCloseDialog = () => {
-      //   // Reset the selected advisor when dialog is closed
-      //   setSelectedAdvisor(advisorEmail);
-      //   setOpen(false);
-      // };
-
-      // useEffect(() => {
-      //   const fetchUsers = async () => {
-      //     const users = await listAllUsers();
-      //     const advisorsMap = users
-      //       .filter((user: any) => {
-      //         const { advisorRoleId } = user.prefs;
-      //         let roleIds;
-      //         if (advisorRoleId) {
-      //           roleIds = JSON.parse(advisorRoleId);
-      //         }
-      //         for (let roleId in roleIds) {
-      //         }
-      //         return advisorRoleId === String(advisorInfo?.purposeOfVisitCode);
-      //       })
-      //       .map((user: any) => ({
-      //         email: user.email,
-      //         name: user.name,
-      //       }));
-      //     setAllAdvisors(advisorsMap);
-      //   };
-      //   fetchUsers();
-      // }, [advisorInfo]);
-
-      // const handleSave = async () => {
-      //   // Find and update the specific advisor entry in the purposeOfVisitAndAdvisors array
-      //   const updatedPurposeOfVisitAndAdvisors = purposeOfVisitAndAdvisors.map(
-      //     (pov: any) => {
-      //       if (pov.advisorEmail === advisorInfo.advisorEmail) {
-      //         return { ...pov, advisorEmail: selectedAdvisor }; // Update the advisor's email
-      //       }
-      //       return pov; // Leave other items unchanged
-      //     }
-      //   );
-      //   console.log(updatedPurposeOfVisitAndAdvisors);
-      //   console.log(tempCar.purposeOfVisitAndAdvisors);
-
-      //   // Call Appwrite's updateDocument method to update the tempCar with the new advisor email
-      //   try {
-      //     await databases.updateDocument(
-      //       config.databaseId,
-      //       config.tempCarsCollectionId, // collectionId
-      //       tempCar.$id, // documentId
-      //       {
-      //         purposeOfVisitAndAdvisors: convertToStrings(
-      //           updatedPurposeOfVisitAndAdvisors
-      //         ), // Updated array
-      //       }
-      //     );
-      //     // Close the dialog after saving
-      //     setOpen(false);
-      //     setTimeout(() => {
-      //       window.location.reload(); // Refresh the page
-      //     }, 500);
-      //     toast("Advisor updated successfully! \u2705");
-      //     console.log("Advisor updated successfully");
-      //   } catch (error) {
-      //     console.error("Error updating advisor:", error);
-      //   }
-      // };
-
       switch (userAccess) {
-        // case "admin":
-        //   return (
-        //     <div className="p-2">
-        //       <Dialog open={open} onOpenChange={setOpen}>
-        //         <DialogTrigger asChild>
-        //           <Button
-        //             variant="outline"
-        //             className="border border-red-500 text-red-500"
+        case "admin":
+        // return (
+        //   <div className="p-2">
+        //     <Dialog open={open} onOpenChange={setOpen}>
+        //       <DialogTrigger asChild>
+        //         <Button
+        //           variant="outline"
+        //           className="border border-red-500 text-red-500"
+        //         >
+        //           Change Advisor
+        //         </Button>
+        //       </DialogTrigger>
+        //       <DialogContent className="sm:max-w-[425px]">
+        //         <DialogHeader>
+        //           <DialogTitle>Change Advisor</DialogTitle>
+        //           <DialogDescription>
+        //             Select a new advisor from the list below
+        //           </DialogDescription>
+        //         </DialogHeader>
+        //         <div className="grid gap-4 py-4">
+        //           <Select
+        //             value={selectedAdvisor}
+        //             onValueChange={(value) => setSelectedAdvisor(value)}
         //           >
-        //             Change Advisor
+        //             <SelectTrigger id="advisorSelect" className="col-span-3">
+        //               <SelectValue placeholder="Select an advisor" />
+        //             </SelectTrigger>
+        //             <SelectContent>
+        //               {allAdvisors.map((advisor) => (
+        //                 <SelectItem key={advisor.email} value={advisor.email}>
+        //                   {advisor.name}
+        //                 </SelectItem>
+        //               ))}
+        //             </SelectContent>
+        //           </Select>
+        //         </div>
+        //         <DialogFooter>
+        //           <Button
+        //             className="bg-red-500 text-white"
+        //             onClick={handleSave}
+        //           >
+        //             Save
         //           </Button>
-        //         </DialogTrigger>
-        //         <DialogContent className="sm:max-w-[425px]">
-        //           <DialogHeader>
-        //             <DialogTitle>Change Advisor</DialogTitle>
-        //             <DialogDescription>
-        //               Select a new advisor from the list below
-        //             </DialogDescription>
-        //           </DialogHeader>
-        //           <div className="grid gap-4 py-4">
-        //             <Select
-        //               value={selectedAdvisor}
-        //               onValueChange={(value) => setSelectedAdvisor(value)}
-        //             >
-        //               <SelectTrigger id="advisorSelect" className="col-span-3">
-        //                 <SelectValue placeholder="Select an advisor" />
-        //               </SelectTrigger>
-        //               <SelectContent>
-        //                 {allAdvisors.map((advisor) => (
-        //                   <SelectItem key={advisor.email} value={advisor.email}>
-        //                     {advisor.name}
-        //                   </SelectItem>
-        //                 ))}
-        //               </SelectContent>
-        //             </Select>
-        //           </div>
-        //           <DialogFooter>
-        //             <Button
-        //               className="bg-red-500 text-white"
-        //               onClick={handleSave}
-        //             >
-        //               Save
-        //             </Button>
-        //             <DialogClose asChild>
-        //               <Button onClick={handleCloseDialog}>Close</Button>
-        //             </DialogClose>
-        //           </DialogFooter>
-        //         </DialogContent>
-        //       </Dialog>
-        //     </div>
-        //   );
+        //           <DialogClose asChild>
+        //             <Button onClick={handleCloseDialog}>Close</Button>
+        //           </DialogClose>
+        //         </DialogFooter>
+        //       </DialogContent>
+        //     </Dialog>
+        //   </div>
+        // );
         case "parts":
           return (
             <div className="flex justify-center items-center">
@@ -473,6 +382,7 @@ import {
   config,
   databases,
   deleteTempCar,
+  getTempCarById,
   listAllUsers,
   searchTempCar,
 } from "./appwrite";

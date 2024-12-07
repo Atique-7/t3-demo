@@ -320,6 +320,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
               setIsEdited={setIsEdited}
               user={user}
               isInsuranceDetails={false}
+              partsTotal={undefined}
             />
           </div>
         </>

@@ -501,12 +501,6 @@ export default function jobCard({
     });
   };
 
-  const loggg = () => {
-    console.log(invoiceCode);
-    console.log(invoiceSeries);
-    console.log(invoiceCounter);
-  };
-
   const saveInsuranceDetails = async () => {
     const foundObj = policyProvidersDict.find(
       (a) => a.insurer == policyProvider

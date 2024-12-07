@@ -13,6 +13,7 @@ import {
   getAllJobCards,
   getAllTempCars,
   getLastJobCardNumber,
+  validateJobCardNumber,
 } from "@/lib/appwrite";
 import { TempCarsDataTable } from "@/components/data-tables/temp-cars-data-table";
 import { TempCar } from "@/lib/definitions";
@@ -120,6 +121,7 @@ export default function Service({}: Props) {
 
       //Set jobcard counter
       currentCounter = (await getLastJobCardNumber()) + 1;
+      currentCounter = await validateJobCardNumber(currentCounter);
       setCookie("currentCounter", JSON.stringify(currentCounter));
       setTotalNumberOfCars(allJobCards.total);
       setCurrentJobCards(allJobCards.documents);

@@ -15,6 +15,7 @@ import {
   convertToStrings,
   purposeOfVisits,
 } from "./helper";
+import { JobCard } from "./definitions";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -50,6 +51,88 @@ export const imagekit = new ImageKit({
   privateKey: "private_pPkQ38mNRgbbpt9JElST4HPGQfw=",
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
+
+// export async function fetchJobCardsBasedonTime(filterType = "all") {
+//   try {
+//     const queries = [];
+
+//     // Get current date and time
+//     const currentDate = new Date();
+//     const currentYear = currentDate.getFullYear();
+//     const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+
+//     if (filterType === "month") {
+//       // Filter for the current month
+//       const startOfMonth = `${currentYear}-${currentMonth}-01T00:00:00Z`;
+//       const endOfMonth = new Date(currentYear, currentMonth, 0).toISOString();
+//       queries.push(Query.greaterThanEqual("createdAt", startOfMonth));
+//       queries.push(Query.lessThanEqual("createdAt", endOfMonth));
+//     } else if (filterType === "year") {
+//       // Filter for the current yearD
+//       const startOfYear = `${currentYear}-01-01T00:00:00Z`;
+//       const endOfYear = `${currentYear}-12-31T23:59:59Z`;
+//       queries.push(Query.greaterThanEqual("createdAt", startOfYear));
+//       queries.push(Query.lessThanEqual("createdAt", endOfYear));
+//     }
+
+//     // Fetch documents based on queries
+//     const response = await databases.listDocuments(
+//       config.databaseId,
+//       config.jobCardsCollectionId,
+//       queries
+//     );
+
+//     console.log(
+//       `Fetched ${response.documents.length} job cards for filter: ${filterType}`
+//     );
+//     return response.documents;
+//   } catch (error) {
+//     console.error("Error fetching job cards:", error);
+//     throw error;
+//   }
+// }
+
+export function analyzeJobCards(jobCards: JobCard[]) {
+  const advisorStats: Record<string, number> = {}; // For tracking stats per advisor
+  const serviceCategoryStats: Record<string, number> = {}; // For tracking stats per service category
+  const totalAmountByAdvisor: Record<string, number> = {}; // For tracking total amount per advisor
+
+  for (const jobCard of jobCards) {
+    const advisorEmail = jobCard.serviceAdvisorId;
+    const serviceCategory = jobCard.purposeOfVisit;
+    const amount = jobCard.amount || 0; // Default to 0 if no amount
+
+    // Count job cards handled by each advisor
+    if (advisorEmail) {
+      if (!advisorStats[advisorEmail]) {
+        advisorStats[advisorEmail] = 0;
+      }
+      advisorStats[advisorEmail]++;
+    }
+
+    // Calculate total amount made in each service category
+    if (serviceCategory) {
+      if (!serviceCategoryStats[serviceCategory]) {
+        serviceCategoryStats[serviceCategory] = 0;
+      }
+      serviceCategoryStats[serviceCategory] += amount;
+    }
+
+    // Calculate total amount made by each advisor
+    if (advisorEmail) {
+      if (!totalAmountByAdvisor[advisorEmail]) {
+        totalAmountByAdvisor[advisorEmail] = 0;
+      }
+      totalAmountByAdvisor[advisorEmail] += amount;
+    }
+  }
+
+  return {
+    advisorStats,
+    serviceCategoryStats,
+    totalAmountByAdvisor,
+  };
+}
 
 // Function to check if there is an active session
 export const checkActiveSession = async () => {
@@ -417,6 +500,7 @@ export const createJobCard = async (
     console.log(purposeOfVisit);
 
     const validJobCardNumber = await validateJobCardNumber(jobCardNumber);
+    console.log(validJobCardNumber);
 
     let result = await databases.createDocument(
       config.databaseId,
@@ -437,6 +521,7 @@ export const createJobCard = async (
         customerAddress,
         purposeOfVisit,
         jobCardPDF,
+        serviceAdvisorID: advisorEmail,
       }
     );
 

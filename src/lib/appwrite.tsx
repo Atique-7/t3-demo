@@ -1035,6 +1035,33 @@ export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: string) => {
   }
 };
 
+export const inputSinglePartAppwrite = async (part: any) => {
+  // console.log("The Parts are -", partsArr);
+
+  try {
+    let partsResult = await databases.createDocument(
+      config.databaseId,
+      config.partsCollectionId,
+      ID.unique(),
+      {
+        partName: String(part.partName),
+        partNumber: String(part.partNumber),
+        hsn: String(part.hsn),
+        category: "Spare Parts",
+        mrp: Number(part.mrp),
+        gst: Number(part.gst),
+        cgst: Number(part.cgst),
+        sgst: Number(part.sgst),
+      }
+    );
+    console.log("The created part is - ", partsResult);
+    return true;
+  } catch (error: any) {
+    console.log(error.message);
+    // return null;
+  }
+};
+
 export const inputPartsAppwrite = async (partsArr: any[]) => {
   // console.log("The Parts are -", partsArr);
 

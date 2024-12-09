@@ -13,6 +13,7 @@ import {
   Layers3,
   LogOut,
   Menu,
+  PlusIcon,
   UserRoundCog,
 } from "lucide-react";
 
@@ -83,6 +84,18 @@ export default function Sidebar({ home }: any) {
                   </Button>
                 </DrawerClose>
               )}
+              {home == "/parts" && (
+                <DrawerClose>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/addParts`)}
+                    variant={"link"}
+                  >
+                    <PlusIcon />
+                    <div>Add Parts</div>
+                  </Button>
+                </DrawerClose>
+              )}
               {home == "/biller" && (
                 <DrawerClose>
                   <Button
@@ -140,6 +153,14 @@ export default function Sidebar({ home }: any) {
                 href={`${home}/parts-inventory`}
               >
                 <ClipboardList />
+              </Link>
+            )}
+            {home == "/parts" && (
+              <Link
+                className="border-2 rounded-md shadow-md p-3"
+                href={`${home}/addParts`}
+              >
+                <PlusIcon />
               </Link>
             )}
             {home == "/admin" && (

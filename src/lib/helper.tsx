@@ -163,6 +163,7 @@ export const carMakeModels = [
       "Creta",
       "Elantra",
       "Eon",
+      "i10",
       "Grand i10",
       "Grand i10 NIOS",
       "I20",

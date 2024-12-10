@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   heading: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Open Sans",
     fontWeight: "black",
     textAlign: "center",
@@ -60,19 +60,20 @@ const styles = StyleSheet.create({
     width: "40%",
   },
   workShopName: {
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: "Open Sans",
     fontWeight: "black",
     alignSelf: "flex-end",
   },
   workShopAddress: {
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: "Open Sans",
     fontWeight: "thin",
     alignSelf: "flex-end",
+    textAlign: "right",
   },
   workShopGST: {
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: "Open Sans",
     fontWeight: "black",
     alignSelf: "flex-end",
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   tableTitle: {
-    fontSize: 11,
+    fontSize: 8,
     fontFamily: "Open Sans",
     fontWeight: "black",
     padding: 2,
@@ -117,17 +118,23 @@ const styles = StyleSheet.create({
   tableRow: {
     display: "flex",
     flexDirection: "row",
+    width: "100%",
   },
   tableCell: {
     borderWidth: 0.5,
     borderColor: "#000000",
-    width: "50%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    // flex: "1 1 0%",
   },
   tableData: {
-    fontSize: 11,
+    fontSize: 8,
     padding: 5,
     display: "flex",
     flexWrap: "wrap",
+    textAlign: "center",
   },
   tableDataEmphasized: {
     fontFamily: "Open Sans",
@@ -145,12 +152,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#D1D5DB",
     width: "100%",
-    justifyContent: "space-evenly",
   },
   tableHeader: {
     borderWidth: 0.5,
     borderColor: "#000000",
-    width: "50%",
+    width: "100%",
     textAlign: "center",
     fontSize: 8,
   },
@@ -205,14 +211,14 @@ const styles = StyleSheet.create({
     width: "40%",
   },
   signName: {
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: "Open Sans",
     fontWeight: "black",
     marginTop: 20,
     // alignSelf: "flex-end",
   },
   signAddress: {
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: "Open Sans",
     fontWeight: "thin",
     // marginTop: 60,
@@ -773,47 +779,47 @@ export const InvoicePDF = ({
                 <Text style={styles.tableTitle}>Parts</Text>
               </View>
               <View style={styles.tableHeaderRow}>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Sr. No.
+                    Sr.
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "20%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Part No.
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "30%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Name
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Tax %
+                    Tax
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "10%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     HSN
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Quantity
+                    Qty
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "10%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Rate
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Disc %
+                    Disc
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "10%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Amount
                   </Text>
@@ -821,33 +827,33 @@ export const InvoicePDF = ({
               </View>
               {parts.map((part: CurrentPart, index: number) => (
                 <View key={index} style={styles.tableRow}>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "20%" }]}>
                     <Text style={styles.tableData}>{part.partNumber}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "30%" }]}>
                     <Text style={styles.tableData}>{part.partName}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{part.gst}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "10%" }]}>
                     <Text style={styles.tableData}>{part.hsn}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{part.quantity}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "10%" }]}>
                     <Text style={styles.tableData}>{part.mrp}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>
                       {part.discountPercentage}
                     </Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "10%" }]}>
                     <Text style={styles.tableData}>
                       {isInsurance && invoiceType != "Quote" ? (
                         <>
@@ -936,32 +942,36 @@ export const InvoicePDF = ({
                 </View>
               ))}
               <View style={[styles.tableRow, styles.tableFooterRow]}>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "20%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
-                  <Text style={styles.tableData}>SubTotal</Text>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    SubTotal
+                  </Text>
                 </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{partsSubtotal}</Text>
+                <View style={[styles.tableCell, { width: "10%" }]}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    {partsSubtotal}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -970,47 +980,47 @@ export const InvoicePDF = ({
                 <Text style={styles.tableTitle}>Labour</Text>
               </View>
               <View style={styles.tableHeaderRow}>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Sr. No.
+                    Sr
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "20%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Labour Code
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "30%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Name
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Tax %
+                    Tax
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "10%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     HSN
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Quantity
+                    Qty
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "10%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Rate
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
-                    Disc %
+                    Disc
                   </Text>
                 </View>
-                <View style={styles.tableHeader}>
+                <View style={[styles.tableHeader, { width: "10%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Amount
                   </Text>
@@ -1018,33 +1028,33 @@ export const InvoicePDF = ({
               </View>
               {labour.map((work: CurrentLabour, index: number) => (
                 <View key={index} style={styles.tableRow}>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "20%" }]}>
                     <Text style={styles.tableData}>{work.labourCode}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "30%" }]}>
                     <Text style={styles.tableData}>{work.labourName}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{work.gst}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "10%" }]}>
                     <Text style={styles.tableData}>{work.hsn}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{work.quantity}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "10%" }]}>
                     <Text style={styles.tableData}>{work.mrp}</Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>
                       {work.discountPercentage}
                     </Text>
                   </View>
-                  <View style={styles.tableCell}>
+                  <View style={[styles.tableCell, { width: "10%" }]}>
                     <Text style={styles.tableData}>
                       {isInsurance && invoiceType != "Quote" ? (
                         <>
@@ -1133,32 +1143,36 @@ export const InvoicePDF = ({
                 </View>
               ))}
               <View style={[styles.tableRow, styles.tableFooterRow]}>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "20%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
-                  <Text style={styles.tableData}>SubTotal</Text>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    SubTotal
+                  </Text>
                 </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{labourSubtotal}</Text>
+                <View style={[styles.tableCell, { width: "10%" }]}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    {labourSubtotal}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -1218,32 +1232,36 @@ export const InvoicePDF = ({
                 </View>
               ))}
               <View style={[styles.tableRow, styles.tableFooterRow]}>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
+                <View style={[styles.tableEmptyCell, { width: "5%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={styles.tableEmptyCell}>
-                  <Text style={styles.tableData}>Tax Total</Text>
+                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    Tax Total
+                  </Text>
                 </View>
-                <View style={styles.tableCell}>
-                  <Text style={styles.tableData}>{totalTax}</Text>
+                <View style={[styles.tableCell, { width: "25%" }]}>
+                  <Text style={[styles.tableDataEmphasized, styles.tableData]}>
+                    {totalTax}
+                  </Text>
                 </View>
               </View>
             </View>

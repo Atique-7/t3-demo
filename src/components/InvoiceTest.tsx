@@ -263,6 +263,15 @@ export const InvoicePDF = ({
   let totalSubtotal = 0;
   let insuranceDetails;
 
+  const dateTemp = new Date(currentDate);
+
+  const day = String(dateTemp.getDate()).padStart(2, "0"); // Ensures 2 digits
+  const month = String(dateTemp.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const year = dateTemp.getFullYear();
+
+  // Combine into the desired format
+  const formattedDate = `${day}-${month}-${year}`;
+
   if (isInsurance && invoiceType != "Quote") {
     insuranceDetails = JSON.parse(jobCard.insuranceDetails);
   }
@@ -739,9 +748,7 @@ export const InvoicePDF = ({
                     </Text>
                   </View>
                   <View style={styles.tableCell}>
-                    <Text style={styles.tableData}>
-                      {currentDate.toLocaleDateString()}
-                    </Text>
+                    <Text style={styles.tableData}>{formattedDate}</Text>
                   </View>
                 </View>
                 <View style={styles.tableRow}>
@@ -1176,8 +1183,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-          </Page>
-          <Page size="A4" style={styles.page}>
+
             <View style={styles.partsTable}>
               <View style={styles.tableTitleRow}>
                 <Text style={styles.tableTitle}>Taxes</Text>

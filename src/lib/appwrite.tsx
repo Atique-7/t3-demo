@@ -986,7 +986,7 @@ export const getAllInvoices = async () => {
     let result = await databases.listDocuments(
       config.databaseId,
       config.invoicesCollectionId,
-      [Query.orderDesc("$createdAt")]
+      [Query.orderDesc("$createdAt"), Query.limit(9999)]
     );
     return result;
   } catch (error: any) {

@@ -605,7 +605,7 @@ export function CurrentPartsDataTable<TData, TValue>({
                           // handleDiscount(row, event.target.value)
                           handleInsurance(row, Number(event.target.value))
                         }
-                        className="w-10"
+                        className="w-12"
                         disabled={disable}
                       />
                     </TableCell>

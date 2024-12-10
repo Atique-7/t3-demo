@@ -249,22 +249,53 @@ export default function jobCard({
       setIsInsurance(isInsuranceConst);
 
       console.log("THIS IS THE PURPOSE OF VISIT - ", jobCardObj.purposeOfVisit);
+
+      // Fetch only invoices related to this job card
+      let jobCardInvoicesArr = [];
+      try {
+        jobCardInvoicesArr = await getInvoicesByJobCardId(params.jobCardId);
+      } catch (error) {
+        console.error("Failed to fetch invoices for job card:", error);
+        jobCardInvoicesArr = [];
+      }
+
       const series = jobCardObj.purposeOfVisit === "Bodyshop" ? "BDS" : "SER";
       console.log("This is the SERIES - ", series);
       setInvoiceSeries(series);
 
-      // Fetch the latest invoice in the selected series
-      const invoice = await getLatestInvoiceBySeries(series);
-      console.log("THESE ARE THE INVOICES BY SERIES ", series, " - ", invoice);
-      const newInvoiceCounter = invoice ? invoice.invoiceNumber + 1 : 1; // If no previous invoice, start with 1
+      // Determine the baseInvoiceNumber
+      let baseInvoiceNumber;
+      const latestInvoice = await getLatestInvoiceBySeries(series);
 
-      setInvoiceCounter(newInvoiceCounter);
+      if (jobCardInvoicesArr.length > 0) {
+        const customerInvoices = jobCardInvoicesArr.filter(
+          (invoice: Invoice) => !invoice.isInsuranceInvoice
+        );
 
-      // Compute invoice code directly here, using the 'series' and 'newInvoiceCounter'
-      const newInvoiceCode = `${series}/${newInvoiceCounter}`;
-      setInvoiceCode(newInvoiceCode);
+        if (customerInvoices.length > 0) {
+          customerInvoices.sort(
+            (a: Invoice, b: Invoice) => b.invoiceNumber - a.invoiceNumber
+          );
+          baseInvoiceNumber = customerInvoices[0].invoiceNumber;
+        } else {
+          if (latestInvoice) {
+            baseInvoiceNumber = latestInvoice.invoiceNumber + 1; // Increment from the latest
+          } else {
+            baseInvoiceNumber = 1; // No invoices in the series, start with 1
+          } // Start from 1 if no customer invoices exist
+        }
+      } else {
+        if (latestInvoice) {
+          baseInvoiceNumber = latestInvoice.invoiceNumber + 1; // Increment from the latest
+        } else {
+          baseInvoiceNumber = 1; // No invoices in the series, start with 1
+        }
+      }
 
-      console.log("Generated Invoice Code:", newInvoiceCode);
+      console.log("Base Invoice Number:", baseInvoiceNumber);
+
+      setInvoiceCounter(baseInvoiceNumber);
+      setInvoiceCode(`${series}/${baseInvoiceNumber}`);
 
       setJobCard((prev) => jobCardObj);
       setCurrentJobCardStatus(jobCardObj.jobCardStatus);

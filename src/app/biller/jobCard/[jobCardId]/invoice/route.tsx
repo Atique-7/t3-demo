@@ -1,6 +1,7 @@
 import {
   createInvoice,
   getAllInvoices,
+  getInvoicesByJobCardId,
   getJobCardById,
   getTempCarById,
   imagekit,
@@ -49,7 +50,7 @@ export async function POST(
         work.insurancePercentage && work.insurancePercentage != 0
     );
 
-    const isInsurance = foundIndexParts != -1 || foundIndexLabour != -1;
+    const isInsurance = foundIndexParts !== -1 || foundIndexLabour !== -1;
 
     // console.log("THIS INVOICE HAS INSURANCE", isInsurance);
 
@@ -66,6 +67,18 @@ export async function POST(
     const jobCardInvoicesArr = invoices.documents.filter(
       (invoice: Invoice) => invoice.jobCardId == params.jobCardId
     );
+    const customerInvoices = jobCardInvoicesArr.filter(
+      (invoice: Invoice) => !invoice.isInsuranceInvoice
+    );
+
+    let baseInvoiceNumber = invoiceCounter; // Fallback
+
+    if (customerInvoices.length > 0) {
+      customerInvoices.sort(
+        (a: Invoice, b: Invoice) => b.invoiceNumber - a.invoiceNumber
+      );
+      baseInvoiceNumber = customerInvoices[0].invoiceNumber;
+    }
 
     let isUpdatedInvoice = false;
 
@@ -79,6 +92,8 @@ export async function POST(
     const povs = convertStringsToArray(car.purposeOfVisitAndAdvisors);
 
     if (isInsurance && invoiceTypeString != "Quote") {
+      const customerInvoiceCode = `${invoiceSeries}/${baseInvoiceNumber}`;
+      const insuranceInvoiceCode = `${invoiceSeries}/${baseInvoiceNumber + 1}`;
       const stream1 = await renderToStream(
         <InvoicePDF
           jobCard={jobCard}
@@ -89,7 +104,7 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={invoiceCode}
+          invoiceNumber={customerInvoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={isInsurance}
           liabilityType={"Customer"}
@@ -182,7 +197,7 @@ export async function POST(
         invoiceTypeString!,
         invoiceCounter,
         invoiceSeries,
-        invoiceCode,
+        customerInvoiceCode,
         isUpdatedInvoice,
         "Customer"
       );
@@ -205,6 +220,7 @@ export async function POST(
       return NextResponse.json([result1, result2], { status: 201 });
     } else {
       // console.log("There is no insurance or ITS QUOTE");
+      const invoiceCode = `${invoiceSeries}/${baseInvoiceNumber}`;
 
       const stream = await renderToStream(
         <InvoicePDF
@@ -218,7 +234,7 @@ export async function POST(
           invoiceType={invoiceTypeString}
           invoiceNumber={invoiceCode}
           purposeOfVisitAndAdvisors={povs}
-          isInsurance={isInsurance}
+          isInsurance={false}
         />
       );
 
@@ -267,8 +283,6 @@ export async function POST(
 
       return NextResponse.json([result], { status: 201 });
     }
-
-    // return;
   } catch (error) {
     console.log("Failed");
     console.log(error);

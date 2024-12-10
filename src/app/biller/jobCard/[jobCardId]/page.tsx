@@ -102,7 +102,7 @@ export default function jobCard({
 }) {
   const pathname = usePathname();
 
-  console.log("THIS IS THE PATHNAME - ", pathname);
+  // console.log("THIS IS THE PATHNAME - ", pathname);
 
   const [jobCard, setJobCard] = useState<JobCard | null>(null); // Properly typed state
   const [car, setCar] = useState<Car | null>(null); // Properly typed state
@@ -160,7 +160,7 @@ export default function jobCard({
   }, [isEdited]);
 
   useEffect(() => {
-    // console.log("THERE WAS A CHANGE - ", currentParts, currentLabour);
+    console.log("THERE WAS A CHANGE - ", currentParts, currentLabour);
 
     let parts = 0;
     let labour = 0;
@@ -180,7 +180,7 @@ export default function jobCard({
     labour = roundToTwoDecimals(labour);
     total = roundToTwoDecimals(total);
 
-    console.log("TOTALS: ", parts, labour, total);
+    // console.log("TOTALS: ", parts, labour, total);
 
     setPartsTotal(parts);
     setLabourTotal(labour);
@@ -193,7 +193,7 @@ export default function jobCard({
 
       const parsedToken = JSON.parse(String(token));
       setUser((prev) => parsedToken);
-      console.log(parsedToken);
+      // console.log(parsedToken);
     };
 
     const getJobCardDetails = async () => {
@@ -219,15 +219,16 @@ export default function jobCard({
         if (status === 2) setIsDisabled(true);
       } else {
         carObj = await getCarByCarNumber(jobCardObj.carNumber);
+        carObj = carObj.documents[0];
       }
-      // console.log("This is the car details - ", carObj);
+      console.log("This is the car details - ", carObj);
 
       if (jobCardObj.insuranceDetails) {
         setIsInsuranceDetails(true);
         const details = JSON.parse(jobCardObj.insuranceDetails);
         setPolicyProvider(details.policyProvider);
         setPolicyNumber(details.policyNumber);
-        console.log("DETAILS", details);
+        // console.log("DETAILS", details);
       } else {
         setIsInsuranceDetails(false);
       }
@@ -244,11 +245,11 @@ export default function jobCard({
 
       const isInsuranceConst = foundIndexParts != -1 || foundIndexLabour != -1;
 
-      console.log("IS INSURANCE - ", foundIndexParts, foundIndexLabour);
+      // console.log("IS INSURANCE - ", foundIndexParts, foundIndexLabour);
 
       setIsInsurance(isInsuranceConst);
 
-      console.log("THIS IS THE PURPOSE OF VISIT - ", jobCardObj.purposeOfVisit);
+      // console.log("THIS IS THE PURPOSE OF VISIT - ", jobCardObj.purposeOfVisit);
 
       // Fetch only invoices related to this job card
       let jobCardInvoicesArr = [];
@@ -260,7 +261,7 @@ export default function jobCard({
       }
 
       const series = jobCardObj.purposeOfVisit === "Bodyshop" ? "BDS" : "SER";
-      console.log("This is the SERIES - ", series);
+      // console.log("This is the SERIES - ", series);
       setInvoiceSeries(series);
 
       // Determine the baseInvoiceNumber
@@ -304,11 +305,13 @@ export default function jobCard({
 
     const getJobCardInvoices = async () => {
       const invoices = await getAllInvoices();
+
+      // console.log("JOB CARD ID - ", invoices);
       const jobCardInvoicesArr = invoices.documents.filter(
         (invoice: Invoice) => invoice.jobCardId == params.jobCardId
       );
 
-      console.log("INVOICES FOR THIS JC - ", jobCardInvoicesArr);
+      // console.log("INVOICES FOR THIS JC - ", jobCardInvoicesArr);
 
       setJobCardInvoices(jobCardInvoicesArr);
     };
@@ -337,8 +340,8 @@ export default function jobCard({
   }, []);
 
   const saveCurrentPartsAndLbour = async (statusUpdate?: number) => {
-    console.log("Current Parts - ", currentParts);
-    console.log("CURRENT LABOUR - ", currentLabour);
+    // console.log("Current Parts - ", currentParts);
+    // console.log("CURRENT LABOUR - ", currentLabour);
 
     let status = 2;
 
@@ -352,11 +355,11 @@ export default function jobCard({
     const amounts = calcAllAmts(currentParts, currentLabour);
     const taxes: TaxObj[] = createTaxObj(currentParts, currentLabour);
 
-    console.log("TAXES ON THE FRONT - ", taxes);
+    // console.log("TAXES ON THE FRONT - ", taxes);
 
     const strTaxes = objToStringArr(taxes);
 
-    console.log("THESE ARE THE AMOUNTS - ", amounts);
+    // console.log("THESE ARE THE AMOUNTS - ", amounts);
 
     let tempJobCard = jobCard;
     if (tempJobCard) {
@@ -605,10 +608,10 @@ export default function jobCard({
   };
 
   const handleInvoicePDF = (selectedValue: string) => {
-    console.log("SELECTED PDF - ", selectedValue);
+    // console.log("SELECTED PDF - ", selectedValue);
     if (selectedValue == "Gate Pass") {
       if (jobCard) {
-        console.log("gatePass PDF = ", jobCard.gatePassPDF);
+        // console.log("gatePass PDF = ", jobCard.gatePassPDF);
         openInNewTab(jobCard.gatePassPDF);
       }
     } else {
@@ -621,6 +624,8 @@ export default function jobCard({
             new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
         );
         const selectedInvoice = filteredInvoices[0];
+
+        // console.log("FILTERED INVOICES - ", jobCardInvoices);
         openInNewTab(selectedInvoice.invoiceUrl);
       }
     }

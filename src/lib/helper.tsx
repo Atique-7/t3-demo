@@ -163,6 +163,7 @@ export const carMakeModels = [
       "Creta",
       "Elantra",
       "Eon",
+      "i10",
       "Grand i10",
       "Grand i10 NIOS",
       "I20",
@@ -711,6 +712,7 @@ export const createTempPartZeroObj = (item: CurrentPart) => {
     //   (item.totalTax = 0),
     //   (item.amount = 0),
     //   (item.cgstAmt = 0);
+    item.amount = 0;
     item.sgstAmt = 0;
     item.mrp = 0;
     item.subTotal = 0;
@@ -727,6 +729,8 @@ export const createTempLabourZeroObj = (item: CurrentLabour) => {
     //   (item.totalTax = 0),
     //   (item.amount = 0),
     //   (item.cgstAmt = 0);
+    item.amount = 0;
+
     item.sgstAmt = 0;
     item.mrp = 0;
     item.subTotal = 0;

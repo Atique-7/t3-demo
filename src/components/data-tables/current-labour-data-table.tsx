@@ -677,7 +677,7 @@ export function CurrentLabourDataTable<TData, TValue>({
                               onChange={(event) =>
                                 handleInsurance(row, Number(event.target.value))
                               }
-                              className="w-10"
+                              className="w-12"
                               disabled={disable}
                             />
                           </TableCell>

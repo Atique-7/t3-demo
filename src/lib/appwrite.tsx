@@ -798,7 +798,7 @@ export const getAllLabour = async () => {
     let result = await databases.listDocuments(
       config.databaseId,
       config.labourCollectionId,
-      [Query.limit(999999)]
+      [Query.limit(999999), Query.orderDesc("$createdAt")]
     );
     return result;
   } catch (error: any) {
@@ -986,7 +986,7 @@ export const getAllInvoices = async () => {
     let result = await databases.listDocuments(
       config.databaseId,
       config.invoicesCollectionId,
-      [Query.orderDesc("$createdAt")]
+      [Query.orderDesc("$createdAt"), Query.limit(9999)]
     );
     return result;
   } catch (error: any) {
@@ -1056,6 +1056,33 @@ export const inputSinglePartAppwrite = async (part: any) => {
       }
     );
     console.log("The created part is - ", partsResult);
+    return true;
+  } catch (error: any) {
+    console.log(error.message);
+    // return null;
+  }
+};
+
+export const inputSingleLabourAppwrite = async (work: any) => {
+  // console.log("The Parts are -", partsArr);
+
+  try {
+    let labourResult = await databases.createDocument(
+      config.databaseId,
+      config.labourCollectionId,
+      ID.unique(),
+      {
+        labourName: String(work.labourName),
+        labourCode: String(work.labourCode),
+        hsn: String(work.hsn),
+        category: "Spare Parts",
+        mrp: Number(work.mrp),
+        gst: Number(work.gst),
+        cgst: Number(work.cgst),
+        sgst: Number(work.sgst),
+      }
+    );
+    console.log("The created labour is - ", labourResult);
     return true;
   } catch (error: any) {
     console.log(error.message);

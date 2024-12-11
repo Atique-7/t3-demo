@@ -3,16 +3,17 @@ export interface Car {
   carMake: string;
   carModel: string;
   location: string;
-  purposeOfVisitAndAdvisors: string[];
-  jobCardId: string;
-  carStatus: number;
-  carsTableId: string;
   $id: string;
   $createdAt: string;
   $updatedAt: string;
   $permissions: string[];
   $databaseId: string;
   $collectionId: string;
+  customerName: string;
+  customerPhone: string;
+  customerAddress?: string;
+  allJobCards: string[];
+  carsTableId: string;
 }
 
 export interface Part {
@@ -161,10 +162,10 @@ export type TempCar = {
   carModel: string;
   location: string;
   purposeOfVisitAndAdvisors: string[];
-  jobCardId: null | number;
+  jobCardId: null | string;
   allJobCardIds: string[];
   carStatus: number;
-  carsTableId: null | number;
+  carsTableId: null | string;
   $id: string;
   $createdAt: string;
   $updatedAt: string;

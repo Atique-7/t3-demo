@@ -80,6 +80,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import CarHistory from "@/components/CarHistory";
 
 // Define the structure for the Car object
 
@@ -652,6 +653,8 @@ export default function jobCard({
               </Link>
             </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
+              <CarHistory carObj={car} />
+
               <div>
                 <Button
                   variant="outline"

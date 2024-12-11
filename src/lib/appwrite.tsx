@@ -704,6 +704,21 @@ export const getTempCarById = async (id: string) => {
   }
 };
 
+export const getCarById = async (id: string) => {
+  // console.log("Hitting Backend");
+  try {
+    let result = await databases.getDocument(
+      config.databaseId,
+      config.carsCollectionId,
+      id
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const updateTempCarById = async (id: string, carStatus: number) => {
   // console.log("Hitting Backend");
   try {

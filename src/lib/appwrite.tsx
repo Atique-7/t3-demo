@@ -990,7 +990,7 @@ export const getInvoicesByJobCardId = async (jobCardId: string) => {
     return result;
   } catch (error: any) {
     console.log(error.message);
-    return null;
+    return [];
   }
 };
 
@@ -1009,6 +1009,7 @@ export const getAllInvoices = async () => {
     return null;
   }
 };
+
 export const getLatestInvoiceBySeries = async (invoiceSeries: string) => {
   console.log("INVOCIJDJSDJ", invoiceSeries);
   try {

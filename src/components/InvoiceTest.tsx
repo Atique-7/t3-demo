@@ -276,7 +276,7 @@ export const InvoicePDF = ({
     insuranceDetails = JSON.parse(jobCard.insuranceDetails);
   }
 
-  const taxObj = createTaxObj(parts, labour);
+  const taxObj = createTaxObj(parts, labour, isInsurance, liabilityType);
 
   console.log("INVOICE TYPE - ", invoiceType);
 

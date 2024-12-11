@@ -1157,10 +1157,20 @@ export function bufferToStream(buffer: Buffer) {
   return readable;
 }
 
-export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
+export const createTaxObj = (
+  parts: CurrentPart[],
+  labour: CurrentLabour[],
+  isInsurance?: boolean,
+  liabilityType?: string
+) => {
   let taxes: TaxObj[] = [];
 
   parts.map((part: CurrentPart) => {
+    console.log(
+      "INSURANCE PERCENTAGE - ",
+      part.insurancePercentage,
+      isInsurance
+    );
     let foundCgstObjIndex = taxes.findIndex(
       (obj: TaxObj) =>
         obj.taxName == "CGST" &&
@@ -1179,18 +1189,87 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundCgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundCgstObjIndex + 1);
 
-      taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
-        taxes[foundCgstObjIndex].taxAmt + part.cgstAmt
-      );
+      if (
+        isInsurance &&
+        part.insurancePercentage &&
+        part.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          part.cgstAmt,
+          part.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          part.sgstAmt,
+          part.insurancePercentage
+        );
+
+        // console.log("ANDAR AA RAHA HAI", splitPartCGST);
+
+        if (liabilityType == "Customer") {
+          taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundCgstObjIndex].taxAmt + splitPartCGST.customerAmt
+          );
+        } else {
+          taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundCgstObjIndex].taxAmt + splitPartCGST.insuranceAmt
+          );
+        }
+      } else {
+        // console.log("ANDAR NAHI AAYA");
+        taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+          taxes[foundCgstObjIndex].taxAmt + part.cgstAmt
+        );
+      }
+
+      console.log("TAX OBJ EDITED- ", taxes[foundCgstObjIndex]);
 
       taxes = [...arrayFirstHalf, taxes[foundCgstObjIndex], ...arraySecondHalf];
     } else {
+      let calculatedCGSTAmt = 0;
+
+      if (
+        isInsurance &&
+        part.insurancePercentage &&
+        part.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          part.cgstAmt,
+          part.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          part.sgstAmt,
+          part.insurancePercentage
+        );
+
+        console.log("ANDAR AA RAHA HAI NEW", splitPartCGST);
+
+        if (liabilityType == "Customer") {
+          calculatedCGSTAmt = roundToTwoDecimals(
+            calculatedCGSTAmt + splitPartCGST.customerAmt
+          );
+          console.log("CUSTOMER BHI AA RAHA HAI", calculatedCGSTAmt);
+        } else {
+          calculatedCGSTAmt = roundToTwoDecimals(
+            calculatedCGSTAmt + splitPartCGST.insuranceAmt
+          );
+        }
+      } else {
+        // console.log("ANDAR NAHI AAYA");
+        calculatedCGSTAmt = roundToTwoDecimals(
+          calculatedCGSTAmt + part.cgstAmt
+        );
+      }
+
       let cgstObj = {
         taxType: "GOODS",
         taxRate: part.cgst,
         taxName: "CGST",
-        taxAmt: part.cgstAmt,
+        taxAmt: calculatedCGSTAmt,
       };
+
+      console.log("TAX OBJ NEW- ", calculatedCGSTAmt, cgstObj);
 
       taxes.push(cgstObj);
     }
@@ -1199,18 +1278,82 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundSgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundSgstObjIndex + 1);
 
-      taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
-        taxes[foundSgstObjIndex].taxAmt + part.sgstAmt
-      );
+      if (
+        isInsurance &&
+        part.insurancePercentage &&
+        part.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          part.cgstAmt,
+          part.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          part.sgstAmt,
+          part.insurancePercentage
+        );
+
+        if (liabilityType == "Customer") {
+          taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundSgstObjIndex].taxAmt + splitPartSGST.customerAmt
+          );
+        } else {
+          taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundSgstObjIndex].taxAmt + splitPartSGST.insuranceAmt
+          );
+        }
+      } else {
+        taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+          taxes[foundSgstObjIndex].taxAmt + part.sgstAmt
+        );
+      }
 
       taxes = [...arrayFirstHalf, taxes[foundSgstObjIndex], ...arraySecondHalf];
     } else {
+      let calculatedSGSTAmt = 0;
+
+      if (
+        isInsurance &&
+        part.insurancePercentage &&
+        part.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          part.cgstAmt,
+          part.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          part.sgstAmt,
+          part.insurancePercentage
+        );
+
+        console.log("ANDAR AA RAHA HAI NEW", splitPartSGST);
+
+        if (liabilityType == "Customer") {
+          calculatedSGSTAmt = roundToTwoDecimals(
+            calculatedSGSTAmt + splitPartSGST.customerAmt
+          );
+          console.log("CUSTOMER BHI AA RAHA HAI", calculatedSGSTAmt);
+        } else {
+          calculatedSGSTAmt = roundToTwoDecimals(
+            calculatedSGSTAmt + splitPartSGST.insuranceAmt
+          );
+        }
+      } else {
+        // console.log("ANDAR NAHI AAYA");
+        calculatedSGSTAmt = roundToTwoDecimals(
+          calculatedSGSTAmt + part.sgstAmt
+        );
+      }
+
       let sgstObj = {
         taxType: "GOODS",
         taxRate: part.sgst,
         taxName: "SGST",
-        taxAmt: part.sgstAmt,
+        taxAmt: calculatedSGSTAmt,
       };
+
+      console.log("TAX OBJ NEW- ", calculatedSGSTAmt, sgstObj);
 
       taxes.push(sgstObj);
     }
@@ -1235,18 +1378,82 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundCgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundCgstObjIndex + 1);
 
-      taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
-        taxes[foundCgstObjIndex].taxAmt + work.cgstAmt
-      );
+      if (
+        isInsurance &&
+        work.insurancePercentage &&
+        work.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          work.cgstAmt,
+          work.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          work.sgstAmt,
+          work.insurancePercentage
+        );
+
+        if (liabilityType == "Customer") {
+          taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundCgstObjIndex].taxAmt + splitPartCGST.customerAmt
+          );
+        } else {
+          taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundCgstObjIndex].taxAmt + splitPartCGST.insuranceAmt
+          );
+        }
+      } else {
+        taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+          taxes[foundCgstObjIndex].taxAmt + work.cgstAmt
+        );
+      }
 
       taxes = [...arrayFirstHalf, taxes[foundCgstObjIndex], ...arraySecondHalf];
     } else {
+      let calculatedCGSTAmt = 0;
+
+      if (
+        isInsurance &&
+        work.insurancePercentage &&
+        work.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          work.cgstAmt,
+          work.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          work.sgstAmt,
+          work.insurancePercentage
+        );
+
+        console.log("ANDAR AA RAHA HAI NEW", splitPartCGST);
+
+        if (liabilityType == "Customer") {
+          calculatedCGSTAmt = roundToTwoDecimals(
+            calculatedCGSTAmt + splitPartCGST.customerAmt
+          );
+          console.log("CUSTOMER BHI AA RAHA HAI", calculatedCGSTAmt);
+        } else {
+          calculatedCGSTAmt = roundToTwoDecimals(
+            calculatedCGSTAmt + splitPartCGST.insuranceAmt
+          );
+        }
+      } else {
+        // console.log("ANDAR NAHI AAYA");
+        calculatedCGSTAmt = roundToTwoDecimals(
+          calculatedCGSTAmt + work.cgstAmt
+        );
+      }
+
       let cgstObj = {
         taxType: "SERVICES",
         taxRate: work.cgst,
         taxName: "CGST",
-        taxAmt: work.cgstAmt,
+        taxAmt: calculatedCGSTAmt,
       };
+
+      console.log("TAX OBJ NEW- ", calculatedCGSTAmt, cgstObj);
 
       taxes.push(cgstObj);
     }
@@ -1255,19 +1462,82 @@ export const createTaxObj = (parts: CurrentPart[], labour: CurrentLabour[]) => {
       let arrayFirstHalf = taxes!.slice(0, foundSgstObjIndex);
       let arraySecondHalf = taxes!.slice(foundSgstObjIndex + 1);
 
-      taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
-        taxes[foundSgstObjIndex].taxAmt + work.sgstAmt
-      );
+      if (
+        isInsurance &&
+        work.insurancePercentage &&
+        work.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          work.cgstAmt,
+          work.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          work.sgstAmt,
+          work.insurancePercentage
+        );
+
+        if (liabilityType == "Customer") {
+          taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundSgstObjIndex].taxAmt + splitPartSGST.customerAmt
+          );
+        } else {
+          taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+            taxes[foundSgstObjIndex].taxAmt + splitPartSGST.insuranceAmt
+          );
+        }
+      } else {
+        taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+          taxes[foundSgstObjIndex].taxAmt + work.sgstAmt
+        );
+      }
 
       taxes = [...arrayFirstHalf, taxes[foundSgstObjIndex], ...arraySecondHalf];
     } else {
+      let calculatedSGSTAmt = 0;
+
+      if (
+        isInsurance &&
+        work.insurancePercentage &&
+        work.insurancePercentage != 0
+      ) {
+        const splitPartCGST = splitInsuranceAmt(
+          work.cgstAmt,
+          work.insurancePercentage
+        );
+
+        const splitPartSGST = splitInsuranceAmt(
+          work.sgstAmt,
+          work.insurancePercentage
+        );
+
+        console.log("ANDAR AA RAHA HAI NEW", splitPartSGST);
+
+        if (liabilityType == "Customer") {
+          calculatedSGSTAmt = roundToTwoDecimals(
+            calculatedSGSTAmt + splitPartSGST.customerAmt
+          );
+          console.log("CUSTOMER BHI AA RAHA HAI", calculatedSGSTAmt);
+        } else {
+          calculatedSGSTAmt = roundToTwoDecimals(
+            calculatedSGSTAmt + splitPartSGST.insuranceAmt
+          );
+        }
+      } else {
+        // console.log("ANDAR NAHI AAYA");
+        calculatedSGSTAmt = roundToTwoDecimals(
+          calculatedSGSTAmt + work.sgstAmt
+        );
+      }
+
       let sgstObj = {
         taxType: "SERVICES",
         taxRate: work.sgst,
         taxName: "SGST",
-        taxAmt: work.sgstAmt,
+        taxAmt: calculatedSGSTAmt,
       };
 
+      console.log("TAX OBJ NEW- ", calculatedSGSTAmt, sgstObj);
       taxes.push(sgstObj);
     }
   });

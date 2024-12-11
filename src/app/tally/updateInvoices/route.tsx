@@ -19,6 +19,82 @@ import {
 } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 
+const getLatestInvoices = (invoices: any) => {
+  const latestInvoices: Record<string, any> = {};
+
+  invoices.forEach((invoice: any) => {
+    const { invoiceType, $createdAt, insuranceInvoiceType } = invoice;
+
+    // Create a unique key for each combination of invoiceType and insuranceInvoiceType
+    const key = insuranceInvoiceType
+      ? `${invoiceType}-${insuranceInvoiceType}`
+      : invoiceType;
+
+    // Ensure `$createdAt` is valid
+    if (!$createdAt) {
+      console.warn(
+        `Invoice with key ${key} has no '$createdAt' field:`,
+        invoice
+      );
+      return;
+    }
+
+    if (!latestInvoices[key]) {
+      // Initialize with the first invoice for this key
+      latestInvoices[key] = invoice;
+    } else {
+      // Compare timestamps to find the latest
+      const currentTimestamp = new Date($createdAt).getTime();
+      const existingTimestamp = new Date(
+        latestInvoices[key].$createdAt
+      ).getTime();
+
+      if (currentTimestamp > existingTimestamp) {
+        latestInvoices[key] = invoice;
+      }
+    }
+  });
+
+  // Validate final output to ensure no duplicate keys
+  const uniqueInvoices = Object.values(latestInvoices);
+  // console.log("Final Unique Invoices:", uniqueInvoices);
+
+  return uniqueInvoices; // Return only the latest invoices
+};
+
+const curateInvoices = (invoices: any) => {
+  let invoiceArr: any[] = [];
+
+  console.log("ACTUAL", invoices.length);
+
+  const groupedByJobCardId = invoices.reduce((acc: any, invoice: any) => {
+    const jobCardId = invoice.jobCardId;
+    if (!acc[jobCardId]) {
+      acc[jobCardId] = [];
+    }
+    acc[jobCardId].push(invoice);
+    return acc;
+  }, {});
+
+  let total = 0;
+
+  Object.keys(groupedByJobCardId).map((key) => {
+    const latestInvoices = getLatestInvoices(groupedByJobCardId[key]);
+    total = total + groupedByJobCardId[key].length;
+    invoiceArr = [...invoiceArr, ...latestInvoices];
+  });
+
+  invoiceArr.sort((a, b) =>
+    a.invoiceNumber > b.invoiceNumber
+      ? 1
+      : b.invoiceNumber > a.invoiceNumber
+      ? -1
+      : 0
+  );
+
+  return invoiceArr;
+};
+
 export async function POST(request: NextRequest) {
   // console.log("BODY", request.body);
   try {
@@ -31,10 +107,10 @@ export async function POST(request: NextRequest) {
 
     const newInvoices = result.documents;
 
-    console.log("Total Number of Invoices - ", newInvoices.length);
+    const curatedInvoices = curateInvoices(newInvoices);
 
     const updatedNewInvoices = await Promise.all(
-      newInvoices.map(async (invoice: Invoice, index: number) => {
+      curatedInvoices.map(async (invoice: Invoice, index: number) => {
         let result: JobCard = await getJobCardById(invoice.jobCardId);
         let partsArr = stringToObj(result.parts);
         let labourArr = stringToObj(result.labour);

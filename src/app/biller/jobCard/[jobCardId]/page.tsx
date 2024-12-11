@@ -684,7 +684,7 @@ export default function jobCard({
               </Link>
             </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
-              <CarHistory carObj={car} />
+              {/* <CarHistory carObj={car} /> */}
 
               <div>
                 <Button

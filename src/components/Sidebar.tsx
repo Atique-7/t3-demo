@@ -100,6 +100,18 @@ export default function Sidebar({ home }: any) {
                 <DrawerClose>
                   <Button
                     className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/addLabour`)}
+                    variant={"link"}
+                  >
+                    <PlusIcon />
+                    <div>Add Labour</div>
+                  </Button>
+                </DrawerClose>
+              )}
+              {home == "/biller" && (
+                <DrawerClose>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
                     onClick={() => router.push(`${home}/labour-inventory`)}
                     variant={"link"}
                   >
@@ -155,14 +167,7 @@ export default function Sidebar({ home }: any) {
                 <ClipboardList />
               </Link>
             )}
-            {home == "/parts" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/addParts`}
-              >
-                <PlusIcon />
-              </Link>
-            )}
+
             {home == "/admin" && (
               <Link
                 className="border-2 rounded-md shadow-md p-3"
@@ -185,6 +190,22 @@ export default function Sidebar({ home }: any) {
                 href={`${home}/addCar`}
               >
                 <Car />
+              </Link>
+            )}
+            {home == "/parts" && (
+              <Link
+                className="border-2 rounded-md shadow-md p-3"
+                href={`${home}/addParts`}
+              >
+                <PlusIcon />
+              </Link>
+            )}
+            {home == "/biller" && (
+              <Link
+                className="border-2 rounded-md shadow-md p-3"
+                href={`${home}/addLabour`}
+              >
+                <PlusIcon />
               </Link>
             )}
           </div>

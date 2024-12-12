@@ -107,6 +107,8 @@ export default function jobCard({
 
   const [jobCard, setJobCard] = useState<JobCard | null>(null); // Properly typed state
   const [car, setCar] = useState<Car | null>(null); // Properly typed state
+  const [carsTableId, setCarsTableId] = useState<string>(""); // Properly typed state
+
   const [parts, setParts] = useState<Part[] | null>(null);
   const [labours, setLabours] = useState<Labour[] | null>(null);
   const [currentParts, setCurrentParts] = useState<CurrentPart[]>([]);
@@ -218,9 +220,11 @@ export default function jobCard({
       if (carObj) {
         const status = carObj.carStatus;
         if (status === 2) setIsDisabled(true);
+        setCarsTableId(carObj.carsTableId);
       } else {
         carObj = await getCarByCarNumber(jobCardObj.carNumber);
         carObj = carObj.documents[0];
+        setCarsTableId(carObj["$id"]);
       }
       console.log("This is the car details - ", carObj);
 
@@ -684,7 +688,11 @@ export default function jobCard({
               </Link>
             </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
-              {/* <CarHistory carObj={car} /> */}
+              {/* <CarHistory
+                carsTableId={carsTableId}
+                currentJobCardId={params.jobCardId}
+                currentJobCardStatus={currentJobCardStatus || 0}
+              /> */}
 
               <div>
                 <Button

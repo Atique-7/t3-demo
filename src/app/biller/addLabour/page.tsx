@@ -41,7 +41,7 @@ function AddLabour({}: Props) {
     if (labourName) {
       setIsValid(true);
       let newPart = {
-        labourName,
+        labourName: labourName.toUpperCase(),
         labourCode: calculatedLabourCode,
         hsn: "998729",
         gst: 18,

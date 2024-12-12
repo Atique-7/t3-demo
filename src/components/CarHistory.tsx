@@ -14,30 +14,34 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { History } from "lucide-react";
-import { Car, TempCar } from "@/lib/definitions";
-import { getCarById } from "@/lib/appwrite";
+import { Car, JobCard, TempCar } from "@/lib/definitions";
+import { getCarById, getJobCardById } from "@/lib/appwrite";
 
 type Props = {
-  carObj: TempCar | Car;
+  carsTableId: string;
+  currentJobCardId: string;
+  currentJobCardStatus: number;
 };
 
 const CarHistory = (props: Props) => {
   const [car, setCar] = useState<Car>();
   useEffect(() => {
-    const getCar = async (id: string) => {
-      // console.log(parsedToken);
-      const result = await getCarById(id);
-      console.log("CAR MILA HAI - ", result);
+    const getCarDetails = async (id: string) => {
+      const carObj = await getCarById(id);
+      setCar(carObj);
+      await createCarHistoryModel(carObj);
     };
 
-    console.log("Car Obj - ", props.carObj);
-    if (props.carObj.carsTableId) {
-      console.log("HAS IN TEMP CAR");
-      getCar(props.carObj.carsTableId);
-      //   console.log("CAR MILA HAI - ", car);
-    } else {
-      console.log("HAS IN CAR");
-    }
+    const createCarHistoryModel = async (carObj: Car) => {
+      let testObj: any = {};
+      carObj.allJobCards.map(async (jobCardId: string) => {
+        const jobCardObj: JobCard = await getJobCardById(jobCardId);
+        testObj[jobCardId] = jobCardObj;
+      });
+      console.log("CREATED HISTORY - ", testObj);
+    };
+
+    getCarDetails(props.carsTableId);
   }, []);
 
   return (
@@ -54,36 +58,30 @@ const CarHistory = (props: Props) => {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
           <DialogHeader>
-            <DialogTitle>Insurance Details</DialogTitle>
-            <DialogDescription>
-              Enter the details of your vehicle insurance
-            </DialogDescription>
+            <DialogTitle className="flex justify-start items-center space-x-2">
+              <History />
+              <div>Car History</div>
+            </DialogTitle>
+            <DialogDescription>Previous entries for this car</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="policyProvider" className="text-right">
-                Policy Provider
-              </Label>
-              {/* <div className="col-span-3">
-                <SearchSelectNEW
-                  data={policyProviders}
-                  placeholder="Select a provider"
-                  value={policyProvider || ""}
-                  onChange={setPolicyProvider}
-                />
-              </div> */}
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="policyNumber" className="text-right">
-                Policy Number
-              </Label>
-              {/* <Input
-                id="policyNumber"
-                className="col-span-3"
-                onChange={(event) => setPolicyNumber(event.target.value)}
-                value={policyNumber}
-              /> */}
-            </div>
+            {car?.allJobCards.map((a, index) => (
+              <div
+                key={index}
+                className="p-5 flex justify-between items-center rounded-xl border-2 border-red-500"
+              >
+                <div
+                  className={`font-semibold ${
+                    a == props.currentJobCardId ? "text-red-500" : ""
+                  }`}
+                >
+                  {a}
+                </div>
+                <div className="text-white font-semibold text-sm py-2 px-4 bg-red-500 rounded-full">
+                  {a == props.currentJobCardId ? <>Current</> : <></>}
+                </div>
+              </div>
+            ))}
           </div>
           <DialogFooter>
             {/* <Button

@@ -24,7 +24,7 @@ function AddParts({}: Props) {
     if (partName && partNumber && hsn && mrp && gst) {
       setIsValid(true);
       let newPart = {
-        partName,
+        partName: partName.toUpperCase(),
         partNumber,
         hsn,
         gst,

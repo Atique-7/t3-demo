@@ -1090,7 +1090,7 @@ export const inputSingleLabourAppwrite = async (work: any) => {
         labourName: String(work.labourName),
         labourCode: String(work.labourCode),
         hsn: String(work.hsn),
-        category: "Spare Parts",
+        category: "Labour",
         mrp: Number(work.mrp),
         gst: Number(work.gst),
         cgst: Number(work.cgst),

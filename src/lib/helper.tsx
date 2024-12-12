@@ -97,6 +97,7 @@ export const carMakeModels = [
       "SWIFT DZIRE (NEW)",
       "SX4",
       "VITARA BREZZA",
+      "Grand Vitara",
       "WAGON R",
       "WAGON-R (NEW)",
       "XL6",

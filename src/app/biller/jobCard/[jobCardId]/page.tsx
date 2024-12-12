@@ -11,7 +11,9 @@ import {
   getJobCardById,
   getLatestInvoiceBySeries,
   getTempCarById,
+  updateCarField,
   updateJobCardById,
+  updateJobCardField,
   updateJobCardGSTDetails,
   updateJobCardInsuranceDetails,
   updateJobCardObservationRemarks,
@@ -121,6 +123,8 @@ export default function jobCard({
 
   const [customerGST, setCustomerGST] = useState<string>();
   const [observationRemarks, setObservationRemarks] = useState<string>();
+  const [customerName, setCustomerName] = useState<string>();
+  const [customerAddress, setCustomerAddress] = useState<string>();
 
   const [isInsuranceDetails, setIsInsuranceDetails] = useState(false);
   const [isInsurance, setIsInsurance] = useState(false);
@@ -205,6 +209,8 @@ export default function jobCard({
 
       setCustomerGST(jobCardObj.gstin);
       setObservationRemarks(jobCardObj.observationRemarks);
+      setCustomerName(jobCardObj.customerName);
+      setCustomerAddress(jobCardObj.customerAddress);
 
       if (jobCardObj.jobCardStatus >= 6) {
         setIsDisabled(true);
@@ -343,6 +349,44 @@ export default function jobCard({
 
     getJobCardInvoices();
   }, []);
+
+  const saveCustomerName = async () => {
+    try {
+      await updateJobCardField(jobCard!.$id, "customerName", customerName);
+      const carId = (await getCarByCarNumber(jobCard!.carNumber)).documents[0]
+        .$id;
+      await updateCarField(carId, "customerName", customerName);
+      toast("Custoemr Name Changed \u2705");
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 100);
+      return true;
+    } catch (error: any) {
+      console.error(`Failed to update field: ${error.message}`);
+      return null;
+    }
+  };
+
+  const saveCustomerAddress = async () => {
+    try {
+      await updateJobCardField(
+        jobCard!.$id,
+        "customerAddress",
+        customerAddress
+      );
+      const carId = (await getCarByCarNumber(jobCard!.carNumber)).documents[0]
+        .$id;
+      await updateCarField(carId, "customerAddress", customerAddress);
+      toast("Custoemr Address Changed \u2705");
+      setTimeout(() => {
+        window.location.reload(); // Refreshes the page to get the latest data
+      }, 100);
+      return true;
+    } catch (error: any) {
+      console.error(`Failed to update field: ${error.message}`);
+      return null;
+    }
+  };
 
   const saveCurrentPartsAndLbour = async (statusUpdate?: number) => {
     // console.log("Current Parts - ", currentParts);
@@ -982,6 +1026,94 @@ export default function jobCard({
                       type="submit"
                       className="bg-red-500"
                       onClick={saveInsuranceDetails}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border bordre-red-500 text-red-500"
+                    disabled={isDisabled}
+                  >
+                    Edit Customer Name
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+                  <DialogHeader>
+                    <DialogTitle>Customer Name</DialogTitle>
+                    <DialogDescription>Customer Name Details</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="Customer Name" className="text-right">
+                        Customer Name
+                      </Label>
+                      <Input
+                        id="customerName"
+                        className="col-span-3"
+                        onChange={(event) =>
+                          setCustomerName(event.target.value)
+                        }
+                        value={customerName}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-red-500"
+                      onClick={saveCustomerName}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border bordre-red-500 text-red-500"
+                    disabled={isDisabled}
+                  >
+                    Edit Customer Address
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+                  <DialogHeader>
+                    <DialogTitle>Customer Address</DialogTitle>
+                    <DialogDescription>
+                      Customer Address Details
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="CustomerAddress" className="text-right">
+                        Customer Address
+                      </Label>
+                      <Input
+                        id="customerAddress"
+                        className="col-span-3"
+                        onChange={(event) =>
+                          setCustomerAddress(event.target.value)
+                        }
+                        value={customerAddress}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-red-500"
+                      onClick={saveCustomerAddress}
                     >
                       Save
                     </Button>

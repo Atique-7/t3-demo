@@ -940,6 +940,56 @@ export const updateJobCardGatePassDetails = async (
   }
 };
 
+export const updateJobCardField = async (
+  id: string,
+  fieldName: string,
+  fieldValue: any
+) => {
+  try {
+    // Update the document with the merged data
+    await databases.updateDocument(
+      config.databaseId,
+      config.jobCardsCollectionId,
+      id,
+      {
+        [fieldName]: fieldValue,
+      }
+    );
+
+    return true;
+  } catch (error: any) {
+    console.error(
+      `Failed to update field "${fieldName}" in job card: ${error.message}`
+    );
+    return null;
+  }
+};
+
+export const updateCarField = async (
+  id: string,
+  fieldName: string,
+  fieldValue: any
+) => {
+  try {
+    // Update the document with the merged data
+    await databases.updateDocument(
+      config.databaseId,
+      config.carsCollectionId,
+      id,
+      {
+        [fieldName]: fieldValue,
+      }
+    );
+
+    return true;
+  } catch (error: any) {
+    console.error(
+      `Failed to update field "${fieldName}" in job card: ${error.message}`
+    );
+    return null;
+  }
+};
+
 export const createInvoice = async (
   invoiceUrl: string,
   jobCardId: string,

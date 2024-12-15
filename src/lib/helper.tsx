@@ -243,6 +243,7 @@ export const carMakeModels = [
       "Tigor",
       "Punch",
       "Safari",
+      "Hexa",
     ],
   },
   {

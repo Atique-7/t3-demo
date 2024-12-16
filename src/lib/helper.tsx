@@ -155,7 +155,16 @@ export const carMakeModels = [
   },
   {
     company: "Honda",
-    models: ["Amaze", "City", "Civic", "CR-V", "Jazz", "WR-V", "Mobilio"],
+    models: [
+      "Amaze",
+      "City",
+      "Civic",
+      "CR-V",
+      "Jazz",
+      "WR-V",
+      "Mobilio",
+      "Brio",
+    ],
   },
   {
     company: "Hyundai",
@@ -243,7 +252,6 @@ export const carMakeModels = [
       "Tigor",
       "Punch",
       "Safari",
-      "Hexa",
     ],
   },
   {

@@ -9,12 +9,7 @@ import DisplayCard from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
 import { CarFront, Wrench, ListChecks } from "lucide-react";
 import { tempCarsColumns } from "@/lib/column-definitions";
-import {
-  getAllJobCards,
-  getAllTempCars,
-  getLastJobCardNumber,
-  validateJobCardNumber,
-} from "@/lib/appwrite";
+import { getAllJobCards, getAllTempCars } from "@/lib/appwrite";
 import { TempCarsDataTable } from "@/components/data-tables/temp-cars-data-table";
 import { TempCar } from "@/lib/definitions";
 import Link from "next/link";
@@ -44,8 +39,6 @@ export default function Service({}: Props) {
   const [tempCars, setTempCars] = useState<TempCar[]>([]);
 
   const [servicePOV, setServicePOV] = useState<string[]>([]);
-
-  let currentCounter: number;
 
   useEffect(() => {
     let povArr: string[] = [];
@@ -117,12 +110,6 @@ export default function Service({}: Props) {
     const getJobCards = async () => {
       const allJobCards = await getAllJobCards();
       console.log("THESE ARE THE CURRENT JOB CARDS - ", allJobCards);
-      //currentCounter = allJobCards.documents[0].jobCardNumber + 1;
-
-      //Set jobcard counter
-      currentCounter = (await getLastJobCardNumber()) + 1;
-      currentCounter = await validateJobCardNumber(currentCounter);
-      setCookie("currentCounter", JSON.stringify(currentCounter));
       setTotalNumberOfCars(allJobCards.total);
       setCurrentJobCards(allJobCards.documents);
 

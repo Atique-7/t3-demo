@@ -7,6 +7,7 @@ import {
   getAllLabour,
   getAllParts,
   getCarByCarNumber,
+  getInvoiceNumber,
   getInvoicesByJobCardId,
   getJobCardById,
   getLatestInvoiceBySeries,
@@ -105,8 +106,6 @@ export default function jobCard({
 }) {
   const pathname = usePathname();
 
-  // console.log("THIS IS THE PATHNAME - ", pathname);
-
   const [jobCard, setJobCard] = useState<JobCard | null>(null); // Properly typed state
   const [car, setCar] = useState<Car | null>(null); // Properly typed state
   const [carsTableId, setCarsTableId] = useState<string>(""); // Properly typed state
@@ -133,12 +132,7 @@ export default function jobCard({
   const [isEdited, setIsEdited] = useState(false);
 
   const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>();
-
-  const [invoiceCounter, setInvoiceCounter] = useState(0);
-
   const [invoiceSeries, setInvoiceSeries] = useState("");
-
-  const [invoiceCode, setInvoiceCode] = useState("");
 
   const [partsTotal, setPartsTotal] = useState<number>();
   const [labourTotal, setLabourTotal] = useState<number>();
@@ -187,8 +181,6 @@ export default function jobCard({
     parts = roundToTwoDecimals(parts);
     labour = roundToTwoDecimals(labour);
     total = roundToTwoDecimals(total);
-
-    // console.log("TOTALS: ", parts, labour, total);
 
     setPartsTotal(parts);
     setLabourTotal(labour);
@@ -258,12 +250,7 @@ export default function jobCard({
 
       const isInsuranceConst = foundIndexParts != -1 || foundIndexLabour != -1;
 
-      // console.log("IS INSURANCE - ", foundIndexParts, foundIndexLabour);
-
       setIsInsurance(isInsuranceConst);
-
-      // console.log("THIS IS THE PURPOSE OF VISIT - ", jobCardObj.purposeOfVisit);
-
       // Fetch only invoices related to this job card
       let jobCardInvoicesArr = [];
       try {
@@ -274,43 +261,8 @@ export default function jobCard({
       }
 
       const series = jobCardObj.purposeOfVisit === "Bodyshop" ? "BDS" : "SER";
-      // console.log("This is the SERIES - ", series);
+
       setInvoiceSeries(series);
-
-      // Determine the baseInvoiceNumber
-      let baseInvoiceNumber;
-      const latestInvoice = await getLatestInvoiceBySeries(series);
-
-      if (jobCardInvoicesArr.length > 0) {
-        const customerInvoices = jobCardInvoicesArr.filter(
-          (invoice: Invoice) => !invoice.isInsuranceInvoice
-        );
-
-        if (customerInvoices.length > 0) {
-          customerInvoices.sort(
-            (a: Invoice, b: Invoice) => b.invoiceNumber - a.invoiceNumber
-          );
-          baseInvoiceNumber = customerInvoices[0].invoiceNumber;
-        } else {
-          if (latestInvoice) {
-            baseInvoiceNumber = latestInvoice.invoiceNumber + 1; // Increment from the latest
-          } else {
-            baseInvoiceNumber = 1; // No invoices in the series, start with 1
-          } // Start from 1 if no customer invoices exist
-        }
-      } else {
-        if (latestInvoice) {
-          baseInvoiceNumber = latestInvoice.invoiceNumber + 1; // Increment from the latest
-        } else {
-          baseInvoiceNumber = 1; // No invoices in the series, start with 1
-        }
-      }
-
-      console.log("Base Invoice Number:", baseInvoiceNumber);
-
-      setInvoiceCounter(baseInvoiceNumber);
-      setInvoiceCode(`${series}/${baseInvoiceNumber}`);
-
       setJobCard((prev) => jobCardObj);
       setCurrentJobCardStatus(jobCardObj.jobCardStatus);
       setCar((prev) => carObj);
@@ -319,25 +271,20 @@ export default function jobCard({
     const getJobCardInvoices = async () => {
       const invoices = await getAllInvoices();
 
-      // console.log("JOB CARD ID - ", invoices);
       const jobCardInvoicesArr = invoices.documents.filter(
         (invoice: Invoice) => invoice.jobCardId == params.jobCardId
       );
-
-      // console.log("INVOICES FOR THIS JC - ", jobCardInvoicesArr);
 
       setJobCardInvoices(jobCardInvoicesArr);
     };
 
     const getParts = async () => {
       const partsObj = await getAllParts();
-      // console.log("THESE ARE THE PARTS - ", partsObj);
       setParts((prev) => partsObj.documents);
     };
 
     const getLabour = async () => {
       const labourObj = await getAllLabour();
-      // console.log("THESE ARE THE Labours - ", labourObj);
       setLabours((prev) => labourObj.documents);
     };
 
@@ -408,9 +355,6 @@ export default function jobCard({
   };
 
   const saveCurrentPartsAndLbour = async (statusUpdate?: number) => {
-    // console.log("Current Parts - ", currentParts);
-    // console.log("CURRENT LABOUR - ", currentLabour);
-
     let status = 2;
 
     if (statusUpdate) {
@@ -422,12 +366,7 @@ export default function jobCard({
 
     const amounts = calcAllAmts(currentParts, currentLabour);
     const taxes: TaxObj[] = createTaxObj(currentParts, currentLabour);
-
-    // console.log("TAXES ON THE FRONT - ", taxes);
-
     const strTaxes = objToStringArr(taxes);
-
-    // console.log("THESE ARE THE AMOUNTS - ", amounts);
 
     let tempJobCard = jobCard;
     if (tempJobCard) {
@@ -472,14 +411,12 @@ export default function jobCard({
         currentParts,
         currentLabour,
         currentJobCardStatus,
-        invoiceCounter,
         invoiceSeries,
-        invoiceCode,
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
       setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
+        window.location.reload();
       }, 1000);
 
       result.json().then((invoices: any) => {
@@ -500,7 +437,6 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(4);
 
-    // await fetch(`http://localhost:3000${pathname}/invoice`, {
     await fetch(`${apiUrl}${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
@@ -509,14 +445,12 @@ export default function jobCard({
         currentParts,
         currentLabour,
         currentJobCardStatus,
-        invoiceCounter,
         invoiceSeries,
-        invoiceCode,
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
       setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
+        window.location.reload();
       }, 1000);
 
       result.json().then((invoices: any) => {
@@ -536,7 +470,6 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(5);
 
-    // await fetch(`http://localhost:3000${pathname}/invoice`, {
     await fetch(`${apiUrl}${pathname}/invoice`, {
       method: "POST",
       body: JSON.stringify({
@@ -545,14 +478,12 @@ export default function jobCard({
         currentParts,
         currentLabour,
         currentJobCardStatus,
-        invoiceCounter,
         invoiceSeries,
-        invoiceCode,
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
       setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
+        window.location.reload();
       }, 1000);
 
       result.json().then((invoices: any) => {
@@ -572,7 +503,6 @@ export default function jobCard({
     setButtonLoading((prev) => true);
     await saveCurrentPartsAndLbour(6);
 
-    // await fetch(`http://localhost:3000${pathname}/gatePass`, {
     await fetch(`${apiUrl}${pathname}/gatePass`, {
       method: "POST",
       body: JSON.stringify({
@@ -581,18 +511,15 @@ export default function jobCard({
         currentParts,
         currentLabour,
         currentJobCardStatus,
-        invoiceCounter,
       }),
     }).then((result: any) => {
       // Disable the page, this happens automatically at refresh but its a precaution.
       setIsDisabled(true);
-      // Set a short timeout before refreshing the page
       setTimeout(() => {
         window.location.reload();
       }, 1000);
 
       result.json().then((invoice: any) => {
-        console.log("HVVGUUYFUYFYUFFUYYFUYFOUYFOU", invoice);
         openInNewTab(invoice);
       });
 
@@ -624,7 +551,6 @@ export default function jobCard({
 
     console.log(isDone);
     if (isDone) {
-      // console.log("IT IS DONE");
       toast("Insurance Details have been Updated \u2705");
       setIsInsuranceDetails(true);
     }
@@ -635,7 +561,6 @@ export default function jobCard({
 
     console.log(isDone);
     if (isDone) {
-      // console.log("IT IS DONE");
       toast("GST Details have been Updated \u2705");
     }
   };
@@ -648,13 +573,11 @@ export default function jobCard({
 
     console.log(isDone);
     if (isDone) {
-      // console.log("IT IS DONE");
       toast("Observation and Remarks have been Updated \u2705");
     }
   };
 
   const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    // await fetch(`http://localhost:3000${pathname}/jobCardPDF`, {
     await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
       method: "POST",
       body: JSON.stringify({
@@ -664,7 +587,7 @@ export default function jobCard({
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
       setTimeout(() => {
-        window.location.reload(); // Refreshes the page to get the latest data
+        window.location.reload();
       }, 1000);
 
       result.json().then((invoices: any) => {
@@ -679,7 +602,6 @@ export default function jobCard({
     // console.log("SELECTED PDF - ", selectedValue);
     if (selectedValue == "Gate Pass") {
       if (jobCard) {
-        // console.log("gatePass PDF = ", jobCard.gatePassPDF);
         openInNewTab(jobCard.gatePassPDF);
       }
     } else {
@@ -692,8 +614,6 @@ export default function jobCard({
             new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
         );
         const selectedInvoice = filteredInvoices[0];
-
-        // console.log("FILTERED INVOICES - ", jobCardInvoices);
         openInNewTab(selectedInvoice.invoiceUrl);
       }
     }

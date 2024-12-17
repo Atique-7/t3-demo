@@ -8,8 +8,6 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
-import { CurrentLabour, CurrentPart } from "@/lib/definitions";
-import { roundToTwoDecimals } from "@/lib/helper";
 
 Font.register({
   family: "Open Sans",
@@ -238,7 +236,6 @@ export const GatePassPDF = ({
   car,
   currentDate,
   invoiceType,
-  invoiceNumber,
 }: any) => (
   <Document>
     {jobCard && car && parts && labour && (

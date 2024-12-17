@@ -24,15 +24,8 @@ export async function POST(
 ) {
   //   console.log("BODY", request.body);
   try {
-    const {
-      jobCard,
-      car,
-      currentParts,
-      currentLabour,
-      currentJobCardStatus,
-      invoiceCounter,
-      invoiceCode,
-    } = await request.json();
+    const { jobCard, car, currentParts, currentLabour, currentJobCardStatus } =
+      await request.json();
 
     console.log(
       "VALUES",
@@ -53,7 +46,6 @@ export async function POST(
         car={car}
         currentDate={new Date()}
         invoiceType={"Gate Pass"}
-        invoiceNumber={invoiceCode}
       />
     );
 

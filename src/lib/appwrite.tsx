@@ -16,6 +16,7 @@ import {
   purposeOfVisits,
 } from "./helper";
 import { JobCard } from "./definitions";
+import { toast } from "sonner";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -51,6 +52,16 @@ export const imagekit = new ImageKit({
   privateKey: "private_pPkQ38mNRgbbpt9JElST4HPGQfw=",
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
+
+const useDev = false;
+
+let apiUrl: string;
+
+if (useDev) {
+  apiUrl = "http://localhost:3000";
+} else {
+  apiUrl = "https://t3-next-dev.vercel.app";
+}
 
 // export async function fetchJobCardsBasedonTime(filterType = "all") {
 //   try {
@@ -91,6 +102,69 @@ export const imagekit = new ImageKit({
 //     throw error;
 //   }
 // }
+
+export const getInvoiceNumber = async (
+  jobCardId: string,
+  invoiceType: string,
+  isInsuranceInvoice: boolean,
+  series: string
+) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/invoiceCounter`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jobCardId,
+        invoiceType,
+        isInsuranceInvoice,
+        series,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch invoice number.");
+    }
+
+    const data = await response.json();
+    return {
+      invoiceNumber: data.invoiceNumber,
+      invoiceCode: data.invoiceCode,
+    };
+  } catch (error) {
+    console.error("Error fetching invoice number:", error);
+    toast("Failed to fetch invoice number ❌");
+    return null;
+  }
+};
+
+export const getNextJobCardNumber = async (): Promise<number | null> => {
+  try {
+    const response = await fetch("/api/jobCardCounter", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      console.error(`Error fetching job card number: ${response.statusText}`);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data.jobCardNumber) {
+      console.log("Next Job Card Number:", data.jobCardNumber);
+      return data.jobCardNumber;
+    } else {
+      console.error("Failed to fetch job card number:", data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("An error occurred while fetching job card number:", error);
+    return null;
+  }
+};
 
 export function analyzeJobCards(jobCards: JobCard[]) {
   const advisorStats: Record<string, number> = {}; // For tracking stats per advisor
@@ -254,10 +328,6 @@ export const loginUser = async (email: string, password: string) => {
   } catch (error: any) {
     const errorMsg = error.message;
     return { errorMsg };
-    // console.error("Login failed:", error.message);
-    // throw new Error(
-    //   error.message || "An unexpected error occurred during login."
-    // );
   }
 };
 
@@ -266,63 +336,6 @@ export const listAllUsers = async () => {
   const obj = JSON.parse(response.responseBody);
   const users = obj.users.users;
   return users;
-};
-
-export const getLastJobCardNumber = async () => {
-  try {
-    // Fetch the last created job card by sorting by creation time (descending)
-    const response = await databases.listDocuments(
-      config.databaseId,
-      config.jobCardsCollectionId,
-      [
-        Query.orderDesc("$createdAt"), // Sort by creation date in descending order
-        Query.limit(1), // Limit the result to the first document
-      ]
-    );
-
-    if (response.documents.length === 0) {
-      throw new Error("No job cards found in the database.");
-    }
-
-    const lastJobCard = response.documents[0];
-    const lastJobCardNumber = lastJobCard.jobCardNumber;
-
-    console.log("Last job card number fetched:", lastJobCardNumber);
-
-    return lastJobCardNumber;
-  } catch (error) {
-    console.error("Error fetching the last job card number:", error);
-    throw error;
-  }
-};
-
-export const validateJobCardNumber = async (
-  currentJobCardNumber: number
-): Promise<number> => {
-  try {
-    // Fetch the latest job card number
-    const latestJobCardNumber = await getLastJobCardNumber();
-
-    console.log(
-      `Current Job Card Number: ${currentJobCardNumber}, Latest Job Card Number: ${latestJobCardNumber}`
-    );
-
-    // Check if the latest job card number has increased
-    if (latestJobCardNumber >= currentJobCardNumber) {
-      console.warn(
-        `Job card number conflict detected. Updating to the latest value: ${
-          latestJobCardNumber + 1
-        }`
-      );
-      return latestJobCardNumber + 1; // Return the next available number
-    }
-
-    // If no change, return the current job card number
-    return currentJobCardNumber;
-  } catch (error: any) {
-    console.error("Error validating job card number:", error.message || error);
-    throw error;
-  }
 };
 
 export const listSessions = async () => {
@@ -334,16 +347,6 @@ export const listSessions = async () => {
     return null;
   }
 };
-
-// export const logoutUser = async () => {
-//   try {
-//     const result = await account.deleteSessions();
-//     return result;
-//   } catch (error: any) {
-//     console.log(error.message);
-//     return null;
-//   }
-// };
 
 export const logoutUser = async () => {
   try {
@@ -499,9 +502,6 @@ export const createJobCard = async (
 
     console.log(purposeOfVisit);
 
-    const validJobCardNumber = await validateJobCardNumber(jobCardNumber);
-    console.log(validJobCardNumber);
-
     let result = await databases.createDocument(
       config.databaseId,
       config.jobCardsCollectionId,
@@ -514,7 +514,7 @@ export const createJobCard = async (
         jobCardStatus: 0,
         customerName,
         customerPhone,
-        jobCardNumber: validJobCardNumber,
+        jobCardNumber,
         images,
         carFuel,
         carOdometer,

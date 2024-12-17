@@ -1,9 +1,7 @@
 import {
   createInvoice,
   getAllInvoices,
-  getInvoicesByJobCardId,
-  getJobCardById,
-  getTempCarById,
+  getInvoiceNumber,
   imagekit,
 } from "@/lib/appwrite";
 import {
@@ -27,7 +25,6 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { jobCardId: any } }
 ) {
-  //   console.log("BODY", request.body);
   try {
     const {
       jobCard,
@@ -35,65 +32,51 @@ export async function POST(
       currentParts,
       currentLabour,
       currentJobCardStatus,
-      invoiceCounter,
       invoiceSeries,
-      invoiceCode,
     } = await request.json();
 
     const foundIndexParts = currentParts.findIndex(
       (part: CurrentPart) =>
         part.insurancePercentage && part.insurancePercentage != 0
     );
-
     const foundIndexLabour = currentLabour.findIndex(
       (work: CurrentLabour) =>
         work.insurancePercentage && work.insurancePercentage != 0
     );
-
     const isInsurance = foundIndexParts !== -1 || foundIndexLabour !== -1;
-
-    // console.log("THIS INVOICE HAS INSURANCE", isInsurance);
-
     let invoiceType = invoiceTypes.find(
       (a) => a.code == currentJobCardStatus + 1
     );
-
-    const insuranceInvoiceCode = `${invoiceSeries}/${invoiceCounter + 1}`;
-
-    let invoiceTypeString = invoiceType?.description;
-
+    let invoiceTypeString: any = invoiceType?.description;
     const invoices = await getAllInvoices();
-
     const jobCardInvoicesArr = invoices.documents.filter(
       (invoice: Invoice) => invoice.jobCardId == params.jobCardId
     );
-    const customerInvoices = jobCardInvoicesArr.filter(
-      (invoice: Invoice) => !invoice.isInsuranceInvoice
-    );
-
-    let baseInvoiceNumber = invoiceCounter; // Fallback
-
-    if (customerInvoices.length > 0) {
-      customerInvoices.sort(
-        (a: Invoice, b: Invoice) => b.invoiceNumber - a.invoiceNumber
-      );
-      baseInvoiceNumber = customerInvoices[0].invoiceNumber;
-    }
-
     let isUpdatedInvoice = false;
-
     jobCardInvoicesArr.map((invoice: Invoice) => {
       if (invoice.invoiceType == invoiceTypeString) {
         isUpdatedInvoice = true;
         return;
       }
     });
-
     const povs = convertStringsToArray(car.purposeOfVisitAndAdvisors);
 
     if (isInsurance && invoiceTypeString != "Quote") {
-      const customerInvoiceCode = `${invoiceSeries}/${baseInvoiceNumber}`;
-      const insuranceInvoiceCode = `${invoiceSeries}/${baseInvoiceNumber + 1}`;
+      let customerInvoice, insuranceInvoice;
+      customerInvoice = await getInvoiceNumber(
+        jobCard.$id,
+        invoiceTypeString,
+        false,
+        invoiceSeries
+      );
+
+      insuranceInvoice = await getInvoiceNumber(
+        jobCard.$id,
+        invoiceTypeString,
+        true,
+        invoiceSeries
+      );
+
       const stream1 = await renderToStream(
         <InvoicePDF
           jobCard={jobCard}
@@ -104,7 +87,7 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={customerInvoiceCode}
+          invoiceNumber={customerInvoice?.invoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={isInsurance}
           liabilityType={"Customer"}
@@ -123,7 +106,7 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={insuranceInvoiceCode}
+          invoiceNumber={insuranceInvoice?.invoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={isInsurance}
           liabilityType={"Insurance"}
@@ -195,9 +178,9 @@ export async function POST(
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter,
+        customerInvoice?.invoiceNumber,
         invoiceSeries,
-        customerInvoiceCode,
+        customerInvoice?.invoiceCode,
         isUpdatedInvoice,
         "Customer"
       );
@@ -207,9 +190,9 @@ export async function POST(
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter + 1,
+        insuranceInvoice?.invoiceNumber,
         invoiceSeries,
-        insuranceInvoiceCode,
+        insuranceInvoice?.invoiceCode,
         isUpdatedInvoice,
         "Insurance",
         isInsurance
@@ -220,7 +203,12 @@ export async function POST(
       return NextResponse.json([result1, result2], { status: 201 });
     } else {
       // console.log("There is no insurance or ITS QUOTE");
-      const invoiceCode = `${invoiceSeries}/${baseInvoiceNumber}`;
+      let customerInvoice = await getInvoiceNumber(
+        jobCard.$id,
+        invoiceTypeString,
+        false,
+        invoiceSeries
+      );
 
       const stream = await renderToStream(
         <InvoicePDF
@@ -232,7 +220,7 @@ export async function POST(
           car={car}
           currentDate={new Date()}
           invoiceType={invoiceTypeString}
-          invoiceNumber={invoiceCode}
+          invoiceNumber={customerInvoice?.invoiceCode}
           purposeOfVisitAndAdvisors={povs}
           isInsurance={false}
         />
@@ -273,9 +261,9 @@ export async function POST(
         jobCard.$id,
         jobCard.carNumber,
         invoiceTypeString!,
-        invoiceCounter,
+        customerInvoice?.invoiceNumber,
         invoiceSeries,
-        invoiceCode,
+        customerInvoice?.invoiceCode,
         isUpdatedInvoice
       );
 

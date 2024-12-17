@@ -441,8 +441,6 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
         (pov: any) => pov.advisorEmail === advisorEmail
       );
 
-      let currentCounter = getCookie("currentCounter");
-
       const [selectedPovCode, setSelectedPovCode] = useState<number | null>(
         null
       );
@@ -675,7 +673,7 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
               <Link
                 href={`${
                   advisorInfo.open === false
-                    ? `${pathname}/createJobCard/${tempCar.$id}?currentCounter=${currentCounter}`
+                    ? `${pathname}/createJobCard/${tempCar.$id}`
                     : `${pathname}/viewJobCard/${tempCar.jobCardId}`
                 }`}
                 className={`flex justify-center items-center rounded-md w-fit px-3 py-2 border border-gray-200 ${

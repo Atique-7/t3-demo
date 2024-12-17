@@ -1,7 +1,11 @@
 "use client";
 
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
-import { createJobCard, getTempCarById } from "@/lib/appwrite";
+import {
+  createJobCard,
+  getNextJobCardNumber,
+  getTempCarById,
+} from "@/lib/appwrite";
 import { ImageObj, TempCar } from "@/lib/definitions";
 import React, { useEffect, useState } from "react";
 import ImageCard from "@/components/ImageCard";
@@ -41,8 +45,6 @@ export default function CreateJobCard({
   const pathname = usePathname();
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentCounter = searchParams.get("currentCounter");
 
   const [currTempCar, setCurrTempCar] = useState<TempCar>();
   const [images, setImages] = useState<ImageObj[]>([]);
@@ -150,6 +152,8 @@ export default function CreateJobCard({
     const diagnosisStrings = carDiagnosis.map((item) => item.diagnosis);
     const carImages = objToStringArr(images);
 
+    let jobCardNumber = await getNextJobCardNumber();
+
     if (currTempCar) {
       try {
         let newJobCard = await createJobCard(
@@ -164,7 +168,7 @@ export default function CreateJobCard({
           customerAddress,
           sendToPartsManager,
           String(currTempCar.carsTableId),
-          Number(currentCounter!),
+          Number(jobCardNumber),
           "jobCardPdfURL"
         );
         if (newJobCard) {

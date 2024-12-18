@@ -152,9 +152,6 @@ export default function CreateJobCard({
     const diagnosisStrings = carDiagnosis.map((item) => item.diagnosis);
     const carImages = objToStringArr(images);
 
-    let jobCardNumber = await getNextJobCardNumber();
-    console.log("Job Card Number - ", jobCardNumber);
-
     if (currTempCar) {
       try {
         let newJobCard = await createJobCard(
@@ -169,7 +166,6 @@ export default function CreateJobCard({
           customerAddress,
           sendToPartsManager,
           String(currTempCar.carsTableId),
-          Number(jobCardNumber),
           "jobCardPdfURL"
         );
         if (newJobCard) {

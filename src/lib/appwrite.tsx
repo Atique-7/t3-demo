@@ -142,7 +142,7 @@ export const getInvoiceNumber = async (
 export const getNextJobCardNumber = async (): Promise<number | null> => {
   try {
     const response = await fetch(`${apiUrl}/api/jobCardCounter`, {
-      method: "GET",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
     });
 
@@ -478,7 +478,6 @@ export const createJobCard = async (
   customerAddress: string,
   sendToPartsManager: boolean,
   carsTableId: string,
-  jobCardNumber: number,
   jobCardPDF: string
 ) => {
   try {
@@ -501,6 +500,9 @@ export const createJobCard = async (
     }).description;
 
     console.log(purposeOfVisit);
+
+    const jobCardNumber = await getNextJobCardNumber();
+    console.log("Job Card Number - ", jobCardNumber);
 
     let result = await databases.createDocument(
       config.databaseId,

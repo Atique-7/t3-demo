@@ -10,7 +10,7 @@ client
   .setProject("66b10a0100095b4634e4") // Replace with your project ID
   .setKey("standard_ccfafcfdb4ab4b7460d7379de12a0df172814cd321d0c231626e0e03264112144430c0a3eea131046a21b35d9d06766f6b6a8bb2404af24c25c48eea47696d20e1b91271d8b737094c9a8c363c13fcf15ae571f3c78bdef565d3bc93cafed20d9a724658a780267ae9b4bb98ed8dc36f8eede5cbbc571cde970b9894cb15cc21"); // Replace with your API Key
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const counterId = "counter_JCARD"; // ID for the global job card counter document
     const databaseId = "66b10c670021dc021477"; // Replace with your database ID
@@ -36,12 +36,15 @@ export async function GET(req: NextRequest) {
     }
 
     // Step 3: Increment the counter
+    console.log("Current job card number:", counterDocument.currentNumber);
     const nextNumber = counterDocument.currentNumber + 1;
+    console.log("Next job card number:", nextNumber);
 
     // Step 4: Update the counter in the database
-    await databases.updateDocument(databaseId, collectionId, counterId, {
+    const result = await databases.updateDocument(databaseId, collectionId, counterId, {
       currentNumber: nextNumber,
     });
+    console.log("Counter updated successfully:", result);
 
     // Step 5: Return the next job card number
     return NextResponse.json({

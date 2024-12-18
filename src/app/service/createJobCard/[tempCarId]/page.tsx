@@ -153,6 +153,7 @@ export default function CreateJobCard({
     const carImages = objToStringArr(images);
 
     let jobCardNumber = await getNextJobCardNumber();
+    console.log("Job Card Number - ", jobCardNumber);
 
     if (currTempCar) {
       try {

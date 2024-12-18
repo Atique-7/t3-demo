@@ -141,7 +141,7 @@ export const getInvoiceNumber = async (
 
 export const getNextJobCardNumber = async (): Promise<number | null> => {
   try {
-    const response = await fetch("/api/jobCardCounter", {
+    const response = await fetch(`${apiUrl}/api/jobCardCounter`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });

@@ -1,12 +1,8 @@
 // import { NextRequest, NextResponse } from "next/server";
-// import { Client, Databases } from "node-appwrite";
-
-// // Import your helper functions
+// import { Client, Databases, Query } from "node-appwrite";
 
 
-// import { groupInvoicesByJobCardAndSeries } from "@/lib/appwrite";
-// import { rearrangeJobCardsByDate } from "@/lib/appwrite";
-// import { assignInvoiceNumbersBySeries } from "@/lib/appwrite";
+
 // import { config } from "@/lib/appwrite";
 // // Initialize Appwrite Server SDK
 // const client = new Client();
@@ -319,28 +315,28 @@
 
 // const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// const updateInvoicesInDatabase = async (
-//   invoices: any,
-//   rateLimitDelay = 1000
-// ) => {
-//   try {
-//     for (const invoice of invoices) {
-//       await databases.updateDocument(
-//         config.databaseId,
-//         config.invoicesCollectionId,
-//         invoice.$id,
-//         {
-//           invoiceNumber: invoice.invoiceNumber,
-//           invoiceCode: invoice.invoiceCode,
-//         }
-//       );
+// // const updateInvoicesInDatabase = async (
+// //   invoices: any,
+// //   rateLimitDelay = 1000
+// // ) => {
+// //   try {
+// //     for (const invoice of invoices) {
+// //       await databases.updateDocument(
+// //         config.databaseId,
+// //         config.invoicesCollectionId,
+// //         invoice.$id,
+// //         {
+// //           invoiceNumber: invoice.invoiceNumber,
+// //           invoiceCode: invoice.invoiceCode,
+// //         }
+// //       );
 
-//       console.log(`Updated Invoice: ${invoice.invoiceCode}`);
+// //       console.log(`Updated Invoice: ${invoice.invoiceCode}`);
 
-//       // Wait before making the next request to avoid hitting the rate limit
-//       await delay(rateLimitDelay);
-//     }
-//   } catch (error) {
-//     console.error("Error updating invoices in database:", error);
-//   }
-// };
+// //       // Wait before making the next request to avoid hitting the rate limit
+// //       await delay(rateLimitDelay);
+// //     }
+// //   } catch (error) {
+// //     console.error("Error updating invoices in database:", error);
+// //   }
+// // };

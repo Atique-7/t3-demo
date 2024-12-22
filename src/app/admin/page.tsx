@@ -39,12 +39,10 @@ export default function Admin({}: Props) {
   const router = useRouter();
 
   const [name, setName] = useState("");
-  const [tempCars, setTempCars] = useState<TempCar[] | null>(null);
-  const [jobCards, setJobCards] = useState<JobCard[] | null>(null);
-  const [parts, setParts] = useState<Part[] | null>(null);
-  const [labours, setLabours] = useState<Labour[] | null>(null);
-  const [cars, setCars] = useState<Car[] | null>(null);
-  const [invoices, setInvoices] = useState<Invoice[] | null>(null);
+  const [tempCars, setTempCars] = useState<TempCar[] | null>([]);
+  const [jobCards, setJobCards] = useState<JobCard[] | null>([]);
+  const [cars, setCars] = useState<Car[] | null>([]);
+  const [invoices, setInvoices] = useState<Invoice[] | null>([]);
 
   useEffect(() => {
     const getUser = () => {
@@ -57,35 +55,22 @@ export default function Admin({}: Props) {
 
     const getJobCards = async () => {
       const allJobCards = await getAllJobCards();
-      setJobCards(allJobCards.documents);
+      console.log("THESE ARE THE CURRENT JOB CARDS - ", allJobCards);
+      setJobCards((prev) => allJobCards.documents);
     };
 
     const getTempCars = async () => {
       const allTempCars = await getAllTempCars();
-      setTempCars(allTempCars);
-    };
-
-    const getParts = async () => {
-      const partsObj = await getAllParts();
-      // console.log("THESE ARE THE PARTS - ", partsObj);
-      setParts((prev) => partsObj.documents);
-    };
-
-    const getLabour = async () => {
-      const labourObj = await getAllLabour();
-      // console.log("THESE ARE THE Labours - ", labourObj);
-      setLabours((prev) => labourObj.documents);
+      setTempCars((prev) => allTempCars.documents);
     };
 
     const getCars = async () => {
       const carsObj = await getAllCars();
-      // console.log("THESE ARE THE Labours - ", labourObj);
       setCars((prev) => carsObj.documents);
     };
 
     const getInvoices = async () => {
       const invoicesObj = await getAllInvoices();
-      // console.log("THESE ARE THE Labours - ", labourObj);
       setInvoices((prev) => invoicesObj.documents);
     };
 
@@ -93,27 +78,12 @@ export default function Admin({}: Props) {
     getJobCards();
     getCars();
     getTempCars();
-    getParts();
-    getLabour();
     getInvoices();
-    const v = getAllJobCards();
-    setTimeout(() => {
-      console.log(v);
-      // Refreshes the page to get the latest data
-    }, 1000);
   }, []);
 
   return (
     <div className="flex flex-col w-[90%] mt-20">
-      {!(
-        name &&
-        tempCars &&
-        cars &&
-        jobCards &&
-        parts &&
-        labours &&
-        invoices
-      ) ? (
+      {!(name && tempCars && cars && jobCards && invoices) ? (
         <PartsPageSkeleton />
       ) : (
         <>
@@ -131,18 +101,6 @@ export default function Admin({}: Props) {
             <div className="w-1/4">
               <TimeAverage />
             </div>
-            {/* <div className="w-1/4 flex-row space-y-2">
-              <DisplayCard
-                icon={<Check />}
-                desc={"Cars Completed"}
-                value={352}
-              />
-              <DisplayCard
-                icon={<Wrench />}
-                desc={"Cars In Progress"}
-                value={26}
-              />
-            </div> */}
           </div>
           <div className="flex justify-center items-center w-full space-x-5 mb-10">
             <div className="w-[60%]">

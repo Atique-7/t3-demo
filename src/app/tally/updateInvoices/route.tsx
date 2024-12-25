@@ -65,7 +65,7 @@ const getLatestInvoices = (invoices: any) => {
 const curateInvoices = (invoices: any) => {
   let invoiceArr: any[] = [];
 
-  console.log("ACTUAL", invoices.length);
+  // console.log("ACTUAL", invoices.length);
 
   const groupedByJobCardId = invoices.reduce((acc: any, invoice: any) => {
     const jobCardId = invoice.jobCardId;
@@ -235,7 +235,7 @@ export async function POST(request: NextRequest) {
                 part.insurancePercentage
               );
 
-              console.log("DISCOUNT CHECK - ", splitPartDiscAmt);
+              // console.log("DISCOUNT CHECK - ", splitPartDiscAmt);
 
               if (insuranceInvoiceTypeCOPY == "Customer") {
                 part.discountAmtCust = splitPartDiscAmt.customerAmt;
@@ -309,6 +309,9 @@ export async function POST(request: NextRequest) {
         });
 
         labourArr.map((work: CurrentLabour) => {
+          if (result.carNumber == "MH01DE4865") {
+            console.log("THIS IS THE CAR - ", labourArr);
+          }
           if (
             isInsurance &&
             invoice.invoiceType != "Quote" &&
@@ -554,10 +557,7 @@ export async function POST(request: NextRequest) {
                 part.totalTax as number
               );
 
-              if (
-                updatedObject.discountPercentage &&
-                updatedObject.discountAmt
-              ) {
+              if (part.discountPercentage && part.discountAmt) {
                 updatedObject.discountPercentage = roundToTwoDecimals(
                   part.discountPercentage as number
                 );
@@ -567,10 +567,7 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            if (
-              !updatedObject.discountPercentage ||
-              !updatedObject.discountAmt
-            ) {
+            if (!part.discountPercentage || !part.discountAmt) {
               updatedObject.discountPercentage = 0;
               updatedObject.discountAmt = 0;
             }
@@ -593,6 +590,9 @@ export async function POST(request: NextRequest) {
 
         const revisedLabourArr: any = await Promise.all(
           labourArr.map((work: CurrentLabour) => {
+            if (result.carNumber == "MH01DE4865") {
+              console.log("THIS IS THE OBJECT FROM TOP - ", work);
+            }
             const updatedObject: CurrentLabour = Object.keys(work).reduce(
               (acc, key) => {
                 if (keysToRetainLabour.includes(key as keyof CurrentLabour)) {
@@ -662,10 +662,7 @@ export async function POST(request: NextRequest) {
                 work.totalTax as number
               );
 
-              if (
-                updatedObject.discountPercentage &&
-                updatedObject.discountAmt
-              ) {
+              if (work.discountPercentage && work.discountAmt) {
                 updatedObject.discountPercentage = roundToTwoDecimals(
                   work.discountPercentage as number
                 );
@@ -675,14 +672,14 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            if (
-              !updatedObject.discountPercentage ||
-              !updatedObject.discountAmt
-            ) {
+            if (!work.discountPercentage || !work.discountAmt) {
               updatedObject.discountPercentage = 0;
               updatedObject.discountAmt = 0;
             }
             // console.log("UPDATED OBJECT - ", updatedObject);
+            if (result.carNumber == "MH01DE4865") {
+              console.log("THIS IS THE OBJECT AFTER- ", updatedObject);
+            }
 
             return updatedObject;
           })
@@ -726,17 +723,17 @@ export async function POST(request: NextRequest) {
 
         invoice.jobCardDetails = result;
 
-        console.log("Ho Gaya", index);
+        // console.log("Ho Gaya", index);
 
-        console.log(
-          "AMOUNT CHECK - ",
-          invoice.jobCardDetails.subTotal,
-          invoice.jobCardDetails.amount,
-          invoice.jobCardDetails.totalTax,
-          invoice.jobCardDetails.totalDiscountAmt
-        );
+        // console.log(
+        //   "AMOUNT CHECK - ",
+        //   invoice.jobCardDetails.subTotal,
+        //   invoice.jobCardDetails.amount,
+        //   invoice.jobCardDetails.totalTax,
+        //   invoice.jobCardDetails.totalDiscountAmt
+        // );
 
-        console.log("INVOICE FOR - ", invoice.jobCardDetails);
+        // console.log("INVOICE FOR - ", invoice.jobCardDetails);
 
         return invoice;
       })
@@ -748,8 +745,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(returnInvoicesObj, { status: 201 });
   } catch (error) {
-    console.log("Failed");
-    console.log("CAUGHT ERROR", error);
+    // console.log("Failed");
+    // console.log("CAUGHT ERROR", error);
 
     return NextResponse.json({
       message: "HELLOOO",

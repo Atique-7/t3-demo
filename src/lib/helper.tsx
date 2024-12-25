@@ -16,6 +16,7 @@ export const jobCardStatusKey = [
   { code: 4, description: "Pro-Forma Invoice Generated" },
   { code: 5, description: "Tax Invoice Generated" },
   { code: 6, description: "Gate Pass Generated" },
+  { code: 7, description: "Car Exited" },
 ];
 
 export const carMakes = [
@@ -140,6 +141,10 @@ export const carMakeModels = [
       "X7",
       "Z4 Roadster",
     ],
+  },
+  {
+    company: "Volvo",
+    models: ["XC 40", "XC 60"],
   },
   {
     company: "Datsun",

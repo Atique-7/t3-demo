@@ -74,9 +74,8 @@ export function JobCardsDataTable<TData, TValue>({
     return (
       <div className="flex items-center px-4 py-2  rounded-full font-semibold space-x-5">
         <div
-          className={`h-5 w-5 rounded-full bg-black ${
-            jobCardStatus == 0 && "bg-[#0040c1]"
-          }
+          className={`h-5 w-5 rounded-full 
+        ${jobCardStatus == 0 && "bg-[#0040c1]"}
         ${jobCardStatus == 1 && "bg-[#1849a9]"}
         ${jobCardStatus == 2 && "bg-[#065986]"}
         ${jobCardStatus == 3 && "bg-[#107569]"}

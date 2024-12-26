@@ -282,6 +282,10 @@ export const InvoicePDF = ({
 
   console.log("THESE ARE THE TAXES - ", taxObj);
 
+  if (jobCard.gstin) {
+    console.log("HAI ISME GST NUMBER CUSTOMER KA");
+  }
+
   parts.map((part: CurrentPart) => {
     if (isInsurance && invoiceType != "Quote") {
       if (part.insurancePercentage && part.insurancePercentage != 0) {
@@ -628,7 +632,29 @@ export const InvoicePDF = ({
                 {isInsurance && invoiceType != "Quote" ? (
                   <>
                     {liabilityType == "Customer" ? (
-                      <></>
+                      <>
+                        {jobCard.gstin && (
+                          <>
+                            <View style={styles.tableRow}>
+                              <View style={styles.tableCell}>
+                                <Text
+                                  style={[
+                                    styles.tableData,
+                                    styles.tableDataEmphasized,
+                                  ]}
+                                >
+                                  GST Number:
+                                </Text>
+                              </View>
+                              <View style={styles.tableCell}>
+                                <Text style={styles.tableData}>
+                                  {jobCard.gstin}
+                                </Text>
+                              </View>
+                            </View>
+                          </>
+                        )}
+                      </>
                     ) : (
                       <>
                         <View style={styles.tableRow}>

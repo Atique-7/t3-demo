@@ -216,6 +216,7 @@ export const carMakeModels = [
       "Verito",
       "XUV300",
       "XUV500",
+      "XUV700",
     ],
   },
   {

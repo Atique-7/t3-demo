@@ -175,6 +175,7 @@ export const carMakeModels = [
     company: "Hyundai",
     models: [
       "Aura",
+      "Alacazar",
       "Creta",
       "Elantra",
       "Eon",

@@ -371,7 +371,7 @@ export const policyProvidersDict = [
   {
     insurer: "NATIONAL INSURANCE COMPANY LIMITED",
     address:
-      "Sterling Cinema Building 5th floor . 65, Murzban Street, Mumbai 01 State Maharashtra -27",
+      "Mumbai Business office V First floor 14. Jamshedji tata road, churchgate, Mumbai 400020",
     GST: "27AAACN9967E1Z3",
   },
   {

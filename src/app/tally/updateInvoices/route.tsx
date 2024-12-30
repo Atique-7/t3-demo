@@ -95,6 +95,20 @@ const curateInvoices = (invoices: any) => {
   return invoiceArr;
 };
 
+const getFixedData = (data: any) => {
+  const fixedData = data.map((obj: any) =>
+    Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => 
+        [key, typeof value === "number" ? Math.ceil(value * 100) / 100 : value]
+      )
+    )
+  );
+
+  return fixedData;
+}
+
+
+
 export async function POST(request: NextRequest) {
   // console.log("BODY", request.body);
   try {
@@ -109,12 +123,19 @@ export async function POST(request: NextRequest) {
 
     const curatedInvoices = curateInvoices(newInvoices);
 
+    // const testCuratedIncoices = curatedInvoices.filter((invoice: Invoice) => {if(invoice.carNumber == "MH04HF9172") return invoice});
+
+    // console.log("INVOICES - ", testCuratedIncoices);
     const updatedNewInvoices = await Promise.all(
       curatedInvoices.map(async (invoice: Invoice, index: number) => {
         let result: JobCard = await getJobCardById(invoice.jobCardId);
-        let partsArr = stringToObj(result.parts);
-        let labourArr = stringToObj(result.labour);
+        let partsArr = getFixedData(stringToObj(result.parts));
+        let labourArr = getFixedData(stringToObj(result.labour));
+
+
         // let taxesObj = stringToObj(result.taxes);
+
+        
 
         // console.log("THIS IS THE JOB CARD - ", result);
 
@@ -309,9 +330,9 @@ export async function POST(request: NextRequest) {
         });
 
         labourArr.map((work: CurrentLabour) => {
-          if (result.carNumber == "MH01DE4865") {
-            console.log("THIS IS THE CAR - ", labourArr);
-          }
+          // if (result.carNumber == "MH01DE4865") {
+          //   console.log("THIS IS THE CAR - ", labourArr);
+          // }
           if (
             isInsurance &&
             invoice.invoiceType != "Quote" &&
@@ -474,6 +495,8 @@ export async function POST(request: NextRequest) {
           }
         });
 
+        
+
         const keysToRetainParts: (keyof CurrentPart)[] = [
           "partId",
           "partName",
@@ -590,9 +613,9 @@ export async function POST(request: NextRequest) {
 
         const revisedLabourArr: any = await Promise.all(
           labourArr.map((work: CurrentLabour) => {
-            if (result.carNumber == "MH01DE4865") {
-              console.log("THIS IS THE OBJECT FROM TOP - ", work);
-            }
+            // if (result.carNumber == "MH01DE4865") {
+            //   console.log("THIS IS THE OBJECT FROM TOP - ", work);
+            // }
             const updatedObject: CurrentLabour = Object.keys(work).reduce(
               (acc, key) => {
                 if (keysToRetainLabour.includes(key as keyof CurrentLabour)) {
@@ -677,13 +700,18 @@ export async function POST(request: NextRequest) {
               updatedObject.discountAmt = 0;
             }
             // console.log("UPDATED OBJECT - ", updatedObject);
-            if (result.carNumber == "MH01DE4865") {
-              console.log("THIS IS THE OBJECT AFTER- ", updatedObject);
-            }
+            // if (result.carNumber == "MH01DE4865") {
+            //   console.log("THIS IS THE OBJECT AFTER- ", updatedObject);
+            // }
 
             return updatedObject;
           })
         );
+
+        // if(result.carNumber == "MH04HF9172") {
+        //   console.log("TYPE - ", invoice.insuranceInvoiceType);
+        //   console.log("THIS IS THE JOB CARD - ", revisedPartsArr[4], revisedLabourArr[2]);
+        // }
 
         result.parts = revisedPartsArr;
         result.labour = revisedLabourArr;
@@ -707,7 +735,12 @@ export async function POST(request: NextRequest) {
           result.customerPhone = "";
         }
 
-        const taxesSplitObj = createTaxObj(revisedPartsArr, revisedLabourArr);
+        const taxesSplitObj = createTaxObj(partsArr, labourArr, isInsurance, invoice.insuranceInvoiceType);
+
+        if(result.carNumber == "MH04HF9172") {
+          console.log("TYPE - ", invoice.insuranceInvoiceType);
+          console.log("THIS IS THE JOB CARD - ", taxesSplitObj);
+        }
         result.taxes = taxesSplitObj;
 
         const dateTemp = new Date(invoice["$createdAt"]);

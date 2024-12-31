@@ -1230,15 +1230,21 @@ export const createTaxObj = (
           );
         }
       } else {
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundCgstObjIndex].taxAmt + part.cgstAmt
+            );
+          } else {
+            taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundCgstObjIndex].taxAmt + 0
+            );
+          }
+        }else{
           taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
             taxes[foundCgstObjIndex].taxAmt + part.cgstAmt
-          );
-        } else {
-          taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
-            taxes[foundCgstObjIndex].taxAmt + 0
-          );
-        }
+          );}
+        
       }
 
       // console.log("TAX OBJ EDITED- ", taxes[foundCgstObjIndex]);
@@ -1259,7 +1265,7 @@ export const createTaxObj = (
 
 
         // console.log("ANDAR AA RAHA HAI NEW", splitPartCGST);
-
+        
         if (liabilityType == "Customer") {
           calculatedCGSTAmt = roundToTwoDecimals(
             calculatedCGSTAmt + splitPartCGST.customerAmt
@@ -1272,17 +1278,23 @@ export const createTaxObj = (
         }
       } else {
         // console.log("ANDAR NAHI AAYA");
-        
-
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            calculatedCGSTAmt = roundToTwoDecimals(
+              calculatedCGSTAmt + part.cgstAmt
+            );
+          } else {
+            calculatedCGSTAmt = roundToTwoDecimals(
+              calculatedCGSTAmt + 0
+            );
+          }
+        }else{
           calculatedCGSTAmt = roundToTwoDecimals(
             calculatedCGSTAmt + part.cgstAmt
           );
-        } else {
-          calculatedCGSTAmt = roundToTwoDecimals(
-            calculatedCGSTAmt + 0
-          );
         }
+
+        
       }
 
       let cgstObj = {
@@ -1323,13 +1335,19 @@ export const createTaxObj = (
         }
       } else {
 
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundSgstObjIndex].taxAmt + part.sgstAmt
+            );
+          } else {
+            taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundSgstObjIndex].taxAmt + 0);
+          }
+        }else{
           taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
             taxes[foundSgstObjIndex].taxAmt + part.sgstAmt
           );
-        } else {
-          taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
-            taxes[foundSgstObjIndex].taxAmt + 0);
         }
         
       }
@@ -1365,15 +1383,22 @@ export const createTaxObj = (
         }
       } else {
 
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            calculatedSGSTAmt = roundToTwoDecimals(
+              calculatedSGSTAmt + part.sgstAmt
+            );
+          } else {
+            calculatedSGSTAmt = roundToTwoDecimals(
+              calculatedSGSTAmt + 0
+            );
+          }
+        }else{
           calculatedSGSTAmt = roundToTwoDecimals(
-            calculatedSGSTAmt + part.sgstAmt
-          );
-        } else {
-          calculatedSGSTAmt = roundToTwoDecimals(
-            calculatedSGSTAmt + 0
-          );
+            calculatedSGSTAmt + part.sgstAmt)
         }
+
+        
       }
 
       let sgstObj = {
@@ -1430,15 +1455,22 @@ export const createTaxObj = (
           );
         }
       } else {
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundCgstObjIndex].taxAmt + work.cgstAmt
+            );
+          } else {
+            taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundCgstObjIndex].taxAmt + 0
+            );
+          }
+        }else{
           taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
             taxes[foundCgstObjIndex].taxAmt + work.cgstAmt
           );
-        } else {
-          taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
-            taxes[foundCgstObjIndex].taxAmt + 0
-          );
         }
+        
 
         
       }
@@ -1473,15 +1505,22 @@ export const createTaxObj = (
         }
       } else {
         // console.log("ANDAR NAHI AAYA");
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            calculatedCGSTAmt = roundToTwoDecimals(
+              calculatedCGSTAmt + work.cgstAmt
+            );
+          } else {
+            calculatedCGSTAmt = roundToTwoDecimals(
+              calculatedCGSTAmt + 0
+            );
+          }
+        }else{
           calculatedCGSTAmt = roundToTwoDecimals(
             calculatedCGSTAmt + work.cgstAmt
           );
-        } else {
-          calculatedCGSTAmt = roundToTwoDecimals(
-            calculatedCGSTAmt + 0
-          );
         }
+        
       }
 
       let cgstObj = {
@@ -1521,15 +1560,22 @@ export const createTaxObj = (
           );
         }
       } else {
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundSgstObjIndex].taxAmt + work.sgstAmt
+            );
+          } else {
+            taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+              taxes[foundSgstObjIndex].taxAmt + 0
+            );
+          }
+        }else{
           taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
             taxes[foundSgstObjIndex].taxAmt + work.sgstAmt
           );
-        } else {
-          taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
-            taxes[foundSgstObjIndex].taxAmt + 0
-          );
         }
+        
       }
 
       // console.log("TAX OBJ EDITED- ", taxes[foundSgstObjIndex]);
@@ -1563,16 +1609,21 @@ export const createTaxObj = (
           );
         }
       } else {
-        // console.log("ANDAR NAHI AAYA");
-        if (liabilityType == "Customer") {
+        if(liabilityType){
+          if (liabilityType == "Customer") {
+            calculatedSGSTAmt = roundToTwoDecimals(
+              calculatedSGSTAmt + work.sgstAmt
+            );
+          } else {
+            calculatedSGSTAmt = roundToTwoDecimals(
+              calculatedSGSTAmt + 0
+            );
+          }
+        }else{
           calculatedSGSTAmt = roundToTwoDecimals(
             calculatedSGSTAmt + work.sgstAmt
           );
-        } else {
-          calculatedSGSTAmt = roundToTwoDecimals(
-            calculatedSGSTAmt + 0
-          );
-        }
+        }        
       }
 
       let sgstObj = {
@@ -1582,7 +1633,6 @@ export const createTaxObj = (
         taxAmt: calculatedSGSTAmt,
       };
 
-      // console.log("TAX OBJ NEW- ", calculatedSGSTAmt, sgstObj);
       taxes.push(sgstObj);
     }
   });

@@ -1347,7 +1347,9 @@ export const InvoicePDF = ({
                   </View>
                   <View style={styles.tableCell}>
                     <Text style={styles.tableData}>
-                      {roundToTwoDecimals(labourTotal + partsTotal)}
+                      {roundToTwoDecimals(
+                        totalSubtotal - totalDiscount + totalTax
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -1361,7 +1363,11 @@ export const InvoicePDF = ({
                   </View>
                   <View style={styles.tableCell}>
                     <Text style={styles.tableData}>
-                      {Math.round(roundToTwoDecimals(labourTotal + partsTotal))}
+                      {Math.round(
+                        roundToTwoDecimals(
+                          totalSubtotal - totalDiscount + totalTax
+                        )
+                      )}
                     </Text>
                   </View>
                 </View>

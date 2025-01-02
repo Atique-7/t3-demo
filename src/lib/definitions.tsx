@@ -62,6 +62,8 @@ export interface JobCard {
   gstin?: string;
   placeOfSupply?: string;
   // invoiceDate?: string;
+  totalRoundedOffAmount: number;
+  roundOffValue: number;
   $id: string;
   $createdAt: string;
   $updatedAt: string;

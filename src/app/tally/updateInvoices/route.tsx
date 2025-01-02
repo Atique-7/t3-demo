@@ -98,16 +98,15 @@ const curateInvoices = (invoices: any) => {
 const getFixedData = (data: any) => {
   const fixedData = data.map((obj: any) =>
     Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => 
-        [key, typeof value === "number" ? Math.ceil(value * 100) / 100 : value]
-      )
+      Object.entries(obj).map(([key, value]) => [
+        key,
+        typeof value === "number" ? Math.ceil(value * 100) / 100 : value,
+      ])
     )
   );
 
   return fixedData;
-}
-
-
+};
 
 export async function POST(request: NextRequest) {
   // console.log("BODY", request.body);
@@ -132,10 +131,7 @@ export async function POST(request: NextRequest) {
         let partsArr = getFixedData(stringToObj(result.parts));
         let labourArr = getFixedData(stringToObj(result.labour));
 
-
         // let taxesObj = stringToObj(result.taxes);
-
-        
 
         // console.log("THIS IS THE JOB CARD - ", result);
 
@@ -224,6 +220,10 @@ export async function POST(request: NextRequest) {
                 totalSubtotal,
                 part.subTotalCust
               );
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, splitPartSubTotal);
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
             } else {
               part.amountIns = splitPartAmount.insuranceAmt;
               part.subTotalIns = splitPartSubTotal.insuranceAmt;
@@ -244,6 +244,10 @@ export async function POST(request: NextRequest) {
                 totalSubtotal,
                 part.subTotalIns
               );
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, splitPartSubTotal);
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
             }
 
             if (
@@ -277,16 +281,72 @@ export async function POST(request: NextRequest) {
               }
             }
           } else {
-            if (insuranceInvoiceTypeCOPY == "Customer") {
-              partsTotal = preciseOperation("add", partsTotal, part.amount);
-
-              totalTax = preciseOperation("add", totalTax, part.totalTax);
-
-              totalSubtotal = preciseOperation(
-                "add",
-                totalSubtotal,
-                part.subTotal
+            if (result.carNumber == "MH04HF9172") {
+              console.log("CHECKING - ", part.insurancePercentage! >= 0);
+            }
+            if (part.insurancePercentage! >= 0) {
+              if (result.carNumber == "MH04HF9172") {
+                console.log("YAHAAAANNN");
+              }
+              const splitPartTotalTax = splitInsuranceAmt(
+                part.totalTax,
+                part.insurancePercentage!
               );
+
+              const splitPartAmount = splitInsuranceAmt(
+                part.amount,
+                part.insurancePercentage!
+              );
+
+              // console.log("CHECK AMT - ", splitPartAmount);
+
+              const splitPartSubTotal = splitInsuranceAmt(
+                part.subTotal,
+                part.insurancePercentage!
+              );
+
+              if (insuranceInvoiceTypeCOPY == "Customer") {
+                partsTotal = preciseOperation(
+                  "add",
+                  partsTotal,
+                  splitPartAmount.customerAmt
+                );
+
+                totalTax = preciseOperation(
+                  "add",
+                  totalTax,
+                  splitPartTotalTax.customerAmt
+                );
+
+                totalSubtotal = preciseOperation(
+                  "add",
+                  totalSubtotal,
+                  splitPartSubTotal.customerAmt
+                );
+              } else {
+                partsTotal = preciseOperation(
+                  "add",
+                  partsTotal,
+                  splitPartAmount.insuranceAmt
+                );
+
+                totalTax = preciseOperation(
+                  "add",
+                  totalTax,
+                  splitPartTotalTax.insuranceAmt
+                );
+
+                totalSubtotal = preciseOperation(
+                  "add",
+                  totalSubtotal,
+                  splitPartSubTotal.insuranceAmt
+                );
+              }
+
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, splitPartSubTotal);
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
 
               // totalDiscount = totalDiscount , part.discountAmt
 
@@ -311,8 +371,10 @@ export async function POST(request: NextRequest) {
                 totalSubtotal,
                 part.subTotal
               );
-
-              // totalDiscount = totalDiscount , part.discountAmt
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, "CHECK");
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
 
               if (
                 part.discountPercentage &&
@@ -388,6 +450,10 @@ export async function POST(request: NextRequest) {
                 totalSubtotal,
                 work.subTotalCust
               );
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, splitLabourSubTotal);
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
             } else {
               work.amountIns = splitLabourAmount.insuranceAmt;
               work.subTotalIns = splitLabourSubTotal.insuranceAmt;
@@ -412,6 +478,10 @@ export async function POST(request: NextRequest) {
                 totalSubtotal,
                 work.subTotalIns
               );
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, splitLabourSubTotal);
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
             }
 
             if (
@@ -447,16 +517,63 @@ export async function POST(request: NextRequest) {
               // console.log("NOT REGISTERING");
             }
           } else {
-            if (insuranceInvoiceTypeCOPY == "Customer") {
-              labourTotal = preciseOperation("add", labourTotal, work.amount);
-
-              totalTax = preciseOperation("add", totalTax, work.totalTax);
-
-              totalSubtotal = preciseOperation(
-                "add",
-                totalSubtotal,
-                work.subTotal
+            if (work.insurancePercentage! >= 0) {
+              const splitLabourTotalTax = splitInsuranceAmt(
+                work.totalTax,
+                work.insurancePercentage!
               );
+              const splitLabourAmount = splitInsuranceAmt(
+                work.amount,
+                work.insurancePercentage!
+              );
+
+              const splitLabourSubTotal = splitInsuranceAmt(
+                work.subTotal,
+                work.insurancePercentage!
+              );
+
+              if (insuranceInvoiceTypeCOPY == "Customer") {
+                labourTotal = preciseOperation(
+                  "add",
+                  labourTotal,
+                  splitLabourAmount.customerAmt
+                );
+
+                totalTax = preciseOperation(
+                  "add",
+                  totalTax,
+                  splitLabourTotalTax.customerAmt
+                );
+
+                totalSubtotal = preciseOperation(
+                  "add",
+                  totalSubtotal,
+                  splitLabourSubTotal.customerAmt
+                );
+              } else {
+                labourTotal = preciseOperation(
+                  "add",
+                  labourTotal,
+                  splitLabourAmount.insuranceAmt
+                );
+
+                totalTax = preciseOperation(
+                  "add",
+                  totalTax,
+                  splitLabourTotalTax.insuranceAmt
+                );
+
+                totalSubtotal = preciseOperation(
+                  "add",
+                  totalSubtotal,
+                  splitLabourSubTotal.insuranceAmt
+                );
+              }
+
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, splitLabourSubTotal);
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
 
               if (
                 work.discountPercentage &&
@@ -479,6 +596,10 @@ export async function POST(request: NextRequest) {
                 totalSubtotal,
                 work.subTotal
               );
+              if (result.carNumber == "MH04HF9172") {
+                console.log("UPDATED - ", totalSubtotal, "CHECK");
+                console.log("TYPE - ", invoice.insuranceInvoiceType);
+              }
 
               if (
                 work.discountPercentage &&
@@ -494,8 +615,6 @@ export async function POST(request: NextRequest) {
             }
           }
         });
-
-        
 
         const keysToRetainParts: (keyof CurrentPart)[] = [
           "partId",
@@ -708,11 +827,6 @@ export async function POST(request: NextRequest) {
           })
         );
 
-        // if(result.carNumber == "MH04HF9172") {
-        //   console.log("TYPE - ", invoice.insuranceInvoiceType);
-        //   console.log("THIS IS THE JOB CARD - ", revisedPartsArr[4], revisedLabourArr[2]);
-        // }
-
         result.parts = revisedPartsArr;
         result.labour = revisedLabourArr;
 
@@ -723,6 +837,12 @@ export async function POST(request: NextRequest) {
         result.totalDiscountAmt = totalDiscount;
         result.totalTax = totalTax;
         result.placeOfSupply = "Maharashtra";
+        result.totalRoundedOffAmount = Math.round(
+          roundToTwoDecimals(totalSubtotal - totalDiscount + totalTax)
+        );
+        result.roundOffValue = roundToTwoDecimals(
+          result.totalRoundedOffAmount - result.amount
+        );
 
         if (
           isInsurance &&
@@ -735,11 +855,23 @@ export async function POST(request: NextRequest) {
           result.customerPhone = "";
         }
 
-        const taxesSplitObj = createTaxObj(partsArr, labourArr, isInsurance, invoice.insuranceInvoiceType);
+        const taxesSplitObj = createTaxObj(
+          partsArr,
+          labourArr,
+          isInsurance,
+          invoice.insuranceInvoiceType
+        );
 
-        if(result.carNumber == "MH04HF9172") {
+        if (result.carNumber == "MH04HF9172") {
           console.log("TYPE - ", invoice.insuranceInvoiceType);
-          console.log("THIS IS THE JOB CARD - ", taxesSplitObj);
+          console.log(
+            "THIS IS THE JOB CARD - ",
+            taxesSplitObj,
+            result.subTotal,
+            result.amount,
+            result.totalTax,
+            result.totalDiscountAmt
+          );
         }
         result.taxes = taxesSplitObj;
 

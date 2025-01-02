@@ -77,12 +77,12 @@ function Login({}: Props) {
 
   return (
     <div className="flex flex-col justify-center items-center h-dvh">
-      {/* Overlay to disable page */}
+      {/* Overlay to disable page
       {isSigningIn && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <Image src={loader} width={100} height={100} alt="Loading" />
         </div>
-      )}
+      )} */}
       <Image src={T3_Full} width={200} height={200} alt="Logo" />
       <div className="flex flex-col justify-center items-center space-y-5 mt-10">
         <div className="text-gray-800 font-semibold text-3xl">

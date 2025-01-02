@@ -813,31 +813,33 @@ export default function jobCard({
                       )}
                     </Button>
                   )}
-                  {currentJobCardStatus == 4 && (
-                    <Button
-                      variant="outline"
-                      className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
-                        buttonLoading ? "opacity-50" : ""
-                      }`}
-                      size="lg"
-                      onClick={generateTaxInvoice}
-                      disabled={buttonLoading}
-                    >
-                      {buttonLoading ? (
-                        <>
-                          <Image
-                            src={loader}
-                            width={50}
-                            height={50}
-                            alt="Logo"
-                          />
-                        </>
-                      ) : (
-                        <>Generate Tax Invoice</>
-                      )}
-                    </Button>
-                  )}
+                  {currentJobCardStatus == 4 &&
+                    user.email != "billermiraroad@t3cars.in" && (
+                      <Button
+                        variant="outline"
+                        className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
+                          buttonLoading ? "opacity-50" : ""
+                        }`}
+                        size="lg"
+                        onClick={generateTaxInvoice}
+                        disabled={buttonLoading}
+                      >
+                        {buttonLoading ? (
+                          <>
+                            <Image
+                              src={loader}
+                              width={50}
+                              height={50}
+                              alt="Logo"
+                            />
+                          </>
+                        ) : (
+                          <>Generate Tax Invoice</>
+                        )}
+                      </Button>
+                    )}
                   {currentJobCardStatus == 5 && (
+                    user.email != "billermiraroad@t3cars.in" && (
                     <Button
                       variant="outline"
                       className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
@@ -860,6 +862,7 @@ export default function jobCard({
                         <>Generate Gate Pass</>
                       )}
                     </Button>
+                    )
                   )}
                 </>
               )}

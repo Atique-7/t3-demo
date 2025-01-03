@@ -182,7 +182,8 @@ export async function POST(
         invoiceSeries,
         customerInvoice?.invoiceCode,
         isUpdatedInvoice,
-        "Customer"
+        "Customer",
+        isInsurance
       );
 
       let result2 = await createInvoice(

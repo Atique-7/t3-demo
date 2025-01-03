@@ -617,6 +617,11 @@ export const searchTempCar = async (
 };
 
 export const deleteTempCar = async (carId: string) => {
+  const resultTempCar = await getTempCarById(carId);
+  const updatedJobCard = await updateJobCardJobCardStatus(
+    resultTempCar.jobCardId,
+    7
+  );
   try {
     let result = await databases.deleteDocument(
       config.databaseId,
@@ -701,7 +706,7 @@ export const getTempCarById = async (id: string) => {
     );
     return result;
   } catch (error: any) {
-    console.log(error.message);
+    // console.log(error.message);
     return null;
   }
 };
@@ -881,6 +886,28 @@ export const updateJobCardInsuranceDetails = async (
   }
 };
 
+// export const updateInvoiceIsInsurance = async (
+//   id: string,
+//   isInsuranceInvoice?: boolean
+// ) => {
+//   try {
+//     await databases.updateDocument(
+//       config.databaseId,
+//       config.invoicesCollectionId, // collectionId
+//       id, // documentId
+//       {
+//         // insuranceDetails,
+
+//         isInsuranceInvoice,
+//       } // data (optional)
+//     );
+//     return true;
+//   } catch (error: any) {
+//     console.log(error.message);
+//     return null;
+//   }
+// };
+
 export const updateJobCardGSTDetails = async (id: string, gstin?: string) => {
   try {
     await databases.updateDocument(
@@ -891,6 +918,28 @@ export const updateJobCardGSTDetails = async (id: string, gstin?: string) => {
         // insuranceDetails,
 
         gstin,
+      } // data (optional)
+    );
+    return true;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+export const updateJobCardJobCardStatus = async (
+  id: string,
+  jobCardStatus?: number
+) => {
+  try {
+    await databases.updateDocument(
+      config.databaseId,
+      config.jobCardsCollectionId, // collectionId
+      id, // documentId
+      {
+        // insuranceDetails,
+
+        jobCardStatus,
       } // data (optional)
     );
     return true;

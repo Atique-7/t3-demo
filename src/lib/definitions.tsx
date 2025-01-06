@@ -89,6 +89,7 @@ export type CurrentPart = {
   totalTax: number;
   amount: number;
   discountPercentage?: number;
+  discountedSubTotal?: number;
   discountAmt?: number;
   insurancePercentage?: number;
   insuranceAmt?: number;
@@ -140,6 +141,7 @@ export type CurrentLabour = {
   totalTax: number;
   amount: number;
   discountPercentage?: number;
+  discountedSubTotal?: number;
   discountAmt?: number;
   insurancePercentage?: number;
   insuranceAmt?: number;
@@ -220,7 +222,9 @@ export interface Invoice {
   invoiceNumber: number;
   isInsuranceInvoice: boolean;
   insuranceInvoiceType: string;
+  isUpdatedInvoice?: boolean;
   invoiceDate?: string;
+  invoiceCode: string;
   $id: string;
   $createdAt: string;
   $updatedAt: string;

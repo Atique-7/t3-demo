@@ -13,7 +13,7 @@ import {
 } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 
-const Decimal = require("decimal.js");
+import Decimal from "decimal.js";
 
 export async function POST(request: NextRequest) {
   let totalErrors = 0;

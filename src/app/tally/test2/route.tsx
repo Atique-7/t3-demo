@@ -31,36 +31,36 @@ export async function POST(request: NextRequest) {
 
     const curatedInvoices = curateInvoices(newInvoices);
 
-    const curatedInvoiceLength = curatedInvoices.length;
+    // const curatedInvoiceLength = curatedInvoices.length;
 
-    const testCuratedIncoices = curatedInvoices.filter((invoice: Invoice) => {
-      if (
-        [
-          // "BDS/1033",
-          // "BDS/1017",
-          "BDS/1004",
-          // "SER/1113",
-          // "SER/1100",
-          // "SER/1092",
-          // "SER/1086",
-          // "SER/1080",
-          // "SER/1072",
-          // "SER/1067",
-          // "SER/1066",
-          // "SER/1058",
-          // "SER/1052",
-          // "SER/1042",
-          // "SER/1023",
-          // "SER/1019",
-          // "SER/1009",
-          // "BDS/1090",
-          // "BDS/1060",
-          // "BDS/1053",
-          "BDS/1003",
-        ].includes(invoice.invoiceCode)
-      )
-        return invoice;
-    });
+    // const testCuratedIncoices = curatedInvoices.filter((invoice: Invoice) => {
+    //   if (
+    //     [
+    //       // "BDS/1033",
+    //       // "BDS/1017",
+    //       "BDS/1004",
+    //       // "SER/1113",
+    //       // "SER/1100",
+    //       // "SER/1092",
+    //       // "SER/1086",
+    //       // "SER/1080",
+    //       // "SER/1072",
+    //       // "SER/1067",
+    //       // "SER/1066",
+    //       // "SER/1058",
+    //       // "SER/1052",
+    //       // "SER/1042",
+    //       // "SER/1023",
+    //       // "SER/1019",
+    //       // "SER/1009",
+    //       // "BDS/1090",
+    //       // "BDS/1060",
+    //       // "BDS/1053",
+    //       "BDS/1003",
+    //     ].includes(invoice.invoiceCode)
+    //   )
+    //     return invoice;
+    // });
 
     const updatedNewInvoices = await Promise.all(
       curatedInvoices.map(async (invoice: Invoice, index: number) => {

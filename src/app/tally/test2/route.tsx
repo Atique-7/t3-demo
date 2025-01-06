@@ -198,6 +198,7 @@ export async function POST(request: NextRequest) {
               totalTax: Number(tempTotalTax),
               amount: Number(tempAmount),
               discountAmt: Number(discountAmt) || 0,
+              discountPercentage: Number(discountPercentage) || 0,
             };
 
             return updatedPart;
@@ -312,6 +313,7 @@ export async function POST(request: NextRequest) {
               totalTax: Number(tempTotalTax),
               amount: Number(tempAmount),
               discountAmt: Number(discountAmt) || 0,
+              discountPercentage: Number(discountPercentage) || 0,
             };
 
             return updatedLabour;

@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "cookies-next": "^4.2.1",
+    "decimal.js": "^10.4.3",
     "embla-carousel-react": "^8.3.0",
     "imagekit": "^5.2.0",
     "jspdf": "^2.5.2",

@@ -382,9 +382,9 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    const returnResult = JSON.stringify(updatedNewInvoices);
+    const returnInvoicesObj = { invoices: updatedNewInvoices };
 
-    return NextResponse.json(updatedNewInvoices, { status: 201 });
+    return NextResponse.json(returnInvoicesObj, { status: 201 });
   } catch (e) {
     console.log(e);
   }

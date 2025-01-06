@@ -662,8 +662,8 @@ export const getUserAccess = (user: UserType) => {
 
 export const splitInsuranceAmt = (amount: number, insurance: number) => {
   // console.log("USER ACCESS - ", user);
-  let insuranceAmt = roundToTwoDecimals((insurance / 100) * amount);
-  let customerAmt = roundToTwoDecimals(amount - insuranceAmt);
+  let insuranceAmt = (insurance / 100) * amount;
+  let customerAmt = amount - insuranceAmt;
 
   return { insuranceAmt, customerAmt };
 };
@@ -1606,6 +1606,139 @@ export const createTaxObj = (
         taxRate: work.sgst,
         taxName: "SGST",
         taxAmt: calculatedSGSTAmt,
+      };
+
+      taxes.push(sgstObj);
+    }
+  });
+
+  return taxes;
+};
+
+export const createTaxObjNew = (
+  parts: CurrentPart[],
+  labour: CurrentLabour[]
+) => {
+  let taxes: TaxObj[] = [];
+
+  // console.log("GETTING DETAILS - ", isInsurance, liabilityType)
+
+  parts.map((part: CurrentPart) => {
+    // if(part.cgst == 14){
+    //   console.log("PARTS - ", part)
+    // }
+    let foundCgstObjIndex = taxes.findIndex(
+      (obj: TaxObj) =>
+        obj.taxName == "CGST" &&
+        obj.taxRate == part.cgst &&
+        obj.taxType == "GOODS"
+    );
+
+    let foundSgstObjIndex = taxes.findIndex(
+      (obj: TaxObj) =>
+        obj.taxName == "SGST" &&
+        obj.taxRate == part.sgst &&
+        obj.taxType == "GOODS"
+    );
+
+    if (foundCgstObjIndex != -1) {
+      let arrayFirstHalf = taxes!.slice(0, foundCgstObjIndex);
+      let arraySecondHalf = taxes!.slice(foundCgstObjIndex + 1);
+
+      taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundCgstObjIndex].taxAmt + part.cgstAmt
+      );
+
+      taxes = [...arrayFirstHalf, taxes[foundCgstObjIndex], ...arraySecondHalf];
+    } else {
+      let cgstObj = {
+        taxType: "GOODS",
+        taxRate: part.cgst,
+        taxName: "CGST",
+        taxAmt: part.cgstAmt,
+      };
+
+      taxes.push(cgstObj);
+    }
+
+    if (foundSgstObjIndex != -1) {
+      let arrayFirstHalf = taxes!.slice(0, foundSgstObjIndex);
+      let arraySecondHalf = taxes!.slice(foundSgstObjIndex + 1);
+
+      taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundSgstObjIndex].taxAmt + part.sgstAmt
+      );
+
+      taxes = [...arrayFirstHalf, taxes[foundSgstObjIndex], ...arraySecondHalf];
+    } else {
+      let sgstObj = {
+        taxType: "GOODS",
+        taxRate: part.sgst,
+        taxName: "SGST",
+        taxAmt: part.sgstAmt,
+      };
+
+      // console.log("TAX OBJ NEW- ", calculatedSGSTAmt, sgstObj);
+
+      taxes.push(sgstObj);
+    }
+    // console.log("TAXES CHECK - ", taxes[0], taxes[1]);
+  });
+
+  labour.map((work: CurrentLabour) => {
+    let foundCgstObjIndex = taxes.findIndex(
+      (obj: TaxObj) =>
+        obj.taxName == "CGST" &&
+        obj.taxRate == work.cgst &&
+        obj.taxType == "SERVICES"
+    );
+
+    let foundSgstObjIndex = taxes.findIndex(
+      (obj: TaxObj) =>
+        obj.taxName == "SGST" &&
+        obj.taxRate == work.sgst &&
+        obj.taxType == "SERVICES"
+    );
+
+    if (foundCgstObjIndex != -1) {
+      let arrayFirstHalf = taxes!.slice(0, foundCgstObjIndex);
+      let arraySecondHalf = taxes!.slice(foundCgstObjIndex + 1);
+
+      taxes[foundCgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundCgstObjIndex].taxAmt + work.cgstAmt
+      );
+
+      taxes = [...arrayFirstHalf, taxes[foundCgstObjIndex], ...arraySecondHalf];
+    } else {
+      let cgstObj = {
+        taxType: "SERVICES",
+        taxRate: work.cgst,
+        taxName: "CGST",
+        taxAmt: work.cgstAmt,
+      };
+
+      // console.log("TAX OBJ NEW- ", calculatedCGSTAmt, cgstObj);
+
+      taxes.push(cgstObj);
+    }
+
+    if (foundSgstObjIndex != -1) {
+      let arrayFirstHalf = taxes!.slice(0, foundSgstObjIndex);
+      let arraySecondHalf = taxes!.slice(foundSgstObjIndex + 1);
+
+      taxes[foundSgstObjIndex].taxAmt = roundToTwoDecimals(
+        taxes[foundSgstObjIndex].taxAmt + work.sgstAmt
+      );
+
+      // console.log("TAX OBJ EDITED- ", taxes[foundSgstObjIndex]);
+
+      taxes = [...arrayFirstHalf, taxes[foundSgstObjIndex], ...arraySecondHalf];
+    } else {
+      let sgstObj = {
+        taxType: "SERVICES",
+        taxRate: work.sgst,
+        taxName: "SGST",
+        taxAmt: work.sgstAmt,
       };
 
       taxes.push(sgstObj);

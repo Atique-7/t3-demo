@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import {
   getAllInvoices,
   getAllParts,
+  getCarByCarNumber,
   getJobCardById,
   getTempCarById,
   updateJobCardById,
@@ -51,6 +52,8 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
   const [parts, setParts] = useState<Part[] | null>(null);
   const [currentParts, setCurrentParts] = useState<CurrentPart[]>([]);
 
+  const [isDisabled, setIsDisabled] = useState(false);
+
   const [isInsurance, setIsInsurance] = useState(false);
   const [currentJobCardStatus, setCurrentJobCardStatus] = useState<number>();
   const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>();
@@ -75,11 +78,22 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
 
       // console.log("THESE ARE THE PARTS CURRENTLY - ", jobCardObj.parts);
 
+      if (jobCardObj.jobCardStatus > 5) {
+        setIsDisabled(true);
+      }
+
       const prevParts = stringToObj(jobCardObj.parts);
       setCurrentParts(prevParts);
 
-      const carObj = await getTempCarById(jobCardObj.carId);
-      console.log("This is the car details - ", carObj);
+      let carObj = await getTempCarById(jobCardObj.carId);
+      if (carObj) {
+        const status = carObj.carStatus;
+        if (status === 2) setIsDisabled(true);
+      } else {
+        setIsDisabled(true);
+        carObj = await getCarByCarNumber(jobCardObj.carNumber);
+        carObj = carObj.documents[0];
+      }
 
       setJobCard((prev) => jobCardObj);
       setCurrentJobCardStatus((prev) => jobCardObj.jobCardStatus);
@@ -133,7 +147,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
     if (
       jobCard &&
       jobCard.jobCardStatus !== undefined &&
-      jobCard.jobCardStatus < 6
+      jobCard.jobCardStatus < 5
     ) {
       const isDone = await updateJobCardById(
         params.jobCardId,
@@ -280,14 +294,16 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
                   )}
                 </div>
               )}
-              <Button
-                variant="outline"
-                className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
-                size="lg"
-                onClick={saveCurrentParts}
-              >
-                Save
-              </Button>
+              {currentJobCardStatus! < 5 && (
+                <Button
+                  variant="outline"
+                  className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                  size="lg"
+                  onClick={saveCurrentParts}
+                >
+                  Save
+                </Button>
+              )}
             </div>
           </div>
           <div>
@@ -338,6 +354,7 @@ export default function jobCard({ params }: { params: { jobCardId: any } }) {
               user={user}
               isInsuranceDetails={false}
               partsTotal={partsTotal}
+              disable={isDisabled}
             />
           </div>
         </>

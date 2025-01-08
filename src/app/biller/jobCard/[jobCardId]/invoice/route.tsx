@@ -3,7 +3,6 @@ import {
   getAllInvoices,
   getInvoiceNumber,
   getInvoiceUrl,
-  imagekit,
   uploadInvoice,
 } from "@/lib/appwrite";
 import {
@@ -11,14 +10,12 @@ import {
   invoiceTypes,
   streamToBuffer,
   convertStringsToArray,
-  stringToObj,
   base64MarutiLogo,
 } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { InvoicePDF } from "@/components/InvoiceTest";
 import { renderToStream } from "@react-pdf/renderer";
 import { CurrentLabour, CurrentPart, Invoice } from "@/lib/definitions";
-import { Console } from "console";
 
 export const maxDuration = 30; // This function can run for a maximum of 5 seconds
 export const dynamic = "force-dynamic";

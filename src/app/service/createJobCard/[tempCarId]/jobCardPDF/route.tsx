@@ -1,19 +1,7 @@
-import {
-  createInvoice,
-  getJobCardById,
-  getTempCarById,
-  imagekit,
-} from "@/lib/appwrite";
-import {
-  base64Logo,
-  base64MarutiLogo,
-  invoiceTypes,
-  streamToBuffer,
-  stringToObj,
-} from "@/lib/helper";
+import { getInvoiceUrl, uploadInvoice } from "@/lib/appwrite";
+import { base64Logo, base64MarutiLogo, streamToBuffer } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { renderToStream } from "@react-pdf/renderer";
-import { GatePassPDF } from "@/components/GatePassTest";
 import { JobCardPDF } from "@/components/JobCardTest";
 
 export async function POST(
@@ -38,6 +26,11 @@ export async function POST(
 
     const buffer = await streamToBuffer(stream);
 
+    // Convert the buffer into a Blob
+    const blob = new Blob([buffer], { type: "application/pdf" });
+
+    // Create a File object (ensure 'File' is available in your environment)
+
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let uniqueStr = "";
@@ -47,17 +40,18 @@ export async function POST(
       uniqueStr += characters.charAt(randomIndex);
     }
 
-    // Upload the buffer to ImageKit
-    const uploadResponse = await imagekit.upload({
-      file: buffer, // Buffer object
-      fileName: `${params.jobCardId}_jobCard_${uniqueStr}.pdf`, // Name of the file
-      folder: "/pdfs/", // Optional folder
-      useUniqueFileName: false, // Ensure file name uniqueness
-      isPrivateFile: false, // If you want a public URL
-    });
+    const file = new File(
+      [blob],
+      `${params.jobCardId}_jobCard_${uniqueStr}.pdf`,
+      { type: "application/pdf" }
+    );
+
+    const uploadResult = await uploadInvoice(file);
+    console.log("Upload Result", uploadResult);
 
     // Get the URL of the uploaded PDF
-    const pdfUrl = uploadResponse.url;
+    const fileResult = await getInvoiceUrl(uploadResult.$id);
+    const pdfUrl = fileResult.href;
 
     console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 

@@ -1,10 +1,12 @@
 import {
   createInvoice,
+  getInvoiceUrl,
   getJobCardById,
   getTempCarById,
   imagekit,
   updateJobCardGatePassDetails,
   updateTempCarById,
+  uploadInvoice,
   //updateJobCardGatePass,
 } from "@/lib/appwrite";
 import {
@@ -51,6 +53,11 @@ export async function POST(
 
     const buffer = await streamToBuffer(stream);
 
+    // Convert the buffer into a Blob
+    const blob = new Blob([buffer], { type: "application/pdf" });
+
+    // Create a File object (ensure 'File' is available in your environment)
+
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let uniqueStr = "";
@@ -60,17 +67,17 @@ export async function POST(
       uniqueStr += characters.charAt(randomIndex);
     }
 
-    // Upload the buffer to ImageKit
-    const uploadResponse = await imagekit.upload({
-      file: buffer, // Buffer object
-      fileName: `${params.jobCardId}_gatePass_${uniqueStr}.pdf`, // Name of the file
-      folder: "/GatePasses/", // Optional folder
-      useUniqueFileName: false, // Ensure file name uniqueness
-      isPrivateFile: false, // If you want a public URL
-    });
+    const file = new File(
+      [blob],
+      `${params.jobCardId}_gatePass_${uniqueStr}.pdf`,
+      { type: "application/pdf" }
+    );
 
-    // Get the URL of the uploaded PDF
-    const pdfUrl = uploadResponse.url;
+    const uploadResult = await uploadInvoice(file);
+    console.log("Upload Result", uploadResult);
+
+    const fileResult = await getInvoiceUrl(uploadResult.$id);
+    const pdfUrl = fileResult.href;
 
     console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 

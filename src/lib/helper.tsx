@@ -2083,6 +2083,165 @@ export const createInvoiceObj = async (
   });
 };
 
+export const createInvoiceObjReport = async (
+  jobCard: JobCard,
+  invoice: Invoice
+): Promise<{
+  invoice: Invoice;
+  partsTotal: Number;
+  labourTotal: Number;
+  partsSubtotal: Number;
+  labourSubtotal: Number;
+  partsDiscount: Number;
+  labourDiscount: Number;
+}> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let partsArr = stringToObj(jobCard.parts);
+      let labourArr = stringToObj(jobCard.labour);
+
+      let partsTotal = new Decimal(0);
+      let labourTotal = new Decimal(0);
+
+      let partsSubtotal = new Decimal(0);
+      let labourSubtotal = new Decimal(0);
+
+      let partsDiscount = new Decimal(0);
+      let labourDiscount = new Decimal(0);
+
+      let totalTax = new Decimal(0);
+
+      let insuranceDetails;
+
+      if (invoice.isInsuranceInvoice && invoice.invoiceType != "Quote") {
+        insuranceDetails = JSON.parse(jobCard.insuranceDetails);
+        //   console.log(true);
+      }
+
+      const revisedPartsArr: any = await Promise.all(
+        partsArr.map(async (part: CurrentPart) => {
+          const updatedPart = await processItem("Part", part, invoice);
+
+          partsTotal = roundDecimal(
+            partsTotal.add(new Decimal((updatedPart as CurrentPart).amount))
+          );
+          partsSubtotal = roundDecimal(
+            partsSubtotal.add(
+              new Decimal((updatedPart as CurrentPart).subTotal)
+            )
+          );
+          partsDiscount = roundDecimal(
+            partsDiscount.add(
+              new Decimal((updatedPart as CurrentPart).discountAmt!)
+            )
+          );
+          totalTax = roundDecimal(
+            totalTax.add(new Decimal((updatedPart as CurrentPart).totalTax))
+          );
+
+          return updatedPart;
+        })
+      );
+
+      const revisedLabourArr: any = await Promise.all(
+        labourArr.map(async (labour: CurrentLabour) => {
+          const updatedLabour = await processItem("Labour", labour, invoice);
+
+          labourTotal = roundDecimal(
+            labourTotal.add(
+              new Decimal((updatedLabour as CurrentLabour).amount)
+            )
+          );
+          labourSubtotal = roundDecimal(
+            labourSubtotal.add(
+              new Decimal((updatedLabour as CurrentLabour).subTotal)
+            )
+          );
+          labourDiscount = roundDecimal(
+            labourDiscount.add(
+              new Decimal((updatedLabour as CurrentLabour).discountAmt!)
+            )
+          );
+          totalTax = roundDecimal(
+            totalTax.add(new Decimal((updatedLabour as CurrentLabour).totalTax))
+          );
+
+          return updatedLabour;
+        })
+      );
+
+      jobCard.parts = revisedPartsArr;
+      jobCard.labour = revisedLabourArr;
+
+      jobCard.subTotal = Number(
+        roundDecimal(partsSubtotal.plus(labourSubtotal))
+      );
+      jobCard.amount = Number(roundDecimal(partsTotal.plus(labourTotal)));
+
+      jobCard.totalDiscountAmt = Number(
+        roundDecimal(partsDiscount.plus(labourDiscount))
+      );
+      jobCard.totalTax = Number(totalTax);
+      jobCard.placeOfSupply = "Maharashtra";
+      jobCard.totalRoundedOffAmount = Math.round(
+        roundToTwoDecimals(
+          jobCard.subTotal - jobCard.totalDiscountAmt + jobCard.totalTax
+        )
+      );
+      jobCard.roundOffValue = roundToTwoDecimals(
+        jobCard.totalRoundedOffAmount - jobCard.amount
+      );
+
+      if (
+        invoice.isInsuranceInvoice &&
+        invoice.invoiceType != "Quote" &&
+        invoice.insuranceInvoiceType == "Insurance"
+      ) {
+        jobCard.gstin = insuranceDetails.policyProviderGST;
+        jobCard.customerName = insuranceDetails.policyProvider;
+        jobCard.customerAddress = insuranceDetails.policyProviderAddress;
+        jobCard.customerPhone = "";
+      }
+
+      const taxesSplitObj = createTaxObjNew(revisedPartsArr, revisedLabourArr);
+
+      jobCard.taxes = taxesSplitObj;
+
+      const dateTemp = new Date(invoice["$createdAt"]);
+
+      const day = String(dateTemp.getDate()).padStart(2, "0"); // Ensures 2 digits
+      const month = String(dateTemp.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+      const year = dateTemp.getFullYear();
+
+      // Combine into the desired format
+      const formattedDate = `${day}-${month}-${year}`;
+
+      invoice.invoiceDate = formattedDate;
+
+      invoice.jobCardDetails = jobCard;
+
+      const partsTotalNum = Number(partsTotal);
+      const labourTotalNum = Number(labourTotal);
+      const partsSubtotalNum = Number(partsSubtotal);
+      const labourSubtotalNum = Number(labourSubtotal);
+      const partsDiscountNum = Number(partsDiscount);
+      const labourDiscountNum = Number(labourDiscount);
+
+      resolve({
+        invoice,
+        partsTotal: partsTotalNum,
+        labourTotal: labourTotalNum,
+        partsSubtotal: partsSubtotalNum,
+        labourSubtotal: labourSubtotalNum,
+        partsDiscount: partsDiscountNum,
+        labourDiscount: labourDiscountNum,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 export function convertToISODateTime(inputDate: string) {
   const months = {
     Jan: "01",

@@ -5,6 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
+    let trueCounter = 0;
+    let falseCounter = 0;
+
     const body = await request.json();
     console.log("BODY", body);
 
@@ -24,11 +27,20 @@ export async function POST(request: NextRequest) {
 
         invoice = await createInvoiceObj(result, invoice);
 
+        if (invoice.isUpdatedInvoice) {
+          trueCounter++;
+        } else {
+          falseCounter++;
+        }
+
         return invoice;
       })
     );
 
     const returnInvoicesObj = { invoices: updatedNewInvoices };
+
+    console.log("TRUE", trueCounter);
+    console.log("FALSE", falseCounter);
 
     return NextResponse.json(returnInvoicesObj, { status: 201 });
   } catch (e) {

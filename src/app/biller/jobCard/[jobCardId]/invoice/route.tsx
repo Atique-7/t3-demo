@@ -2,7 +2,9 @@ import {
   createInvoice,
   getAllInvoices,
   getInvoiceNumber,
+  getInvoiceUrl,
   imagekit,
+  uploadInvoice,
 } from "@/lib/appwrite";
 import {
   base64Logo,
@@ -96,6 +98,34 @@ export async function POST(
 
       const buffer1 = await streamToBuffer(stream1);
 
+      // Convert the buffer into a Blob
+      const blob1 = new Blob([buffer1], { type: "application/pdf" });
+
+      const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      let uniqueStr1 = "";
+      let uniqueStr2 = "";
+
+      for (let i = 0; i <= 6; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        uniqueStr1 += characters.charAt(randomIndex);
+      }
+
+      for (let i = 0; i <= 6; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        uniqueStr2 += characters.charAt(randomIndex);
+      }
+
+      // Create a File object (ensure 'File' is available in your environment)
+      const file1 = new File(
+        [blob1],
+        `${
+          params.jobCardId
+        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr1}_Customer.pdf`,
+        { type: "application/pdf" }
+      );
+
       const stream2 = await renderToStream(
         <InvoicePDF
           jobCard={jobCard}
@@ -115,61 +145,29 @@ export async function POST(
 
       const buffer2 = await streamToBuffer(stream2);
 
-      const characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      // Convert the buffer into a Blob
+      const blob2 = new Blob([buffer2], { type: "application/pdf" });
 
-      let uniqueStr1 = "";
-      let uniqueStr2 = "";
-
-      for (let i = 0; i <= 6; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        uniqueStr1 += characters.charAt(randomIndex);
-      }
-
-      for (let i = 0; i <= 6; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        uniqueStr2 += characters.charAt(randomIndex);
-      }
-
-      console.log(
-        `/Invoices/${invoiceTypeString?.slice(
-          0,
-          -8
-        )}/InsuranceInvoices/Insurance`
+      // Create a File object (ensure 'File' is available in your environment)
+      const file2 = new File(
+        [blob2],
+        `${
+          params.jobCardId
+        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr2}_Insurance.pdf`,
+        {
+          type: "application/pdf",
+        }
       );
 
-      // Upload the buffer to ImageKit
-      const uploadResponse1 = await imagekit.upload({
-        file: buffer1, // Buffer object
-        fileName: `${
-          params.jobCardId
-        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr1}_Customer.pdf`, // Name of the file
-        // folder: `/Invoices/${invoiceTypeString?.slice(
-        //   0,
-        //   -8
-        // )}/InsuranceInvoices/Customer`, // Optional folder
-        useUniqueFileName: false, // Ensure file name uniqueness
-        isPrivateFile: false, // If you want a public URL
-      });
+      const uploadResult1 = await uploadInvoice(file1);
+      const uploadResult2 = await uploadInvoice(file2);
 
-      const uploadResponse2 = await imagekit.upload({
-        file: buffer2, // Buffer object
-        fileName: `${
-          params.jobCardId
-        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr2}_Insurance.pdf`, // Name of the file
-        // folder: `/Invoices/${invoiceTypeString?.slice(
-        //   0,
-        //   -8
-        // )}/InsuranceInvoices/Insurance`, // Optional folder
-        useUniqueFileName: false, // Ensure file name uniqueness
-        isPrivateFile: false, // If you want a public URL
-      });
+      const fileResult1 = await getInvoiceUrl(uploadResult1.$id);
+      const fileResult2 = await getInvoiceUrl(uploadResult2.$id);
 
       // Get the URL of the uploaded PDF
-      const pdfUrl1 = uploadResponse1.url;
-      const pdfUrl2 = uploadResponse2.url;
-
-      console.log("PDF uploaded to ImageKit, URL:", pdfUrl1, pdfUrl2);
+      const pdfUrl1 = fileResult1.href;
+      const pdfUrl2 = fileResult2.href;
 
       // Create a new ReadableStream from the buffer for the response
 
@@ -199,7 +197,7 @@ export async function POST(
         isInsurance
       );
 
-      console.log("This is the result - ", result1, result2);
+      // console.log("This is the result - ", result1, result2);
 
       return NextResponse.json([result1, result2], { status: 201 });
     } else {
@@ -231,6 +229,11 @@ export async function POST(
 
       const buffer = await streamToBuffer(stream);
 
+      // Convert the buffer into a Blob
+      const blob = new Blob([buffer], { type: "application/pdf" });
+
+      // Create a File object (ensure 'File' is available in your environment)
+
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       let uniqueStr = "";
@@ -240,19 +243,31 @@ export async function POST(
         uniqueStr += characters.charAt(randomIndex);
       }
 
-      // Upload the buffer to ImageKit
-      const uploadResponse = await imagekit.upload({
-        file: buffer, // Buffer object
-        fileName: `${
+      const file = new File(
+        [blob],
+        `${
           params.jobCardId
-        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr}.pdf`, // Name of the file
-        //folder: `/Invoices/${invoiceTypeString}`, // Optional folder
-        useUniqueFileName: true, // Ensure file name uniqueness
-        isPrivateFile: false, // If you want a public URL
-      });
+        }_${invoiceTypeString?.toLowerCase()}_${uniqueStr}.pdf`,
+        { type: "application/pdf" }
+      );
+
+      const uploadResult = await uploadInvoice(file);
+      console.log("Upload Result", uploadResult);
+
+      // // Upload the buffer to ImageKit
+      // const uploadResponse = await imagekit.upload({
+      //   file: buffer, // Buffer object
+      //   fileName: `${
+      //     params.jobCardId
+      //   }_${invoiceTypeString?.toLowerCase()}_${uniqueStr}.pdf`, // Name of the file
+      //   //folder: `/Invoices/${invoiceTypeString}`, // Optional folder
+      //   useUniqueFileName: true, // Ensure file name uniqueness
+      //   isPrivateFile: false, // If you want a public URL
+      // });
 
       // Get the URL of the uploaded PDF
-      const pdfUrl = uploadResponse.url;
+      const fileResult = await getInvoiceUrl(uploadResult.$id);
+      const pdfUrl = fileResult.href;
 
       console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 
@@ -268,7 +283,7 @@ export async function POST(
         isUpdatedInvoice
       );
 
-      console.log("This is the result - ", result);
+      // console.log("This is the result - ", result);
 
       return NextResponse.json([result], { status: 201 });
     }

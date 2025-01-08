@@ -30,9 +30,9 @@ export const config = {
   jobCardsCollectionId: "66e80a830013e7a81f31",
   partsCollectionId: "66f6ce58000446f6aeaf",
   labourCollectionId: "66fa5dc6003941f79697",
-  carImagesBucketId: "67053962002be8598a04",
   invoicesCollectionId: "6710ba53003b4b25a23d",
   historyCollectionId: "670cbc13003d80c32176",
+  invoiceStorageBucketId: "677e05b70025ceed10e4",
 };
 
 export let client: any;
@@ -472,6 +472,33 @@ export const createTempCar = async (
     });
     // console.log("The created Car is - ", result);
     return carsResult;
+  } catch (error: any) {
+    console.log("THIS IS ERROR - ", error.message);
+    return null;
+  }
+};
+
+export const uploadInvoice = async (file: File) => {
+  try {
+    const result = await storage.createFile(
+      config.invoiceStorageBucketId, // bucketId
+      ID.unique(), // fileId
+      file, // file
+      [] // permissions (optional)
+    );
+    // console.log("The UPLOADED INVOICE is - ", result);
+    return result;
+  } catch (error: any) {
+    console.log("THIS IS ERROR - ", error.message);
+    return null;
+  }
+};
+
+export const getInvoiceUrl = async (id: string) => {
+  try {
+    const result = storage.getFileView(config.invoiceStorageBucketId, id);
+    // console.log("The VIEWING INVOICE is - ", result);
+    return result;
   } catch (error: any) {
     console.log("THIS IS ERROR - ", error.message);
     return null;

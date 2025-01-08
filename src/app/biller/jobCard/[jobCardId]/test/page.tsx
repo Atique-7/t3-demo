@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import {
   getAllInvoices,
   getAllJobCards,
+  getInvoiceUrl,
   getJobCardById,
   getTempCarById,
   inputLabourAppwrite,
@@ -120,6 +121,11 @@ export default function page() {
   //   console.log("NOT DONE - ", notDoneCounter);
   // };
 
+  const InvoiceUrl = async () => {
+    const result = await getInvoiceUrl("677e083f00063d9e93da");
+    console.log("PDF URL - ", result);
+  };
+
   return (
     <div className="flex  flex-col w-[90%] mx-auto p-8 bg-white border border-gray-300">
       {jobCard && parts && labour && (
@@ -133,7 +139,7 @@ export default function page() {
               width={100}
               height={50}
               alt="Logo"
-              onClick={fixJobCards}
+              onClick={InvoiceUrl}
             />
             <div>
               <h3 className="text-md font-bold">CHAMUNDA MOTORS PVT LTD</h3>

@@ -12,6 +12,16 @@ type partReportListItem = {
   quantity: number;
 };
 
+const useDev = false;
+
+let apiUrl: string;
+
+if (useDev) {
+  apiUrl = "http://localhost:3000";
+} else {
+  apiUrl = "https://t3-next-dev.vercel.app";
+}
+
 export default function DownloadReports({}: Props) {
   const [isMakingPartsOutReport, setIssMakingPartsOutReport] = useState(false);
   const [isMakingAccountsReport, setIsMakingAccountsReport] = useState(false);
@@ -20,7 +30,7 @@ export default function DownloadReports({}: Props) {
     setIssMakingPartsOutReport(true);
     console.log("Downloading Parts Out Report");
 
-    await fetch(`http://localhost:3000/tally/updateInvoices`, {
+    await fetch(`${apiUrl}/tally/updateInvoices`, {
       method: "POST",
       body: JSON.stringify({
         data: {
@@ -90,7 +100,7 @@ export default function DownloadReports({}: Props) {
     setIsMakingAccountsReport(true);
     console.log("Downloading Accounts Report");
 
-    await fetch(`http://localhost:3000/tally/getReport`, {
+    await fetch(`${apiUrl}/tally/getReport`, {
       method: "POST",
       body: JSON.stringify({
         data: {

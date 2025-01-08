@@ -17,6 +17,8 @@ import {
 } from "./helper";
 import { JobCard } from "./definitions";
 import { toast } from "sonner";
+import { HistoryRecorder, ObjectType } from "@/history/history-recorder";
+import { BaseRepository } from "./BaseRepo";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -30,6 +32,7 @@ export const config = {
   labourCollectionId: "66fa5dc6003941f79697",
   carImagesBucketId: "67053962002be8598a04",
   invoicesCollectionId: "6710ba53003b4b25a23d",
+  historyCollectionId: "670cbc13003d80c32176",
 };
 
 export let client: any;
@@ -404,13 +407,25 @@ export const createCar = async (
   location?: string
 ) => {
   try {
-    let carsResult = await databases.createDocument(
-      config.databaseId,
-      config.carsCollectionId,
-      ID.unique(),
-      { carNumber, carMake, carModel, location, purposeOfVisitAndAdvisors }
-    );
+    // let carsResult = await databases.createDocument(
+    //   config.databaseId,
+    //   config.carsCollectionId,
+    //   ID.unique(),
+    //   { carNumber, carMake, carModel, location, purposeOfVisitAndAdvisors }
+    // );
     // console.log("The created Car is - ", result);
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.carsCollectionId,
+      ObjectType.CAR
+    );
+    let carsResult = await baseRepo.createDocument({
+      carNumber,
+      carMake,
+      carModel,
+      location,
+      purposeOfVisitAndAdvisors,
+    });
+
     return carsResult;
   } catch (error: any) {
     console.log(error.message);
@@ -428,20 +443,33 @@ export const createTempCar = async (
 ) => {
   try {
     let carStatus = 0;
-    let carsResult = await databases.createDocument(
-      config.databaseId,
+    // let carsResult = await databases.createDocument(
+    //   config.databaseId,
+    //   config.tempCarsCollectionId,
+    //   ID.unique(),
+    //   {
+    //     carNumber,
+    //     carMake,
+    //     carModel,
+    //     location,
+    //     carStatus,
+    //     carsTableId,
+    //     purposeOfVisitAndAdvisors,
+    //   }
+    // );
+    const baseRepo: BaseRepository = new BaseRepository(
       config.tempCarsCollectionId,
-      ID.unique(),
-      {
-        carNumber,
-        carMake,
-        carModel,
-        location,
-        carStatus,
-        carsTableId,
-        purposeOfVisitAndAdvisors,
-      }
+      ObjectType.TEMP_CARS
     );
+    let carsResult = await baseRepo.createDocument({
+      carNumber,
+      carMake,
+      carModel,
+      location,
+      carStatus,
+      carsTableId,
+      purposeOfVisitAndAdvisors,
+    });
     // console.log("The created Car is - ", result);
     return carsResult;
   } catch (error: any) {
@@ -504,28 +532,51 @@ export const createJobCard = async (
     const jobCardNumber = await getNextJobCardNumber();
     console.log("Job Card Number - ", jobCardNumber);
 
-    let result = await databases.createDocument(
-      config.databaseId,
+    const baseRepo: BaseRepository = new BaseRepository(
       config.jobCardsCollectionId,
-      ID.unique(),
-      {
-        carId,
-        diagnosis,
-        sendToPartsManager,
-        carNumber,
-        jobCardStatus: 0,
-        customerName,
-        customerPhone,
-        jobCardNumber,
-        images,
-        carFuel,
-        carOdometer,
-        customerAddress,
-        purposeOfVisit,
-        jobCardPDF,
-        serviceAdvisorID: advisorEmail,
-      }
+      ObjectType.JOB_CARD
     );
+
+    let result = await baseRepo.createDocument({
+      carId,
+      diagnosis,
+      sendToPartsManager,
+      carNumber,
+      jobCardStatus: 0,
+      customerName,
+      customerPhone,
+      jobCardNumber,
+      images,
+      carFuel,
+      carOdometer,
+      customerAddress,
+      purposeOfVisit,
+      jobCardPDF,
+      serviceAdvisorID: advisorEmail,
+    });
+
+    // let result = await databases.createDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId,
+    //   ID.unique(),
+    //   {
+    //     carId,
+    //     diagnosis,
+    //     sendToPartsManager,
+    //     carNumber,
+    //     jobCardStatus: 0,
+    //     customerName,
+    //     customerPhone,
+    //     jobCardNumber,
+    //     images,
+    //     carFuel,
+    //     carOdometer,
+    //     customerAddress,
+    //     purposeOfVisit,
+    //     jobCardPDF,
+    //     serviceAdvisorID: advisorEmail,
+    //   }
+    // );
 
     // Check if the user email matches an advisor and update `open` field if it exists
     const updatedPov = purposeOfVisitAndAdvisors.map((pov: any) => {
@@ -536,20 +587,32 @@ export const createJobCard = async (
     });
     const updatedPurposeOfVisitAndAdvisors = convertToStrings(updatedPov);
 
-    let allTempCarJobCardIds = tempCar.allJobCardIds;
+    let allTempCarJobCardIds: any = tempCar.allJobCardIds;
     allTempCarJobCardIds.push(result["$id"]);
 
-    await databases.updateDocument(
-      config.databaseId,
-      config.tempCarsCollectionId, // collectionId
-      carId, // documentId
-      {
-        carStatus: 1,
-        jobCardId: result["$id"],
-        allJobCardIds: allTempCarJobCardIds,
-        purposeOfVisitAndAdvisors: updatedPurposeOfVisitAndAdvisors,
-      } // data (optional)
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.tempCarsCollectionId, // collectionId
+    //   carId, // documentId
+    //   {
+    //     carStatus: 1,
+    //     jobCardId: result["$id"],
+    //     allJobCardIds: allTempCarJobCardIds,
+    //     purposeOfVisitAndAdvisors: updatedPurposeOfVisitAndAdvisors,
+    //   } // data (optional)
+    // );
+
+    const tempCarsBaseRepo: BaseRepository = new BaseRepository(
+      config.tempCarsCollectionId,
+      ObjectType.TEMP_CARS
     );
+
+    await tempCarsBaseRepo.updateDocumentById(carId, {
+      carStatus: 1,
+      jobCardId: result["$id"],
+      allJobCardIds: allTempCarJobCardIds,
+      purposeOfVisitAndAdvisors: updatedPurposeOfVisitAndAdvisors,
+    });
 
     const carHistory = await databases.getDocument(
       config.databaseId,
@@ -566,17 +629,28 @@ export const createJobCard = async (
 
     // if(selectedCarDetails.documents[0][])
 
-    await databases.updateDocument(
-      config.databaseId,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.carsCollectionId,
+    //   carsTableId,
+    //   {
+    //     allJobCards: tempJobCards,
+    //     customerName,
+    //     customerPhone,
+    //     customerAddress,
+    //   }
+    // );
+
+    const carsBaseRepo: BaseRepository = new BaseRepository(
       config.carsCollectionId,
-      carsTableId,
-      {
-        allJobCards: tempJobCards,
-        customerName,
-        customerPhone,
-        customerAddress,
-      }
+      ObjectType.CAR
     );
+    await carsBaseRepo.updateDocumentById(carsTableId, {
+      allJobCards: tempJobCards,
+      customerName,
+      customerPhone,
+      customerAddress,
+    });
 
     console.log("The created Job Card is - ", result);
     return result;
@@ -623,11 +697,17 @@ export const deleteTempCar = async (carId: string) => {
     7
   );
   try {
-    let result = await databases.deleteDocument(
-      config.databaseId,
+    // let result = await databases.deleteDocument(
+    //   config.databaseId,
+    //   config.tempCarsCollectionId,
+    //   carId
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
       config.tempCarsCollectionId,
-      carId
+      ObjectType.TEMP_CARS
     );
+    let result = await baseRepo.deleteDocumentById(carId);
     // console.log("THE SEARCHED CARS -", result);
     return result;
   } catch (error: any) {
@@ -729,14 +809,23 @@ export const getCarById = async (id: string) => {
 export const updateTempCarById = async (id: string, carStatus: number) => {
   // console.log("Hitting Backend");
   try {
-    let result = await databases.updateDocument(
-      config.databaseId,
+    // let result = await databases.updateDocument(
+    //   config.databaseId,
+    //   config.tempCarsCollectionId,
+    //   id,
+    //   {
+    //     carStatus,
+    //   }
+    // );
+
+    const tempCarsBaseRepo: BaseRepository = new BaseRepository(
       config.tempCarsCollectionId,
-      id,
-      {
-        carStatus,
-      }
+      ObjectType.TEMP_CARS
     );
+    let result = await tempCarsBaseRepo.updateDocumentById(id, {
+      carStatus,
+    });
+
     return result;
   } catch (error: any) {
     console.log(error.message);
@@ -790,22 +879,39 @@ export const updateJobCardById = async (
   if (parts) {
   }
   try {
-    await databases.updateDocument(
-      config.databaseId,
-      config.jobCardsCollectionId, // collectionId
-      id, // documentId
-      {
-        // insuranceDetails,
-        parts,
-        labour,
-        jobCardStatus,
-        subTotal,
-        discountAmt,
-        amount,
-        insuranceDetails,
-        taxes,
-      } // data (optional)
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId, // collectionId
+    //   id, // documentId
+    //   {
+    //     // insuranceDetails,
+    //     parts,
+    //     labour,
+    //     jobCardStatus,
+    //     subTotal,
+    //     discountAmt,
+    //     amount,
+    //     insuranceDetails,
+    //     taxes,
+    //   } // data (optional)
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
     );
+
+    await baseRepo.updateDocumentById(id, {
+      parts,
+      labour,
+      jobCardStatus,
+      subTotal,
+      discountAmt,
+      amount,
+      insuranceDetails,
+      taxes,
+    });
+
     return true;
   } catch (error: any) {
     console.log(error.message);
@@ -869,16 +975,25 @@ export const updateJobCardInsuranceDetails = async (
   insuranceDetails?: string
 ) => {
   try {
-    await databases.updateDocument(
-      config.databaseId,
-      config.jobCardsCollectionId, // collectionId
-      id, // documentId
-      {
-        // insuranceDetails,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId, // collectionId
+    //   id, // documentId
+    //   {
+    //     // insuranceDetails,
 
-        insuranceDetails,
-      } // data (optional)
+    //     insuranceDetails,
+    //   } // data (optional)
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
     );
+    await baseRepo.updateDocumentById(id, {
+      insuranceDetails,
+    });
+
     return true;
   } catch (error: any) {
     console.log(error.message);
@@ -910,16 +1025,25 @@ export const updateJobCardInsuranceDetails = async (
 
 export const updateJobCardGSTDetails = async (id: string, gstin?: string) => {
   try {
-    await databases.updateDocument(
-      config.databaseId,
-      config.jobCardsCollectionId, // collectionId
-      id, // documentId
-      {
-        // insuranceDetails,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId, // collectionId
+    //   id, // documentId
+    //   {
+    //     // insuranceDetails,
 
-        gstin,
-      } // data (optional)
+    //     gstin,
+    //   } // data (optional)
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
     );
+    await baseRepo.updateDocumentById(id, {
+      gstin,
+    });
+
     return true;
   } catch (error: any) {
     console.log(error.message);
@@ -932,16 +1056,25 @@ export const updateJobCardJobCardStatus = async (
   jobCardStatus?: number
 ) => {
   try {
-    await databases.updateDocument(
-      config.databaseId,
-      config.jobCardsCollectionId, // collectionId
-      id, // documentId
-      {
-        // insuranceDetails,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId, // collectionId
+    //   id, // documentId
+    //   {
+    //     // insuranceDetails,
 
-        jobCardStatus,
-      } // data (optional)
+    //     jobCardStatus,
+    //   } // data (optional)
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
     );
+    await baseRepo.updateDocumentById(id, {
+      jobCardStatus,
+    });
+
     return true;
   } catch (error: any) {
     console.log(error.message);
@@ -954,16 +1087,25 @@ export const updateJobCardObservationRemarks = async (
   observationRemarks?: string
 ) => {
   try {
-    await databases.updateDocument(
-      config.databaseId,
-      config.jobCardsCollectionId, // collectionId
-      id, // documentId
-      {
-        // insuranceDetails,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId, // collectionId
+    //   id, // documentId
+    //   {
+    //     // insuranceDetails,
 
-        observationRemarks,
-      } // data (optional)
+    //     observationRemarks,
+    //   } // data (optional)
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
     );
+    await baseRepo.updateDocumentById(id, {
+      observationRemarks,
+    });
+
     return true;
   } catch (error: any) {
     console.log(error.message);
@@ -976,14 +1118,23 @@ export const updateJobCardGatePassDetails = async (
   gatePassPDF?: string
 ) => {
   try {
-    await databases.updateDocument(
-      config.databaseId,
-      config.jobCardsCollectionId, // collectionId
-      id, // documentId
-      {
-        gatePassPDF,
-      } // data (optional)
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId, // collectionId
+    //   id, // documentId
+    //   {
+    //     gatePassPDF,
+    //   } // data (optional)
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
     );
+    await baseRepo.updateDocumentById(id, {
+      gatePassPDF,
+    });
+
     return true;
   } catch (error: any) {
     console.log(error.message);
@@ -998,14 +1149,22 @@ export const updateJobCardField = async (
 ) => {
   try {
     // Update the document with the merged data
-    await databases.updateDocument(
-      config.databaseId,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.jobCardsCollectionId,
+    //   id,
+    //   {
+    //     [fieldName]: fieldValue,
+    //   }
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
       config.jobCardsCollectionId,
-      id,
-      {
-        [fieldName]: fieldValue,
-      }
+      ObjectType.JOB_CARD
     );
+    await baseRepo.updateDocumentById(id, {
+      [fieldName]: fieldValue,
+    });
 
     return true;
   } catch (error: any) {
@@ -1023,14 +1182,22 @@ export const updateCarField = async (
 ) => {
   try {
     // Update the document with the merged data
-    await databases.updateDocument(
-      config.databaseId,
+    // await databases.updateDocument(
+    //   config.databaseId,
+    //   config.carsCollectionId,
+    //   id,
+    //   {
+    //     [fieldName]: fieldValue,
+    //   }
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
       config.carsCollectionId,
-      id,
-      {
-        [fieldName]: fieldValue,
-      }
+      ObjectType.CAR
     );
+    await baseRepo.updateDocumentById(id, {
+      [fieldName]: fieldValue,
+    });
 
     return true;
   } catch (error: any) {
@@ -1054,23 +1221,40 @@ export const createInvoice = async (
   isInsuranceInvoice?: boolean
 ) => {
   try {
-    let carsResult = await databases.createDocument(
-      config.databaseId,
+    // let carsResult = await databases.createDocument(
+    //   config.databaseId,
+    //   config.invoicesCollectionId,
+    //   ID.unique(),
+    //   {
+    //     invoiceUrl,
+    //     jobCardId,
+    //     carNumber,
+    //     invoiceType,
+    //     invoiceNumber,
+    //     invoiceSeries,
+    //     invoiceCode,
+    //     isUpdatedInvoice,
+    //     insuranceInvoiceType,
+    //     isInsuranceInvoice,
+    //   }
+    // );
+
+    const baseRepo: BaseRepository = new BaseRepository(
       config.invoicesCollectionId,
-      ID.unique(),
-      {
-        invoiceUrl,
-        jobCardId,
-        carNumber,
-        invoiceType,
-        invoiceNumber,
-        invoiceSeries,
-        invoiceCode,
-        isUpdatedInvoice,
-        insuranceInvoiceType,
-        isInsuranceInvoice,
-      }
+      ObjectType.INVOICE
     );
+    let carsResult = await baseRepo.createDocument({
+      invoiceUrl,
+      jobCardId,
+      carNumber,
+      invoiceType,
+      invoiceNumber,
+      invoiceSeries,
+      invoiceCode,
+      isUpdatedInvoice,
+      insuranceInvoiceType,
+      isInsuranceInvoice,
+    });
     // console.log("The created Car is - ", result);
     return carsResult;
   } catch (error: any) {

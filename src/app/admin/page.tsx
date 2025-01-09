@@ -30,10 +30,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createDateExpandedObj } from "@/lib/helper";
+import { adminReportTimelineDrop, createDateExpandedObj } from "@/lib/helper";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import { set } from "react-datepicker/dist/date_utils";
+import { ServiceAdvisorPerformance } from "@/components/graphs/ServiceAdvisorPerformance";
 
 type Props = {};
 
@@ -245,56 +246,18 @@ export default function Admin({}: Props) {
                   <SelectValue placeholder="Select Reports Timeline" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem key={"thisMonth"} value={"thisMonth"}>
-                    <div className="flex space-x-5 items-center">
-                      <div>This Month</div>
-                      {currentSelectedTimeline === "thisMonth" && (
-                        <div className="text-xs font-semibold text-red-500">
-                          Current
-                        </div>
-                      )}
-                    </div>
-                  </SelectItem>
-                  <SelectItem key={"lastMonth"} value={"lastMonth"}>
-                    <div className="flex space-x-5 items-center">
-                      <div>Last Month</div>
-                      {currentSelectedTimeline === "lastMonth" && (
-                        <div className="text-xs font-semibold text-red-500">
-                          Current
-                        </div>
-                      )}
-                    </div>
-                  </SelectItem>
-                  <SelectItem key={"lastSixMonths"} value={"lastSixMonths"}>
-                    <div className="flex space-x-5 items-center">
-                      <div>This 6 Months</div>
-                      {currentSelectedTimeline === "lastSixMonths" && (
-                        <div className="text-xs font-semibold text-red-500">
-                          Current
-                        </div>
-                      )}
-                    </div>
-                  </SelectItem>
-                  <SelectItem key={"lastYear"} value={"lastYear"}>
-                    <div className="flex space-x-5 items-center">
-                      <div>Last Year</div>
-                      {currentSelectedTimeline === "lastYear" && (
-                        <div className="text-xs font-semibold text-red-500">
-                          Current
-                        </div>
-                      )}
-                    </div>
-                  </SelectItem>
-                  <SelectItem key={"custom"} value={"custom"}>
-                    <div className="flex space-x-5 items-center">
-                      <div>Custom</div>
-                      {currentSelectedTimeline === "custom" && (
-                        <div className="text-xs font-semibold text-red-500">
-                          Current
-                        </div>
-                      )}
-                    </div>
-                  </SelectItem>
+                  {adminReportTimelineDrop.map((timeline) => (
+                    <SelectItem key={timeline.key} value={timeline.key}>
+                      <div className="flex space-x-5 items-center">
+                        <div>{timeline.value}</div>
+                        {currentSelectedTimeline === timeline.key && (
+                          <div className="text-xs font-semibold text-red-500">
+                            Current
+                          </div>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -316,10 +279,16 @@ export default function Admin({}: Props) {
               <div>
                 <div className="flex flex-row mt-10 justify-evenly  items-center h-fit mb-10">
                   <div className="w-1/4">
-                    <CustomerSplit jobCards={jobCards} />
+                    <CustomerSplit
+                      jobCards={jobCards}
+                      currentSelectedTimeline={currentSelectedTimeline}
+                    />
                   </div>
                   <div className="w-1/4">
-                    <RevenueSplit jobCards={jobCards} />
+                    <RevenueSplit
+                      jobCards={jobCards}
+                      currentSelectedTimeline={currentSelectedTimeline}
+                    />
                   </div>
                   {currentSelectedTimeline === "thisMonth" && (
                     <div className="w-1/4">
@@ -328,12 +297,17 @@ export default function Admin({}: Props) {
                   )}
                 </div>
                 <div className="flex justify-center items-center w-full space-x-5 mb-10">
-                  <div className="w-[60%]">
-                    <InsuranceCasesBar jobCards={jobCards} />
+                  <div className="flex flex-col space-y-5 justify-center items-center w-full">
+                    <ServiceAdvisorPerformance
+                      jobCards={jobCards}
+                      currentSelectedTimeline={currentSelectedTimeline}
+                    />
                   </div>
-                  <div className="flex flex-col space-y-5 justify-center items-center">
-                    {/* <NightStockNew jobCards={jobCards} tempCars={tempCars} /> */}
-                    {/* <CurrentCarsPie /> */}
+                  <div className="w-full">
+                    <InsuranceCasesBar
+                      jobCards={jobCards}
+                      currentSelectedTimeline={currentSelectedTimeline}
+                    />
                   </div>
                 </div>
               </div>

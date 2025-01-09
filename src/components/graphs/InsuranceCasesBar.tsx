@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import { JobCard } from "@/lib/definitions";
+import { adminReportTimelineDrop } from "@/lib/helper";
 const chartData = [
   {
     insuranceCompany: "Acko General Insurance Co. Ltd.",
@@ -155,8 +156,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function InsuranceCasesBar({ jobCards }: any) {
+export function InsuranceCasesBar({ jobCards, currentSelectedTimeline }: any) {
   const [chartData, setChartData] = useState<any[]>([]);
+  const [selectedTimeline, setSelectedTimeline] = useState<string>();
+
   // let top10Insurers = chartData
   //   .sort((a, b) => b.cases - a.cases) // Sort in descending order by visitors
   //   .slice(0, 10); // Get the top 10 entries
@@ -189,12 +192,22 @@ export function InsuranceCasesBar({ jobCards }: any) {
     topInsurers = topInsurers.slice(0, 10);
     setChartData(topInsurers);
     // console.log(top10Insurers);
+
+    const timelineIndex = adminReportTimelineDrop.findIndex(
+      (timeline) => timeline.key === currentSelectedTimeline
+    );
+
+    setSelectedTimeline(
+      adminReportTimelineDrop[timelineIndex].value
+        ? adminReportTimelineDrop[timelineIndex].value
+        : selectedTimeline
+    );
   }, [jobCards]);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Top {chartData.length} Insurance Partners</CardTitle>
-        <CardDescription>April 2024 - Present</CardDescription>
+        <CardDescription>{selectedTimeline}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

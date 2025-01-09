@@ -17,8 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { JobCard } from "@/lib/definitions";
+import { adminReportTimelineDrop } from "@/lib/helper";
 
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
@@ -49,25 +50,45 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function CustomerSplit({ jobCards }: any) {
-  const groupedData = jobCards.reduce((acc: any, curr: any) => {
-    acc[curr.purposeOfVisit] = (acc[curr.purposeOfVisit] || 0) + 1;
-    return acc;
-  }, {});
+export default function CustomerSplit({
+  jobCards,
+  currentSelectedTimeline,
+}: any) {
+  const [newChartData, setNewChartData] = useState<any[]>([]);
+  const [selectedTimeline, setSelectedTimeline] = useState<string>();
 
-  // Create the formatted dataset
-  const formattedDataset = Object.keys(groupedData).map((key) => ({
-    pov: key,
-    visitors: groupedData[key],
-    fill: `var(--color-${key.replace(/\s+/g, "").toLowerCase()})`,
-  }));
+  useEffect(() => {
+    const groupedData = jobCards.reduce((acc: any, curr: any) => {
+      acc[curr.purposeOfVisit] = (acc[curr.purposeOfVisit] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Create the formatted dataset
+    const formattedDataset = Object.keys(groupedData).map((key) => ({
+      pov: key,
+      visitors: groupedData[key],
+      fill: `var(--color-${key.replace(/\s+/g, "").toLowerCase()})`,
+    }));
+
+    setNewChartData(formattedDataset);
+
+    const timelineIndex = adminReportTimelineDrop.findIndex(
+      (timeline) => timeline.key === currentSelectedTimeline
+    );
+
+    setSelectedTimeline(
+      adminReportTimelineDrop[timelineIndex].value
+        ? adminReportTimelineDrop[timelineIndex].value
+        : selectedTimeline
+    );
+  }, [jobCards]);
 
   // console.log("FORMATTED", formattedDataset);
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Total Visitors</CardTitle>
-        <CardDescription>This Month</CardDescription>
+        <CardDescription>{selectedTimeline}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -80,7 +101,7 @@ export default function CustomerSplit({ jobCards }: any) {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={formattedDataset}
+              data={newChartData}
               dataKey="visitors"
               nameKey="pov"
               innerRadius={60}

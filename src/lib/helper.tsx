@@ -31,6 +31,14 @@ export const carMakes = [
   { code: 4, description: "Mercedes" },
 ];
 
+export const adminReportTimelineDrop = [
+  { key: "thisMonth", value: "This Month" },
+  { key: "lastMonth", value: "Last Month" },
+  { key: "lastSixMonths", value: "Last 6 Months" },
+  { key: "lastYear", value: "Last Year" },
+  { key: "custom", value: "Custom" },
+];
+
 export const purposeOfVisits = [
   { code: 1, description: "Bodyshop" },
   { code: 0, description: "General visit" },

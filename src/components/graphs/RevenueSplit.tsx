@@ -17,6 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { JobCard } from "@/lib/definitions";
 
 const chartConfig = {
   revenue: {
@@ -42,6 +43,8 @@ const chartConfig = {
 
 export default function RevenueSplit({ jobCards }: any) {
   let totalRevenue = 0;
+
+  jobCards.filter((jobCard: JobCard) => jobCard.jobCardStatus >= 5);
   // Group data by purposeOfVisit and calculate revenue
   const revenueData = jobCards.reduce((acc: any, curr: any) => {
     if (!acc[curr.purposeOfVisit]) {

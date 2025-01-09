@@ -68,7 +68,7 @@ const manageJobCardsAdmin = ({}: Props) => {
     };
 
     const getTempCars = async () => {
-      const allTempCars = await getAllTempCars([0, 1]);
+      const allTempCars = await getAllTempCars([0, 1, 2]);
       const token = getCookie("user");
       const parsedToken = JSON.parse(String(token));
       console.log("TEMP CARS - ", allTempCars);

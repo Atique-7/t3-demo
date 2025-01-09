@@ -192,14 +192,18 @@ export function TempCarsDataTable<TData, TValue>({
                         <div className="flex space-x-4 justify-center">
                           {(row.original as TempCar).jobCardId ? (
                             <>
-                              <Button
-                                variant="outline"
-                                className="px-8 py-2  hover:bg-red-400 hover:text-white"
-                                size="lg"
-                                onClick={() => setReopeningJobCard(true)}
-                              >
-                                Reopen JobCard
-                              </Button>
+                              {(row.original as TempCar).carStatus === 2 && (
+                                <>
+                                  <Button
+                                    variant="outline"
+                                    className="px-8 py-2  hover:bg-red-400 hover:text-white"
+                                    size="lg"
+                                    onClick={() => setReopeningJobCard(true)}
+                                  >
+                                    Reopen JobCard
+                                  </Button>
+                                </>
+                              )}
                               <Button
                                 variant="outline"
                                 className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
@@ -212,6 +216,7 @@ export function TempCarsDataTable<TData, TValue>({
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
+
                               {deletingJobCard && (
                                 <Dialog
                                   open={deletingJobCard != ""}

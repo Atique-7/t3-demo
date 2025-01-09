@@ -214,7 +214,10 @@ export default function Admin({}: Props) {
     const jobcards = await getJobCardsBetween(from!, to!);
 
     console.log("JOB CARDS FOR TIMELINE - ", jobcards);
-    setJobCards((prev) => jobcards.documents);
+
+    if (jobcards) {
+      setJobCards((prev) => jobcards.documents);
+    }
     setLoading((prev) => false);
 
     // return filteredJobCards;
@@ -296,14 +299,14 @@ export default function Admin({}: Props) {
                     </div>
                   )}
                 </div>
-                <div className="flex justify-center items-center w-full space-x-5 mb-10">
+                <div className="flex flex-col justify-center items-center w-full space-y-10 mb-10">
                   <div className="flex flex-col space-y-5 justify-center items-center w-full">
                     <ServiceAdvisorPerformance
                       jobCards={jobCards}
                       currentSelectedTimeline={currentSelectedTimeline}
                     />
                   </div>
-                  <div className="w-full">
+                  <div className="w-[90%]">
                     <InsuranceCasesBar
                       jobCards={jobCards}
                       currentSelectedTimeline={currentSelectedTimeline}

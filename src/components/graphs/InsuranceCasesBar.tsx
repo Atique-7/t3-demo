@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import { JobCard } from "@/lib/definitions";
-import { adminReportTimelineDrop } from "@/lib/helper";
+import { adminReportTimelineDrop, manageTimelineChange } from "@/lib/helper";
 const chartData = [
   {
     insuranceCompany: "Acko General Insurance Co. Ltd.",
@@ -193,15 +193,7 @@ export function InsuranceCasesBar({ jobCards, currentSelectedTimeline }: any) {
     setChartData(topInsurers);
     // console.log(top10Insurers);
 
-    const timelineIndex = adminReportTimelineDrop.findIndex(
-      (timeline) => timeline.key === currentSelectedTimeline
-    );
-
-    setSelectedTimeline(
-      adminReportTimelineDrop[timelineIndex].value
-        ? adminReportTimelineDrop[timelineIndex].value
-        : selectedTimeline
-    );
+    manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
   }, [jobCards]);
   return (
     <Card>

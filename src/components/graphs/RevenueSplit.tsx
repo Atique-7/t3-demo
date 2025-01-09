@@ -20,7 +20,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { JobCard } from "@/lib/definitions";
-import { adminReportTimelineDrop } from "@/lib/helper";
+import { adminReportTimelineDrop, manageTimelineChange } from "@/lib/helper";
 import { set } from "react-datepicker/dist/date_utils";
 
 const chartConfig = {
@@ -90,15 +90,7 @@ export default function RevenueSplit({
 
     setNewChartData(formattedDataset);
 
-    const timelineIndex = adminReportTimelineDrop.findIndex(
-      (timeline) => timeline.key === currentSelectedTimeline
-    );
-
-    setSelectedTimeline(
-      adminReportTimelineDrop[timelineIndex].value
-        ? adminReportTimelineDrop[timelineIndex].value
-        : selectedTimeline
-    );
+    manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
   }, [jobCards]);
 
   return (

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/chart";
 import { use, useEffect, useState } from "react";
 import { JobCard } from "@/lib/definitions";
-import { adminReportTimelineDrop } from "@/lib/helper";
+import { adminReportTimelineDrop, manageTimelineChange } from "@/lib/helper";
 
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
@@ -72,15 +72,7 @@ export default function CustomerSplit({
 
     setNewChartData(formattedDataset);
 
-    const timelineIndex = adminReportTimelineDrop.findIndex(
-      (timeline) => timeline.key === currentSelectedTimeline
-    );
-
-    setSelectedTimeline(
-      adminReportTimelineDrop[timelineIndex].value
-        ? adminReportTimelineDrop[timelineIndex].value
-        : selectedTimeline
-    );
+    manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
   }, [jobCards]);
 
   // console.log("FORMATTED", formattedDataset);

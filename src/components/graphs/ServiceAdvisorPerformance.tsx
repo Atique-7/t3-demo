@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import { JobCard } from "@/lib/definitions";
-import { adminReportTimelineDrop } from "@/lib/helper";
+import { adminReportTimelineDrop, manageTimelineChange } from "@/lib/helper";
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -83,15 +83,7 @@ export function ServiceAdvisorPerformance({
 
     setNewChartData(serviceAdvisors);
 
-    const timelineIndex = adminReportTimelineDrop.findIndex(
-      (timeline) => timeline.key === currentSelectedTimeline
-    );
-
-    setSelectedTimeline(
-      adminReportTimelineDrop[timelineIndex].value
-        ? adminReportTimelineDrop[timelineIndex].value
-        : selectedTimeline
-    );
+    manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
   }, [jobCards]);
   return (
     <Card className="w-[90%]">

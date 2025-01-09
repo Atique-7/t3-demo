@@ -2089,6 +2089,21 @@ export const createInvoiceObj = async (
   });
 };
 
+export const manageTimelineChange = async ({
+  currentSelectedTimeline,
+  setSelectedTimeline,
+}: any) => {
+  const timelineIndex = adminReportTimelineDrop.findIndex(
+    (timeline) => timeline.key === currentSelectedTimeline
+  );
+
+  setSelectedTimeline((prev: any) =>
+    adminReportTimelineDrop[timelineIndex].value
+      ? adminReportTimelineDrop[timelineIndex].value
+      : prev
+  );
+};
+
 export const createDateExpandedObj = async (
   date: Date
 ): Promise<DateExpandedObj> => {

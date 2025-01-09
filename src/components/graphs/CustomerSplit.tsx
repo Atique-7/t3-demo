@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
 
@@ -18,6 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useEffect } from "react";
+import { JobCard } from "@/lib/definitions";
+
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
   { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
@@ -29,34 +31,43 @@ const chartConfig = {
   visitors: {
     label: "Visitors",
   },
-  chrome: {
+  generalvisit: {
     label: "General Visit",
-    color: "hsl(var(--chart-1))",
-  },
-  safari: {
-    label: "Bodyshop",
     color: "hsl(var(--chart-2))",
   },
-  firefox: {
+  bodyshop: {
+    label: "Bodyshop",
+    color: "hsl(var(--chart-1))",
+  },
+  paidservice: {
     label: "Paid Service",
     color: "hsl(var(--chart-3))",
   },
-  edge: {
-    label: "Running Repairs",
+  runningrepair: {
+    label: "Running Repair",
     color: "hsl(var(--chart-4))",
   },
 } satisfies ChartConfig;
 
-export default function CustomerSplit() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+export default function CustomerSplit({ jobCards }: any) {
+  const groupedData = jobCards.reduce((acc: any, curr: any) => {
+    acc[curr.purposeOfVisit] = (acc[curr.purposeOfVisit] || 0) + 1;
+    return acc;
+  }, {});
 
+  // Create the formatted dataset
+  const formattedDataset = Object.keys(groupedData).map((key) => ({
+    pov: key,
+    visitors: groupedData[key],
+    fill: `var(--color-${key.replace(/\s+/g, "").toLowerCase()})`,
+  }));
+
+  // console.log("FORMATTED", formattedDataset);
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Total Visitors</CardTitle>
-        <CardDescription>April 2024 - Present</CardDescription>
+        <CardDescription>This Month</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -69,9 +80,9 @@ export default function CustomerSplit() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={chartData}
+              data={formattedDataset}
               dataKey="visitors"
-              nameKey="browser"
+              nameKey="pov"
               innerRadius={60}
               strokeWidth={5}
             >
@@ -90,7 +101,7 @@ export default function CustomerSplit() {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {totalVisitors.toLocaleString()}
+                          {jobCards.length}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

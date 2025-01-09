@@ -2,6 +2,7 @@ import Decimal from "decimal.js";
 import {
   CurrentLabour,
   CurrentPart,
+  DateExpandedObj,
   Invoice,
   JobCard,
   Labour,
@@ -2065,18 +2066,41 @@ export const createInvoiceObj = async (
 
       const dateTemp = new Date(invoice["$createdAt"]);
 
-      const day = String(dateTemp.getDate()).padStart(2, "0"); // Ensures 2 digits
-      const month = String(dateTemp.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-      const year = dateTemp.getFullYear();
+      const dateExpandedObj: DateExpandedObj = await createDateExpandedObj(
+        dateTemp
+      );
 
-      // Combine into the desired format
-      const formattedDate = `${day}-${month}-${year}`;
-
-      invoice.invoiceDate = formattedDate;
+      invoice.invoiceDate = dateExpandedObj.formattedDate;
 
       invoice.jobCardDetails = jobCard;
 
       resolve(invoice);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const createDateExpandedObj = async (
+  date: Date
+): Promise<DateExpandedObj> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const day = Number(String(date.getDate()).padStart(2, "0")); // Ensures 2 digits
+      const month = Number(String(date.getMonth() + 1).padStart(2, "0")); // Months are 0-indexed
+      const year = Number(date.getFullYear());
+
+      // Combine into the desired format
+      const formattedDate = `${day}-${month}-${year}`;
+
+      const dateExpandedObj: DateExpandedObj = {
+        day,
+        month,
+        year,
+        formattedDate,
+      };
+
+      resolve(dateExpandedObj);
     } catch (error) {
       reject(error);
     }
@@ -2209,14 +2233,11 @@ export const createInvoiceObjReport = async (
 
       const dateTemp = new Date(invoice["$createdAt"]);
 
-      const day = String(dateTemp.getDate()).padStart(2, "0"); // Ensures 2 digits
-      const month = String(dateTemp.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-      const year = dateTemp.getFullYear();
+      const dateExpandedObj: DateExpandedObj = await createDateExpandedObj(
+        dateTemp
+      );
 
-      // Combine into the desired format
-      const formattedDate = `${day}-${month}-${year}`;
-
-      invoice.invoiceDate = formattedDate;
+      invoice.invoiceDate = dateExpandedObj.formattedDate;
 
       invoice.jobCardDetails = jobCard;
 

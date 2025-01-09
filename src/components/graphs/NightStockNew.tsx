@@ -17,14 +17,23 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [{ month: "january", desktop: 80, mobile: 7, empty: 0 }];
+import { useEffect } from "react";
+
+const TOTAL_PARKING_SPACE = 200;
+
+let carsBeingWorkedOn = 0;
+let gatePassGenerated = 0;
+
+const chartData = [
+  { month: "january", carsBeingWorkedOn: 80, gatePassGenerated: 7, empty: 0 },
+];
 
 const chartConfig = {
-  desktop: {
+  carsBeingWorkedOn: {
     label: "Cars Being Worked On ",
     color: "hsl(var(--chart-2))",
   },
-  mobile: {
+  gatePassGenerated: {
     label: "Gate Pass Generated",
     color: "hsl(var(--chart-1))",
   },
@@ -34,10 +43,45 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function NightStockNew() {
-  const totalVisitors = chartData[0].desktop + chartData[0].mobile;
-  const emptySpace = 120 - totalVisitors;
+export function NightStockNew({ jobCards, tempCars }: any) {
+  let totalCars = jobCards.length;
+  const emptySpace = TOTAL_PARKING_SPACE - totalCars;
   chartData[0].empty = emptySpace;
+
+  useEffect(() => {
+    carsBeingWorkedOn = 0;
+    gatePassGenerated = 0;
+
+    const statusCounts = jobCards.reduce((acc: any, curr: any) => {
+      acc[curr.jobCardStatus] = (acc[curr.jobCardStatus] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Create the formatted dataset
+    const formattedDataset = Object.entries(statusCounts).map(
+      ([status, count]) => ({
+        jobCardStatus: parseInt(status, 10),
+        carCount: count,
+      })
+    );
+
+    // Update the chart data
+
+    formattedDataset.forEach((data: any) => {
+      if (data.jobCardStatus === 0 || 1 || 2 || 3 || 4 || 5) {
+        carsBeingWorkedOn += data.carCount;
+      }
+      if (data.jobCardStatus === 6) {
+        gatePassGenerated += data.carCount;
+      }
+    });
+
+    totalCars = carsBeingWorkedOn + gatePassGenerated;
+
+    chartData[0].carsBeingWorkedOn = carsBeingWorkedOn;
+    chartData[0].gatePassGenerated = gatePassGenerated;
+    chartData[0].empty = TOTAL_PARKING_SPACE - totalCars;
+  }, [jobCards]);
 
   return (
     <Card className="flex flex-col">
@@ -71,14 +115,14 @@ export function NightStockNew() {
                           y={(viewBox.cy || 0) - 16}
                           className="fill-foreground text-2xl font-bold"
                         >
-                          {totalVisitors.toLocaleString()}
+                          {totalCars.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 4}
                           className="fill-muted-foreground"
                         >
-                          Cars Parked / 120
+                          Cars Parked / {TOTAL_PARKING_SPACE}
                         </tspan>
                       </text>
                     );
@@ -87,15 +131,15 @@ export function NightStockNew() {
               />
             </PolarRadiusAxis>
             <RadialBar
-              dataKey="desktop"
+              dataKey="carsBeingWorkedOn"
               stackId="a"
               cornerRadius={5}
-              fill="var(--color-desktop)"
+              fill="var(--color-carsBeingWorkedOn)"
               className="stroke-transparent stroke-2"
             />
             <RadialBar
-              dataKey="mobile"
-              fill="var(--color-mobile)"
+              dataKey="gatePassGenerated"
+              fill="var(--color-gatePassGenerated)"
               stackId="a"
               cornerRadius={5}
               className="stroke-transparent stroke-2"

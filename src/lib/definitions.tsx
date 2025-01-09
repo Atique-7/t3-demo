@@ -251,3 +251,10 @@ export interface InputPart {
   cgst: number;
   sgst: number;
 }
+
+export interface DateExpandedObj {
+  formattedDate: string;
+  month: Number;
+  year: Number;
+  day: Number;
+}

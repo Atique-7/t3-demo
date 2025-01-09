@@ -24,127 +24,129 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useEffect, useState } from "react";
+import { JobCard } from "@/lib/definitions";
 const chartData = [
   {
-    browser: "Acko General Insurance Co. Ltd.",
-    visitors: 120,
+    insuranceCompany: "Acko General Insurance Co. Ltd.",
+    cases: 120,
   },
   {
-    browser: "Bajaj Allianz General Insurance",
-    visitors: 95,
+    insuranceCompany: "Bajaj Allianz General Insurance",
+    cases: 95,
   },
   {
-    browser: "Bharti AXA General Insurance Company Ltd.",
-    visitors: 110,
+    insuranceCompany: "Bharti AXA General Insurance Company Ltd.",
+    cases: 110,
   },
   {
-    browser: "CHOLAMANDALAM MS GENERAL INSURANCE COMPANY LTD",
-    visitors: 75,
+    insuranceCompany: "CHOLAMANDALAM MS GENERAL INSURANCE COMPANY LTD",
+    cases: 75,
   },
   {
-    browser: "Go Digit General Insurance Ltd.",
-    visitors: 60,
+    insuranceCompany: "Go Digit General Insurance Ltd.",
+    cases: 60,
   },
   {
-    browser: "Edelweiss General Insurance Co. Ltd.",
-    visitors: 85,
+    insuranceCompany: "Edelweiss General Insurance Co. Ltd.",
+    cases: 85,
   },
   {
-    browser: "Future Generali General Insurance",
-    visitors: 90,
+    insuranceCompany: "Future Generali General Insurance",
+    cases: 90,
   },
   {
-    browser: "Iffco Tokio General Insurance Co. Ltd.",
-    visitors: 115,
+    insuranceCompany: "Iffco Tokio General Insurance Co. Ltd.",
+    cases: 115,
   },
   {
-    browser: "Kotak Mahindra General Insurance Co. Ltd.",
-    visitors: 70,
+    insuranceCompany: "Kotak Mahindra General Insurance Co. Ltd.",
+    cases: 70,
   },
   {
-    browser: "LIBERTY GENERAL INSURANCE LIMITED",
-    visitors: 55,
+    insuranceCompany: "LIBERTY GENERAL INSURANCE LIMITED",
+    cases: 55,
   },
   {
-    browser: "NATIONAL INSURANCE COMPANY LIMITED",
-    visitors: 150,
+    insuranceCompany: "NATIONAL INSURANCE COMPANY LIMITED",
+    cases: 150,
   },
   {
-    browser: "THE NEW INDIA ASSURANCE CO LTD",
-    visitors: 200,
+    insuranceCompany: "THE NEW INDIA ASSURANCE CO LTD",
+    cases: 200,
   },
   {
-    browser: "The Oriental Insurance Co. Ltd.",
-    visitors: 145,
+    insuranceCompany: "The Oriental Insurance Co. Ltd.",
+    cases: 145,
   },
   {
-    browser: "Raheja QBE General Insurance Co. Ltd.",
-    visitors: 65,
+    insuranceCompany: "Raheja QBE General Insurance Co. Ltd.",
+    cases: 65,
   },
   {
-    browser: "Reliance General Insurance Co Ltd",
-    visitors: 180,
+    insuranceCompany: "Reliance General Insurance Co Ltd",
+    cases: 180,
   },
   {
-    browser: "SBI General Insurance Co. Ltd.",
-    visitors: 130,
+    insuranceCompany: "SBI General Insurance Co. Ltd.",
+    cases: 130,
   },
   {
-    browser: "Shriram General Insurance Co. Ltd.",
-    visitors: 125,
+    insuranceCompany: "Shriram General Insurance Co. Ltd.",
+    cases: 125,
   },
   {
-    browser: "Tata AIG General Insurance Co. Ltd.",
-    visitors: 170,
+    insuranceCompany: "Tata AIG General Insurance Co. Ltd.",
+    cases: 170,
   },
   {
-    browser: "United India Insurance Co. Ltd.",
-    visitors: 155,
+    insuranceCompany: "United India Insurance Co. Ltd.",
+    cases: 155,
   },
   {
-    browser: "Universal Sompo General Insurance Co. Ltd.",
-    visitors: 140,
+    insuranceCompany: "Universal Sompo General Insurance Co. Ltd.",
+    cases: 140,
   },
   {
-    browser: "HDFC ERGO GEN INS CO LTD",
-    visitors: 135,
+    insuranceCompany: "HDFC ERGO GEN INS CO LTD",
+    cases: 135,
   },
   {
-    browser: "ICICI LOMBARD GENERAL INS CO LTD",
-    visitors: 160,
+    insuranceCompany: "ICICI LOMBARD GENERAL INS CO LTD",
+    cases: 160,
   },
   {
-    browser: "Royal Sundaram General Insurance Co. Ltd.",
-    visitors: 100,
+    insuranceCompany: "Royal Sundaram General Insurance Co. Ltd.",
+    cases: 100,
   },
   {
-    browser: "OLA FLEET TECHNOLOGIES PVT LTD",
-    visitors: 50,
+    insuranceCompany: "OLA FLEET TECHNOLOGIES PVT LTD",
+    cases: 50,
   },
   {
-    browser: "Magma HDI General Insurance Co. Ltd.",
-    visitors: 45,
+    insuranceCompany: "Magma HDI General Insurance Co. Ltd.",
+    cases: 45,
   },
   {
-    browser: "Navi General Insurance Ltd.",
-    visitors: 40,
+    insuranceCompany: "Navi General Insurance Ltd.",
+    cases: 40,
   },
   {
-    browser: "National Insurance Company Ltd",
-    visitors: 125,
+    insuranceCompany: "National Insurance Company Ltd",
+    cases: 125,
   },
   {
-    browser: "ZUNO GENERAL INSURANCE LIMITED",
-    visitors: 95,
+    insuranceCompany: "ZUNO GENERAL INSURANCE LIMITED",
+    cases: 95,
   },
   {
-    browser: "ZURICH KOTAK GENERAL INSURANCE COMPANY (INDIA) LIMITED",
-    visitors: 85,
+    insuranceCompany: "ZURICH KOTAK GENERAL INSURANCE COMPANY (INDIA) LIMITED",
+    cases: 85,
   },
 ];
 
 const chartConfig = {
-  visitors: {
+  cases: {
     label: "Cases",
     color: "hsl(var(--chart-1))",
   },
@@ -153,21 +155,52 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function InsuranceCasesBar() {
-  const top10Visitors = chartData
-    .sort((a, b) => b.visitors - a.visitors) // Sort in descending order by visitors
-    .slice(0, 10); // Get the top 10 entries
+export function InsuranceCasesBar({ jobCards }: any) {
+  const [chartData, setChartData] = useState<any[]>([]);
+  // let top10Insurers = chartData
+  //   .sort((a, b) => b.cases - a.cases) // Sort in descending order by visitors
+  //   .slice(0, 10); // Get the top 10 entries
+
+  useEffect(() => {
+    let topInsurers: any = [];
+    const filteredJobCards = jobCards.filter(
+      (jobCard: JobCard) =>
+        jobCard.insuranceDetails && jobCard.jobCardStatus > 4
+    );
+
+    filteredJobCards.forEach((jobCard: JobCard) => {
+      const insuranceDetails = JSON.parse(jobCard.insuranceDetails);
+      // console.log(insuranceDetails);
+      const insuranceCompany = insuranceDetails.policyProvider;
+      const index = topInsurers.findIndex(
+        (insurer: any) => insurer.insuranceCompany === insuranceCompany
+      );
+      if (index === -1) {
+        topInsurers.push({
+          insuranceCompany,
+          cases: 1,
+        });
+      } else {
+        topInsurers[index].cases += 1;
+      }
+    });
+
+    topInsurers = topInsurers.sort((a: any, b: any) => b.cases - a.cases);
+    topInsurers = topInsurers.slice(0, 10);
+    setChartData(topInsurers);
+    // console.log(top10Insurers);
+  }, [jobCards]);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Top 10 Insurance Partners</CardTitle>
+        <CardTitle>Top {chartData.length} Insurance Partners</CardTitle>
         <CardDescription>April 2024 - Present</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={top10Visitors}
+            data={chartData}
             layout="vertical"
             margin={{
               right: 16,
@@ -175,7 +208,7 @@ export function InsuranceCasesBar() {
           >
             <CartesianGrid horizontal={false} />
             <YAxis
-              dataKey="browser"
+              dataKey="insuranceCompany"
               type="category"
               tickLine={false}
               tickMargin={10}
@@ -183,26 +216,26 @@ export function InsuranceCasesBar() {
               tickFormatter={(value) => value.slice(0, 3)}
               hide
             />
-            <XAxis dataKey="visitors" type="number" hide />
+            <XAxis dataKey="cases" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
             <Bar
-              dataKey="visitors"
+              dataKey="cases"
               layout="vertical"
-              fill="var(--color-visitors)"
+              fill="var(--color-cases)"
               radius={4}
             >
               <LabelList
-                dataKey="browser"
+                dataKey="insuranceCompany"
                 position="insideLeft"
                 offset={8}
                 className="fill-[--color-label]"
                 fontSize={12}
               />
               <LabelList
-                dataKey="visitors"
+                dataKey="cases"
                 position="right"
                 offset={8}
                 className="fill-foreground"

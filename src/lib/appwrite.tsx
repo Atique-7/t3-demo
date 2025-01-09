@@ -1363,6 +1363,27 @@ export const getAllTaxInvoicesAfterDateTime = async (dateTimeStamp: string) => {
   }
 };
 
+export const getJobCardsBetween = async (from: Date, to: Date) => {
+  try {
+    const newFrom = from.toISOString();
+    const newTo = to.toISOString();
+
+    let result = await databases.listDocuments(
+      config.databaseId,
+      config.jobCardsCollectionId,
+      [
+        Query.limit(9999),
+        Query.greaterThanEqual("$createdAt", newFrom),
+        Query.lessThanEqual("$createdAt", newTo),
+      ]
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const inputSinglePartAppwrite = async (part: any) => {
   // console.log("The Parts are -", partsArr);
 

@@ -52,6 +52,7 @@ import {
   getInvoicesByJobCardId,
 } from "@/lib/appwrite";
 import { Invoice, TempCar } from "@/lib/definitions";
+import { Trash2 } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -193,6 +194,14 @@ export function TempCarsDataTable<TData, TValue>({
                             <>
                               <Button
                                 variant="outline"
+                                className="px-8 py-2  hover:bg-red-400 hover:text-white"
+                                size="lg"
+                                onClick={() => setReopeningJobCard(true)}
+                              >
+                                Reopen JobCard
+                              </Button>
+                              <Button
+                                variant="outline"
                                 className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
                                 size="lg"
                                 onClick={() =>
@@ -201,15 +210,7 @@ export function TempCarsDataTable<TData, TValue>({
                                   )
                                 }
                               >
-                                Delete JobCard
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="px-8 py-2  hover:bg-red-400 hover:text-white"
-                                size="lg"
-                                onClick={() => setReopeningJobCard(true)}
-                              >
-                                Reopen JobCard
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                               {deletingJobCard && (
                                 <Dialog
@@ -259,7 +260,7 @@ export function TempCarsDataTable<TData, TValue>({
                                   )
                                 }
                               >
-                                Delete TempCar
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                               {deletingTempCar && (
                                 <Dialog

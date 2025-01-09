@@ -8,30 +8,32 @@ import {
   getAllCars,
   getAllInvoices,
   getAllJobCards,
-  getAllLabour,
-  getAllParts,
   getAllTempCars,
+  getJobCardsBetween,
 } from "@/lib/appwrite";
 import {
   Car,
+  DateExpandedObj,
   Invoice,
   JobCard,
-  Labour,
-  Part,
   TempCar,
 } from "@/lib/definitions";
-import { TestComponent } from "@/components/graphTest";
 import CustomerSplit from "@/components/graphs/CustomerSplit";
 import RevenueSplit from "@/components/graphs/RevenueSplit";
-import DisplayCard from "@/components/DisplayCard";
-import { Check, Wrench } from "lucide-react";
-import { TimeAverage } from "@/components/graphs/TimeAverage";
-import { CurrentCars } from "@/components/graphs/CurrentCars";
-import { NightStock } from "@/components/graphs/NightStock";
-import { InsuranceCases } from "@/components/graphs/InsuranceCases";
 import { CurrentCarsPie } from "@/components/graphs/CurrentCarsPie";
 import { InsuranceCasesBar } from "@/components/graphs/InsuranceCasesBar";
 import { NightStockNew } from "@/components/graphs/NightStockNew";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createDateExpandedObj } from "@/lib/helper";
+import { DateRangePicker } from "@/components/DateRangePicker";
+import { DateRange } from "react-day-picker";
+import { set } from "react-datepicker/dist/date_utils";
 
 type Props = {};
 
@@ -39,10 +41,20 @@ export default function Admin({}: Props) {
   const router = useRouter();
 
   const [name, setName] = useState("");
-  const [tempCars, setTempCars] = useState<TempCar[] | null>([]);
-  const [jobCards, setJobCards] = useState<JobCard[] | null>([]);
-  const [cars, setCars] = useState<Car[] | null>([]);
-  const [invoices, setInvoices] = useState<Invoice[] | null>([]);
+  const [tempCars, setTempCars] = useState<TempCar[]>([]);
+  const [jobCards, setJobCards] = useState<JobCard[]>([]);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const [currentSelectedTimeline, setCurrentSelectedTimeline] =
+    useState("thisMonth");
+
+  // const [dateExpandedObj, setDateExpandedObj] = useState<DateExpandedObj>();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [customDateRange, setCustomDateRange] = useState<DateRange>();
 
   useEffect(() => {
     const getUser = () => {
@@ -74,43 +86,259 @@ export default function Admin({}: Props) {
       setInvoices((prev) => invoicesObj.documents);
     };
 
+    const getTodaysDate = async () => {
+      const todaysDate = await createDateExpandedObj(new Date());
+      // setDateExpandedObj((prev) => todaysDate);
+      setCustomDateRange({
+        from: new Date(
+          Number(todaysDate.year),
+          Number(todaysDate.month) - 1,
+          1
+        ),
+        to: new Date(),
+      });
+    };
+
     getUser();
-    getJobCards();
+    // getJobCards();
     getCars();
     getTempCars();
     getInvoices();
+    getTodaysDate();
   }, []);
+
+  useEffect(() => {
+    if (customDateRange) {
+      console.log("CUSTOM DATE RANGE - ", customDateRange);
+      getJobCardsForTimeline(customDateRange!);
+    }
+  }, [customDateRange]);
+
+  const modifyReportsTimeline = async (timeline: string) => {
+    setShowDatePicker((prev) => false);
+    const todaysDate = await createDateExpandedObj(new Date());
+    switch (timeline) {
+      case "thisMonth":
+        setCustomDateRange({
+          from: new Date(
+            Number(todaysDate.year),
+            Number(todaysDate.month) - 1,
+            1
+          ),
+          to: new Date(),
+        });
+
+        break;
+      case "lastMonth":
+        if (Number(todaysDate.month) != 1) {
+          setCustomDateRange({
+            from: new Date(
+              Number(todaysDate.year),
+              Number(todaysDate.month) - 2,
+              1
+            ),
+            to: new Date(
+              Number(todaysDate.year),
+              Number(todaysDate.month) - 1,
+              0
+            ),
+          });
+        } else {
+          setCustomDateRange({
+            from: new Date(Number(todaysDate.year) - 1, 11, 1),
+            to: new Date(Number(todaysDate.year) - 1, 12, 0),
+          });
+        }
+
+        break;
+      case "lastSixMonths":
+        if (Number(todaysDate.month) - 6 > 0) {
+          setCustomDateRange({
+            from: new Date(
+              Number(todaysDate.year),
+              Number(todaysDate.month) - 7,
+              1
+            ),
+            to: new Date(
+              Number(todaysDate.year),
+              Number(todaysDate.month) - 1,
+              0
+            ),
+          });
+        } else {
+          setCustomDateRange({
+            from: new Date(
+              Number(todaysDate.year) - 1,
+              11 - (6 - Number(todaysDate.month)),
+              1
+            ),
+            to: new Date(
+              Number(todaysDate.year),
+              Number(todaysDate.month) - 1,
+              0
+            ),
+          });
+        }
+        break;
+      case "lastYear":
+        setCustomDateRange({
+          from: new Date(
+            Number(todaysDate.year) - 1,
+            Number(todaysDate.month) - 1,
+            1
+          ),
+          to: new Date(
+            Number(todaysDate.year),
+            Number(todaysDate.month) - 1,
+            0
+          ),
+        });
+        break;
+      case "custom":
+        setShowDatePicker((prev) => true);
+
+        break;
+
+      default:
+        break;
+    }
+    setCurrentSelectedTimeline(timeline);
+  };
+
+  const getJobCardsForTimeline = async (customDateRange: DateRange) => {
+    setLoading((prev) => true);
+    const from = customDateRange.from;
+    const to = customDateRange.to;
+
+    const jobcards = await getJobCardsBetween(from!, to!);
+
+    console.log("JOB CARDS FOR TIMELINE - ", jobcards);
+    setJobCards((prev) => jobcards.documents);
+    setLoading((prev) => false);
+
+    // return filteredJobCards;
+  };
 
   return (
     <div className="flex flex-col w-[90%] mt-20">
-      {!(name && tempCars && cars && jobCards && invoices) ? (
+      {!(
+        name &&
+        tempCars &&
+        cars &&
+        jobCards &&
+        invoices &&
+        customDateRange
+      ) ? (
         <PartsPageSkeleton />
       ) : (
         <>
           <div>
             <div className="font-semibold text-3xl">Hello {name}! </div>
             <div className="font-medium">T3, Mira Road</div>
+            <div className="mt-10">
+              <Select
+                onValueChange={(reportTimeline) =>
+                  modifyReportsTimeline(reportTimeline)
+                }
+              >
+                <SelectTrigger className="w-full mb-10">
+                  <SelectValue placeholder="Select Reports Timeline" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem key={"thisMonth"} value={"thisMonth"}>
+                    <div className="flex space-x-5 items-center">
+                      <div>This Month</div>
+                      {currentSelectedTimeline === "thisMonth" && (
+                        <div className="text-xs font-semibold text-red-500">
+                          Current
+                        </div>
+                      )}
+                    </div>
+                  </SelectItem>
+                  <SelectItem key={"lastMonth"} value={"lastMonth"}>
+                    <div className="flex space-x-5 items-center">
+                      <div>Last Month</div>
+                      {currentSelectedTimeline === "lastMonth" && (
+                        <div className="text-xs font-semibold text-red-500">
+                          Current
+                        </div>
+                      )}
+                    </div>
+                  </SelectItem>
+                  <SelectItem key={"lastSixMonths"} value={"lastSixMonths"}>
+                    <div className="flex space-x-5 items-center">
+                      <div>This 6 Months</div>
+                      {currentSelectedTimeline === "lastSixMonths" && (
+                        <div className="text-xs font-semibold text-red-500">
+                          Current
+                        </div>
+                      )}
+                    </div>
+                  </SelectItem>
+                  <SelectItem key={"lastYear"} value={"lastYear"}>
+                    <div className="flex space-x-5 items-center">
+                      <div>Last Year</div>
+                      {currentSelectedTimeline === "lastYear" && (
+                        <div className="text-xs font-semibold text-red-500">
+                          Current
+                        </div>
+                      )}
+                    </div>
+                  </SelectItem>
+                  <SelectItem key={"custom"} value={"custom"}>
+                    <div className="flex space-x-5 items-center">
+                      <div>Custom</div>
+                      {currentSelectedTimeline === "custom" && (
+                        <div className="text-xs font-semibold text-red-500">
+                          Current
+                        </div>
+                      )}
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {currentSelectedTimeline === "custom" && showDatePicker && (
+              <div>
+                <DateRangePicker
+                  dateRange={customDateRange}
+                  setCustomDateRange={setCustomDateRange}
+                />
+              </div>
+            )}
           </div>
-          <div className="flex flex-row mt-10 justify-evenly  items-center h-fit mb-10">
-            <div className="w-1/4">
-              <CustomerSplit />
-            </div>
-            <div className="w-1/4">
-              <RevenueSplit />
-            </div>
-            <div className="w-1/4">
-              <TimeAverage />
-            </div>
-          </div>
-          <div className="flex justify-center items-center w-full space-x-5 mb-10">
-            <div className="w-[60%]">
-              <InsuranceCasesBar />
-            </div>
-            <div className="flex flex-col space-y-5 justify-center items-center">
-              <NightStockNew />
-              <CurrentCarsPie />
-            </div>
-          </div>
+          {loading ? (
+            <>
+              <PartsPageSkeleton />
+            </>
+          ) : (
+            <>
+              <div>
+                <div className="flex flex-row mt-10 justify-evenly  items-center h-fit mb-10">
+                  <div className="w-1/4">
+                    <CustomerSplit jobCards={jobCards} />
+                  </div>
+                  <div className="w-1/4">
+                    <RevenueSplit jobCards={jobCards} />
+                  </div>
+                  {currentSelectedTimeline === "thisMonth" && (
+                    <div className="w-1/4">
+                      <NightStockNew jobCards={jobCards} tempCars={tempCars} />
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-center items-center w-full space-x-5 mb-10">
+                  <div className="w-[60%]">
+                    <InsuranceCasesBar jobCards={jobCards} />
+                  </div>
+                  <div className="flex flex-col space-y-5 justify-center items-center">
+                    {/* <NightStockNew jobCards={jobCards} tempCars={tempCars} /> */}
+                    {/* <CurrentCarsPie /> */}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

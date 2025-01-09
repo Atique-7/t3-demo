@@ -50,6 +50,8 @@ import {
   deleteJobCardById,
   deleteTempCarById,
   getInvoicesByJobCardId,
+  getJobCardById,
+  updateJobCardJobCardStatus,
 } from "@/lib/appwrite";
 import { Invoice, TempCar } from "@/lib/definitions";
 import { Trash2 } from "lucide-react";
@@ -84,7 +86,7 @@ export function TempCarsDataTable<TData, TValue>({
   });
 
   const [deletingJobCard, setDeletingJobCard] = useState("");
-  const [reopeningJobCard, setReopeningJobCard] = useState(false);
+  const [reopeningJobCard, setReopeningJobCard] = useState("");
   const [deletingTempCar, setDeletingTempCar] = useState("");
 
   const token = getCookie("user");
@@ -107,11 +109,22 @@ export function TempCarsDataTable<TData, TValue>({
       // const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
       // const deletedTempCar = await deleteJobCardById(tempCarObj.$id);
     }
+    setDeletingJobCard("");
   };
 
   const deleteTempCar = async (tempCar: any) => {
     const tempCarObj: TempCar = JSON.parse(tempCar);
     // const result = await deleteTempCarById(tempCarObj.$id);
+    setDeletingTempCar("");
+  };
+
+  const reOpenJobCard = async (tempCar: any) => {
+    const tempCarObj: TempCar = JSON.parse(tempCar);
+    // const result = await deleteTempCarById(tempCarObj.$id);
+    // if (tempCarObj.jobCardId) {
+    //   const result = await updateJobCardJobCardStatus(tempCarObj.jobCardId, 4);
+    // }
+    setReopeningJobCard("");
   };
 
   return (
@@ -198,7 +211,11 @@ export function TempCarsDataTable<TData, TValue>({
                                     variant="outline"
                                     className="px-8 py-2  hover:bg-red-400 hover:text-white"
                                     size="lg"
-                                    onClick={() => setReopeningJobCard(true)}
+                                    onClick={() =>
+                                      setReopeningJobCard(
+                                        JSON.stringify(row.original)
+                                      )
+                                    }
                                   >
                                     Reopen JobCard
                                   </Button>
@@ -241,6 +258,41 @@ export function TempCarsDataTable<TData, TValue>({
                                         }
                                       >
                                         Delete
+                                      </Button>
+                                      <Button
+                                        type="submit"
+                                        onClick={() => setDeletingJobCard("")}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                              )}
+                              {reopeningJobCard && (
+                                <Dialog
+                                  open={reopeningJobCard != ""}
+                                  onOpenChange={() => setReopeningJobCard("")}
+                                >
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Are you absolutely sure?
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        This action cannot be undone. This will
+                                        Re - Open the job card.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                      <Button
+                                        type="submit"
+                                        className="bg-red-500"
+                                        onClick={() =>
+                                          reOpenJobCard(reopeningJobCard)
+                                        }
+                                      >
+                                        Re Open
                                       </Button>
                                       <Button
                                         type="submit"

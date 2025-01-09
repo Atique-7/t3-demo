@@ -33,6 +33,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { usePathname } from "next/navigation";
+import { getCookie } from "cookies-next";
+import { useState } from "react";
+import { set } from "react-datepicker/dist/date_utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import {
+  deleteInvoiceById,
+  deleteJobCardById,
+  deleteTempCarById,
+  getInvoicesByJobCardId,
+} from "@/lib/appwrite";
+import { Invoice, TempCar } from "@/lib/definitions";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -45,10 +64,8 @@ export function TempCarsDataTable<TData, TValue>({
   data,
   povCategories,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -64,6 +81,37 @@ export function TempCarsDataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const [deletingJobCard, setDeletingJobCard] = useState("");
+  const [reopeningJobCard, setReopeningJobCard] = useState(false);
+  const [deletingTempCar, setDeletingTempCar] = useState("");
+
+  const token = getCookie("user");
+  const parsedToken = JSON.parse(String(token));
+  const userAccess = parsedToken.labels[0];
+
+  const deleteJobCard = async (tempCar: any) => {
+    const tempCarObj: TempCar = JSON.parse(tempCar);
+    console.log(tempCarObj);
+
+    if (tempCarObj.jobCardId) {
+      const invoices = await getInvoicesByJobCardId(tempCarObj.jobCardId);
+      await Promise.all(
+        invoices.map(async (invoice: Invoice) => {
+          // const result = await deleteInvoiceById(invoice.$id);
+          // console.log(result);
+        })
+      );
+
+      // const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
+      // const deletedTempCar = await deleteJobCardById(tempCarObj.$id);
+    }
+  };
+
+  const deleteTempCar = async (tempCar: any) => {
+    const tempCarObj: TempCar = JSON.parse(tempCar);
+    // const result = await deleteTempCarById(tempCarObj.$id);
+  };
 
   return (
     <div>
@@ -118,6 +166,7 @@ export function TempCarsDataTable<TData, TValue>({
                     </TableHead>
                   );
                 })}
+                {userAccess === "admin" && <TableHead></TableHead>}
               </TableRow>
             ))}
           </TableHeader>
@@ -136,6 +185,123 @@ export function TempCarsDataTable<TData, TValue>({
                       )}
                     </TableCell>
                   ))}
+                  {userAccess === "admin" && (
+                    <>
+                      <TableCell>
+                        <div className="flex space-x-4 justify-center">
+                          {(row.original as TempCar).jobCardId ? (
+                            <>
+                              <Button
+                                variant="outline"
+                                className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                                size="lg"
+                                onClick={() =>
+                                  setDeletingJobCard(
+                                    JSON.stringify(row.original)
+                                  )
+                                }
+                              >
+                                Delete JobCard
+                              </Button>
+                              <Button
+                                variant="outline"
+                                className="px-8 py-2  hover:bg-red-400 hover:text-white"
+                                size="lg"
+                                onClick={() => setReopeningJobCard(true)}
+                              >
+                                Reopen JobCard
+                              </Button>
+                              {deletingJobCard && (
+                                <Dialog
+                                  open={deletingJobCard != ""}
+                                  onOpenChange={() => setDeletingJobCard("")}
+                                >
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Are you absolutely sure?
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        This action cannot be undone. This will
+                                        permanently delete the job card.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                      <Button
+                                        type="submit"
+                                        className="bg-red-500"
+                                        onClick={() =>
+                                          deleteJobCard(deletingJobCard)
+                                        }
+                                      >
+                                        Delete
+                                      </Button>
+                                      <Button
+                                        type="submit"
+                                        onClick={() => setDeletingJobCard("")}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                variant="outline"
+                                className="px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white"
+                                size="lg"
+                                onClick={() =>
+                                  setDeletingTempCar(
+                                    JSON.stringify(row.original)
+                                  )
+                                }
+                              >
+                                Delete TempCar
+                              </Button>
+                              {deletingTempCar && (
+                                <Dialog
+                                  open={deletingTempCar != ""}
+                                  onOpenChange={() => setDeletingTempCar("")}
+                                >
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Are you absolutely sure?
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        This action cannot be undone. This will
+                                        permanently delete the temp car.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                      <Button
+                                        type="submit"
+                                        className="bg-red-500"
+                                        onClick={() =>
+                                          deleteTempCar(deletingTempCar)
+                                        }
+                                      >
+                                        Delete
+                                      </Button>
+                                      <Button
+                                        type="submit"
+                                        onClick={() => setDeletingTempCar("")}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                    </>
+                  )}
                 </TableRow>
               ))
             ) : (

@@ -1322,6 +1322,66 @@ export const getAllInvoices = async () => {
   }
 };
 
+export const deleteJobCardById = async (id: string) => {
+  try {
+    const result = await databases.deleteDocument(
+      config.databaseId,
+      config.jobCardsCollectionId,
+      id // documentId
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+export const deleteTempCarById = async (id: string) => {
+  try {
+    const result = await databases.deleteDocument(
+      config.databaseId,
+      config.tempCarsCollectionId,
+      id // documentId
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+export const deleteInvoiceById = async (id: string) => {
+  try {
+    const result = await databases.deleteDocument(
+      config.databaseId,
+      config.invoicesCollectionId,
+      id // documentId
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+// export const getInvoiceByJobCardId = async (jobCardId: string) => {
+//   try {
+//     const result = await databases.listDocuments(
+//       config.databaseId,
+//       config.invoicesCollectionId,
+//       [
+//         Query.equal("jobCardId", jobCardId), // Filter by the specified invoice series
+//         Query.orderDesc("$createdAt"), // Order by creation date in descending order
+//       ]
+//     );
+
+//     return result;
+//   } catch (error: any) {
+//     console.log(error.message);
+//     return null;
+//   }
+// };
+
 export const getLatestInvoiceBySeries = async (invoiceSeries: string) => {
   console.log("INVOCIJDJSDJ", invoiceSeries);
   try {

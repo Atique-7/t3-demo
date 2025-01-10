@@ -743,6 +743,18 @@ export const InvoicePDF = ({
                     <Text style={styles.tableData}>{car?.carModel}</Text>
                   </View>
                 </View>
+                <View style={styles.tableRow}>
+                  <View style={styles.tableCell}>
+                    <Text
+                      style={[styles.tableData, styles.tableDataEmphasized]}
+                    >
+                      Odometer:
+                    </Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text style={styles.tableData}>{jobCard.carOdometer}</Text>
+                  </View>
+                </View>
               </View>
               <View style={styles.detailTable}>
                 <View style={styles.tableTitleRow}>

@@ -35,6 +35,7 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import { set } from "react-datepicker/dist/date_utils";
 import { ServiceAdvisorPerformance } from "@/components/graphs/ServiceAdvisorPerformance";
+import { PartsLabourSplit } from "@/components/graphs/PartsLabourSplit";
 
 type Props = {};
 
@@ -280,22 +281,58 @@ export default function Admin({}: Props) {
           ) : (
             <>
               <div>
-                <div className="flex flex-row mt-10 justify-evenly  items-center h-fit mb-10">
-                  <div className="w-1/4">
-                    <CustomerSplit
-                      jobCards={jobCards}
-                      currentSelectedTimeline={currentSelectedTimeline}
-                    />
-                  </div>
-                  <div className="w-1/4">
-                    <RevenueSplit
-                      jobCards={jobCards}
-                      currentSelectedTimeline={currentSelectedTimeline}
-                    />
-                  </div>
-                  {currentSelectedTimeline === "thisMonth" && (
-                    <div className="w-1/4">
-                      <NightStockNew jobCards={jobCards} tempCars={tempCars} />
+                <div className="flex flex-col mt-10 justify-evenly items-center h-fit mb-10">
+                  {currentSelectedTimeline === "thisMonth" ? (
+                    <>
+                      <div className="flex flex-row w-full justify-evenly items-center">
+                        <div className="w-1/3">
+                          <CustomerSplit
+                            jobCards={jobCards}
+                            currentSelectedTimeline={currentSelectedTimeline}
+                          />
+                        </div>
+                        <div className="w-1/3">
+                          <RevenueSplit
+                            jobCards={jobCards}
+                            currentSelectedTimeline={currentSelectedTimeline}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-row w-full justify-evenly items-center mt-10">
+                        <div className="w-1/3">
+                          <PartsLabourSplit
+                            jobCards={jobCards}
+                            currentSelectedTimeline={currentSelectedTimeline}
+                          />
+                        </div>
+                        <div className="w-1/3">
+                          <NightStockNew
+                            jobCards={jobCards}
+                            tempCars={tempCars}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-row w-full justify-evenly items-center">
+                      <div className="w-1/4">
+                        <CustomerSplit
+                          jobCards={jobCards}
+                          currentSelectedTimeline={currentSelectedTimeline}
+                        />
+                      </div>
+                      <div className="w-1/4">
+                        <RevenueSplit
+                          jobCards={jobCards}
+                          currentSelectedTimeline={currentSelectedTimeline}
+                        />
+                      </div>
+                      <div className="w-1/4">
+                        <PartsLabourSplit
+                          jobCards={jobCards}
+                          currentSelectedTimeline={currentSelectedTimeline}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

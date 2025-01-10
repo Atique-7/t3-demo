@@ -67,7 +67,7 @@ export default function DownloadReports({}: Props) {
     }
   }, [customDateRange]);
 
-  const downloadPasrtsOutReport = async () => {
+  const downloadPartsOutReport = async () => {
     setIssMakingPartsOutReport(true);
     console.log("Downloading Parts Out Report");
 
@@ -75,8 +75,10 @@ export default function DownloadReports({}: Props) {
 
     await Promise.all(
       jobCards.map(async (jobCard: JobCard) => {
-        let parts = stringToObj(jobCard.parts);
-        partOutObj[jobCard.jobCardNumber] = parts;
+        if (jobCard.jobCardStatus >= 5) {
+          let parts = stringToObj(jobCard.parts);
+          partOutObj[jobCard.jobCardNumber] = parts;
+        }
       })
     );
 
@@ -352,7 +354,7 @@ export default function DownloadReports({}: Props) {
                 <>
                   <PrimaryButton
                     title={"Download Parts Out Report"}
-                    handleButtonPress={downloadPasrtsOutReport}
+                    handleButtonPress={downloadPartsOutReport}
                     isLoading={isMakingPartsOutReport}
                   />
                   <PrimaryButton

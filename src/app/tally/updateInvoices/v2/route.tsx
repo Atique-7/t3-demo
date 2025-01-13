@@ -33,6 +33,13 @@ export async function POST(request: NextRequest) {
           falseCounter++;
         }
 
+        // if (
+        //   invoice.invoiceCode == "BDS/1120" ||
+        //   invoice.invoiceCode == "BDS/1123"
+        // ) {
+        //   console.log("INVOICE HAIIIII", invoice);
+        // }
+
         return invoice;
       })
     );

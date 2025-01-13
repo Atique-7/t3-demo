@@ -2078,6 +2078,34 @@ export const createInvoiceObj = async (
         dateTemp
       );
 
+      const todaysDate: DateExpandedObj = await createDateExpandedObj(
+        new Date()
+      );
+
+      let checkDate;
+
+      if (Number(todaysDate.day) >= 13) {
+        checkDate = new Date(
+          Number(todaysDate.year),
+          Number(todaysDate.month) - 1,
+          1
+        );
+      } else {
+        if (Number(todaysDate.month) != 1) {
+          checkDate = new Date(
+            Number(todaysDate.year),
+            Number(todaysDate.month) - 2,
+            1
+          );
+        } else {
+          checkDate = new Date(Number(todaysDate.year) - 1, 11, 1);
+        }
+      }
+
+      if (dateTemp < checkDate) {
+        invoice.isUpdatedInvoice = false;
+      }
+
       invoice.invoiceDate = dateExpandedObj.formattedDate;
 
       invoice.jobCardDetails = jobCard;

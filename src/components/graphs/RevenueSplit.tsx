@@ -57,38 +57,44 @@ export default function RevenueSplit({
   let totalRevenue = 0;
 
   useEffect(() => {
-    totalRevenue = 0;
-    jobCards.filter((jobCard: JobCard) => jobCard.jobCardStatus >= 5);
-    // Group data by purposeOfVisit and calculate revenue
-    const revenueData = jobCards.reduce((acc: any, curr: any) => {
-      if (!acc[curr.purposeOfVisit]) {
-        acc[curr.purposeOfVisit] = {
-          revenue: 0,
-          fill: `var(--color-${curr.purposeOfVisit
-            .replace(/\s+/g, "")
-            .toLowerCase()})`,
-        };
-      }
-      acc[curr.purposeOfVisit].revenue += curr.amount || 0; // Handle null or missing amounts
-      return acc;
-    }, {});
+    const refreshData = async () => {
+      totalRevenue = 0;
+      // Group data by purposeOfVisit and calculate revenue
+      jobCards = await jobCards.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+      );
+      const revenueData = jobCards.reduce((acc: any, curr: any) => {
+        if (!acc[curr.purposeOfVisit]) {
+          acc[curr.purposeOfVisit] = {
+            revenue: 0,
+            fill: `var(--color-${curr.purposeOfVisit
+              .replace(/\s+/g, "")
+              .toLowerCase()})`,
+          };
+        }
+        acc[curr.purposeOfVisit].revenue += curr.amount || 0; // Handle null or missing amounts
+        return acc;
+      }, {});
 
-    // Create the formatted dataset
-    const formattedDataset = Object.entries(revenueData).map(
-      ([key, value]) => ({
-        pov: key,
-        revenue: Number(revenueData[key].revenue.toFixed(2)), // Round off to 2 decimal places
-        fill: revenueData[key].fill,
-      })
-    );
+      // Create the formatted dataset
+      const formattedDataset = Object.entries(revenueData).map(
+        ([key, value]) => ({
+          pov: key,
+          revenue: Number(revenueData[key].revenue.toFixed(2)), // Round off to 2 decimal places
+          fill: revenueData[key].fill,
+        })
+      );
 
-    formattedDataset.map((pov: any) => {
-      totalRevenue = totalRevenue + pov.revenue;
-    });
+      formattedDataset.map((pov: any) => {
+        totalRevenue = totalRevenue + pov.revenue;
+      });
 
-    setTotal(totalRevenue);
+      setTotal(totalRevenue);
 
-    setNewChartData(formattedDataset);
+      setNewChartData(formattedDataset);
+    };
+
+    refreshData();
 
     manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
   }, [jobCards]);

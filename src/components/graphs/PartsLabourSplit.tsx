@@ -63,49 +63,57 @@ export function PartsLabourSplit({ jobCards, currentSelectedTimeline }: any) {
   let totalLabour = 0;
 
   useEffect(() => {
-    totalParts = 0;
-    totalLabour = 0;
-    jobCards.map((jobCard: JobCard) => {
-      let parts = 0;
-      let labour = 0;
-      let total = 0;
+    const refreshData = async () => {
+      jobCards = await jobCards.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+      );
 
-      let partsArray = stringToObj(jobCard.parts);
-      let labourArray = stringToObj(jobCard.labour);
+      totalParts = 0;
+      totalLabour = 0;
+      jobCards.map((jobCard: JobCard) => {
+        let parts = 0;
+        let labour = 0;
+        let total = 0;
 
-      partsArray.map((part: CurrentPart) => {
-        total = total + part.amount;
-        parts = parts + part.amount;
+        let partsArray = stringToObj(jobCard.parts);
+        let labourArray = stringToObj(jobCard.labour);
+
+        partsArray.map((part: CurrentPart) => {
+          total = total + part.amount;
+          parts = parts + part.amount;
+        });
+
+        labourArray.map((work: CurrentLabour) => {
+          total = total + work.amount;
+          labour = labour + work.amount;
+        });
+
+        parts = roundToTwoDecimals(parts);
+        labour = roundToTwoDecimals(labour);
+        total = roundToTwoDecimals(total);
+
+        totalParts = totalParts + parts;
+        totalLabour = totalLabour + labour;
       });
 
-      labourArray.map((work: CurrentLabour) => {
-        total = total + work.amount;
-        labour = labour + work.amount;
-      });
+      totalParts = roundToTwoDecimals(totalParts);
+      totalLabour = roundToTwoDecimals(totalLabour);
 
-      parts = roundToTwoDecimals(parts);
-      labour = roundToTwoDecimals(labour);
-      total = roundToTwoDecimals(total);
+      setNewChartData([
+        {
+          itemType: "parts",
+          totalRevenue: totalParts,
+          fill: "var(--color-parts)",
+        },
+        {
+          itemType: "labour",
+          totalRevenue: totalLabour,
+          fill: "var(--color-labour)",
+        },
+      ]);
+    };
 
-      totalParts = totalParts + parts;
-      totalLabour = totalLabour + labour;
-    });
-
-    totalParts = roundToTwoDecimals(totalParts);
-    totalLabour = roundToTwoDecimals(totalLabour);
-
-    setNewChartData([
-      {
-        itemType: "parts",
-        totalRevenue: totalParts,
-        fill: "var(--color-parts)",
-      },
-      {
-        itemType: "labour",
-        totalRevenue: totalLabour,
-        fill: "var(--color-labour)",
-      },
-    ]);
+    refreshData();
 
     manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
   }, [jobCards]);

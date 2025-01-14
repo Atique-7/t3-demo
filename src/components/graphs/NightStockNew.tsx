@@ -68,7 +68,7 @@ export function NightStockNew({ jobCards, tempCars }: any) {
     // Update the chart data
 
     formattedDataset.forEach((data: any) => {
-      if (data.jobCardStatus === 0 || 1 || 2 || 3 || 4 || 5) {
+      if (data.jobCardStatus <= 5) {
         carsBeingWorkedOn += data.carCount;
       }
       if (data.jobCardStatus === 6) {
@@ -81,6 +81,8 @@ export function NightStockNew({ jobCards, tempCars }: any) {
     chartData[0].carsBeingWorkedOn = carsBeingWorkedOn;
     chartData[0].gatePassGenerated = gatePassGenerated;
     chartData[0].empty = TOTAL_PARKING_SPACE - totalCars;
+
+    console.log(chartData[0]);
   }, [jobCards]);
 
   return (
@@ -115,7 +117,10 @@ export function NightStockNew({ jobCards, tempCars }: any) {
                           y={(viewBox.cy || 0) - 16}
                           className="fill-foreground text-2xl font-bold"
                         >
-                          {totalCars.toLocaleString()}
+                          {(
+                            chartData[0].carsBeingWorkedOn +
+                            chartData[0].gatePassGenerated
+                          ).toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

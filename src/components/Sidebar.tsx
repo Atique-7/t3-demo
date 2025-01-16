@@ -9,6 +9,7 @@ import loader from "../../public/assets/t3-loader.gif";
 import {
   Car,
   ClipboardList,
+  Download,
   House,
   Layers3,
   LogOut,
@@ -120,6 +121,30 @@ export default function Sidebar({ home }: any) {
                   </Button>
                 </DrawerClose>
               )}
+              {home == "/admin" && (
+                <DrawerClose>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/manage-jobcards`)}
+                    variant={"link"}
+                  >
+                    <ClipboardList />
+                    <div>Manage Jobcards</div>
+                  </Button>
+                </DrawerClose>
+              )}
+              {home == "/admin" && (
+                <DrawerClose>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/reports`)}
+                    variant={"link"}
+                  >
+                    <Download />
+                    <div>Reports</div>
+                  </Button>
+                </DrawerClose>
+              )}
               {home == "/security" && (
                 <DrawerClose>
                   <Button
@@ -174,6 +199,14 @@ export default function Sidebar({ home }: any) {
                 href={`${home}/manage-jobcards`}
               >
                 <ClipboardList />
+              </Link>
+            )}
+            {home == "/admin" && (
+              <Link
+                className="border-2 rounded-md shadow-md p-3"
+                href={`${home}/reports`}
+              >
+                <Download />
               </Link>
             )}
             {home == "/biller" && (

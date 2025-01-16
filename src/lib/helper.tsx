@@ -288,6 +288,7 @@ export const carMakeModels = [
       "Vellfire",
       "Yaris",
       "Corolla Altis",
+      "Etios Liva",
     ],
   },
   {

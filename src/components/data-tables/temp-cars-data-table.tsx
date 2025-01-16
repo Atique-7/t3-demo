@@ -100,30 +100,30 @@ export function TempCarsDataTable<TData, TValue>({
     if (tempCarObj.jobCardId) {
       const invoices = await getInvoicesByJobCardId(tempCarObj.jobCardId);
       await Promise.all(
-        invoices.map(async (invoice: Invoice) => {
-          // const result = await deleteInvoiceById(invoice.$id);
-          // console.log(result);
+        invoices.documents.map(async (invoice: Invoice) => {
+          const result = await deleteInvoiceById(invoice.$id);
+          console.log(result);
         })
       );
 
-      // const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
-      // const deletedTempCar = await deleteJobCardById(tempCarObj.$id);
+      const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
+      const deletedTempCar = await deleteTempCarById(tempCarObj.$id);
     }
     setDeletingJobCard("");
   };
 
   const deleteTempCar = async (tempCar: any) => {
     const tempCarObj: TempCar = JSON.parse(tempCar);
-    // const result = await deleteTempCarById(tempCarObj.$id);
+    const result = await deleteTempCarById(tempCarObj.$id);
     setDeletingTempCar("");
   };
 
   const reOpenJobCard = async (tempCar: any) => {
     const tempCarObj: TempCar = JSON.parse(tempCar);
-    // const result = await deleteTempCarById(tempCarObj.$id);
-    // if (tempCarObj.jobCardId) {
-    //   const result = await updateJobCardJobCardStatus(tempCarObj.jobCardId, 4);
-    // }
+    const result = await deleteTempCarById(tempCarObj.$id);
+    if (tempCarObj.jobCardId) {
+      const result = await updateJobCardJobCardStatus(tempCarObj.jobCardId, 4);
+    }
     setReopeningJobCard("");
   };
 

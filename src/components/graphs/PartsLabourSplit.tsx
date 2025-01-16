@@ -20,10 +20,12 @@ import {
 import { useEffect, useState } from "react";
 import { CurrentLabour, CurrentPart, JobCard } from "@/lib/definitions";
 import {
+  createJobCardObjReport,
   manageTimelineChange,
   roundToTwoDecimals,
   stringToObj,
 } from "@/lib/helper";
+import Decimal from "decimal.js";
 const chartData = [
   { itemType: "parts", totalRevenue: 275, fill: "var(--color-parts)" },
   { itemType: "labour", totalRevenue: 200, fill: "var(--color-labour)" },
@@ -59,8 +61,8 @@ export function PartsLabourSplit({ jobCards, currentSelectedTimeline }: any) {
   const [newChartData, setNewChartData] = useState<any[]>(chartData);
   const [selectedTimeline, setSelectedTimeline] = useState<string>();
 
-  let totalParts = 0;
-  let totalLabour = 0;
+  let totalPartsWithoutTax = new Decimal(0);
+  let totalLabourWithoutTax = new Decimal(0);
 
   useEffect(() => {
     const refreshData = async () => {
@@ -68,46 +70,60 @@ export function PartsLabourSplit({ jobCards, currentSelectedTimeline }: any) {
         (jobCard: JobCard) => jobCard.jobCardStatus >= 6
       );
 
-      totalParts = 0;
-      totalLabour = 0;
-      jobCards.map((jobCard: JobCard) => {
-        let parts = 0;
-        let labour = 0;
-        let total = 0;
+      totalPartsWithoutTax = new Decimal(0);
+      totalLabourWithoutTax = new Decimal(0);
 
-        let partsArray = stringToObj(jobCard.parts);
-        let labourArray = stringToObj(jobCard.labour);
+      await Promise.all(
+        jobCards.map(async (jobCard: JobCard) => {
+          let jobCardParts = new Decimal(0);
+          let jobCardLabour = new Decimal(0);
 
-        partsArray.map((part: CurrentPart) => {
-          total = total + part.amount;
-          parts = parts + part.amount;
-        });
+          const jobCardTotals = await createJobCardObjReport(jobCard);
 
-        labourArray.map((work: CurrentLabour) => {
-          total = total + work.amount;
-          labour = labour + work.amount;
-        });
+          jobCardParts = jobCardParts.add(
+            new Decimal(Number(jobCardTotals.partsSubtotal))
+          );
+          if (jobCard.jobCardNumber == 271) {
+            console.log("totalPartsWithoutTax - ", Number(jobCardParts));
+          }
 
-        parts = roundToTwoDecimals(parts);
-        labour = roundToTwoDecimals(labour);
-        total = roundToTwoDecimals(total);
+          jobCardLabour = jobCardLabour.add(
+            new Decimal(Number(jobCardTotals.labourSubtotal))
+          );
+          if (jobCard.jobCardNumber == 271) {
+            console.log("totalLabourWithoutTax - ", Number(jobCardLabour));
+          }
 
-        totalParts = totalParts + parts;
-        totalLabour = totalLabour + labour;
-      });
+          jobCardParts = jobCardParts.minus(
+            new Decimal(Number(jobCardTotals.partsDiscount))
+          );
+          if (jobCard.jobCardNumber == 271) {
+            console.log("totalPartsWithoutTax - ", Number(jobCardParts));
+          }
+          jobCardLabour = jobCardLabour.minus(
+            new Decimal(Number(jobCardTotals.labourDiscount))
+          );
+          if (jobCard.jobCardNumber == 271) {
+            console.log("totalLabourWithoutTax - ", Number(jobCardLabour));
+          }
 
-      totalParts = roundToTwoDecimals(totalParts);
-      totalLabour = roundToTwoDecimals(totalLabour);
+          totalPartsWithoutTax = totalPartsWithoutTax.add(jobCardParts);
+          totalLabourWithoutTax = totalLabourWithoutTax.add(jobCardLabour);
+        })
+      );
+
+      // totalPartsWithoutTax = roundToTwoDecimals(totalParts);
+      // totalLabour = roundToTwoDecimals(totalLabour);
 
       setNewChartData([
         {
           itemType: "parts",
-          totalRevenue: totalParts,
+          totalRevenue: Number(totalPartsWithoutTax),
           fill: "var(--color-parts)",
         },
         {
           itemType: "labour",
-          totalRevenue: totalLabour,
+          totalRevenue: Number(totalLabourWithoutTax),
           fill: "var(--color-labour)",
         },
       ]);

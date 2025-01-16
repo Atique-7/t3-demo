@@ -20,8 +20,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { JobCard } from "@/lib/definitions";
-import { adminReportTimelineDrop, manageTimelineChange } from "@/lib/helper";
+import {
+  adminReportTimelineDrop,
+  createJobCardObjReport,
+  manageTimelineChange,
+} from "@/lib/helper";
 import { set } from "react-datepicker/dist/date_utils";
+import Decimal from "decimal.js";
 
 const chartConfig = {
   revenue: {
@@ -54,42 +59,128 @@ export default function RevenueSplit({
 
   const [selectedTimeline, setSelectedTimeline] = useState<string>();
 
-  let totalRevenue = 0;
+  let totalRevenue = new Decimal(0);
 
   useEffect(() => {
+    // console.log("SETTING NEW CHAT DATA REVENUE SPLIT");
     const refreshData = async () => {
-      totalRevenue = 0;
+      totalRevenue = new Decimal(0);
       // Group data by purposeOfVisit and calculate revenue
       jobCards = await jobCards.filter(
         (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+        // jobCard.purposeOfVisit == "General Visit"
       );
-      const revenueData = jobCards.reduce((acc: any, curr: any) => {
-        if (!acc[curr.purposeOfVisit]) {
-          acc[curr.purposeOfVisit] = {
-            revenue: 0,
-            fill: `var(--color-${curr.purposeOfVisit
-              .replace(/\s+/g, "")
-              .toLowerCase()})`,
-          };
-        }
-        acc[curr.purposeOfVisit].revenue += curr.amount || 0; // Handle null or missing amounts
-        return acc;
-      }, {});
 
-      // Create the formatted dataset
-      const formattedDataset = Object.entries(revenueData).map(
-        ([key, value]) => ({
-          pov: key,
-          revenue: Number(revenueData[key].revenue.toFixed(2)), // Round off to 2 decimal places
-          fill: revenueData[key].fill,
+      let tempReturnObj: any = {};
+
+      await Promise.all(
+        jobCards.map(async (jobCard: JobCard) => {
+          let jobCardRevenue = new Decimal(0);
+
+          const jobCardTotals = await createJobCardObjReport(jobCard);
+
+          jobCardRevenue = jobCardRevenue.add(
+            new Decimal(Number(jobCardTotals.partsSubtotal))
+          );
+          jobCardRevenue = jobCardRevenue.add(
+            new Decimal(Number(jobCardTotals.labourSubtotal))
+          );
+
+          jobCardRevenue = jobCardRevenue.minus(
+            new Decimal(Number(jobCardTotals.partsDiscount))
+          );
+          jobCardRevenue = jobCardRevenue.minus(
+            new Decimal(Number(jobCardTotals.labourDiscount))
+          );
+
+          if (jobCard.jobCardNumber == 271) {
+            console.log(
+              "jobCardRevenue - ",
+              jobCard.jobCardNumber,
+              jobCardRevenue.toFixed()
+            );
+          }
+
+          if (!tempReturnObj[jobCard.purposeOfVisit]) {
+            tempReturnObj[jobCard.purposeOfVisit] = {
+              revenue: 0,
+              fill: `var(--color-${jobCard.purposeOfVisit
+                .replace(/\s+/g, "")
+                .toLowerCase()})`,
+            };
+          } else {
+            tempReturnObj[jobCard.purposeOfVisit].revenue = Number(
+              new Decimal(tempReturnObj[jobCard.purposeOfVisit].revenue).add(
+                jobCardRevenue
+              )
+            );
+          }
+
+          totalRevenue = totalRevenue.add(jobCardRevenue);
         })
       );
 
-      formattedDataset.map((pov: any) => {
-        totalRevenue = totalRevenue + pov.revenue;
-      });
+      console.log("tempReturnObj", tempReturnObj);
 
-      setTotal(totalRevenue);
+      // Create the formatted dataset
+      const formattedDataset = Object.entries(tempReturnObj).map(
+        ([key, value]) => ({
+          pov: key,
+          revenue: Number(tempReturnObj[key].revenue.toFixed(2)), // Round off to 2 decimal places
+          fill: tempReturnObj[key].fill,
+        })
+      );
+
+      // const revenueData = jobCards.reduce(async (acc: any, curr: any) => {
+      //   if (!acc[curr.purposeOfVisit]) {
+      //     acc[curr.purposeOfVisit] = {
+      //       revenue: new Decimal(0),
+      //       fill: `var(--color-${curr.purposeOfVisit
+      //         .replace(/\s+/g, "")
+      //         .toLowerCase()})`,
+      //     };
+      //   }
+
+      //   const jobCardTotals = await createJobCardObjReport(curr);
+
+      //   let jobCardRevenue = new Decimal(0);
+
+      //   jobCardRevenue = jobCardRevenue.add(
+      //     new Decimal(Number(jobCardTotals.partsSubtotal))
+      //   );
+
+      //   jobCardRevenue = jobCardRevenue.add(
+      //     new Decimal(Number(jobCardTotals.labourSubtotal))
+      //   );
+
+      //   jobCardRevenue = jobCardRevenue.minus(
+      //     new Decimal(Number(jobCardTotals.partsDiscount))
+      //   );
+
+      //   jobCardRevenue = jobCardRevenue.minus(
+      //     new Decimal(Number(jobCardTotals.labourDiscount))
+      //   );
+
+      //   acc[curr.purposeOfVisit].revenue += curr.amount || 0; // Handle null or missing amounts
+      //   return acc;
+      // }, {});
+
+      // // Create the formatted dataset
+      // const formattedDataset = Object.entries(revenueData).map(
+      //   ([key, value]) => ({
+      //     pov: key,
+      //     revenue: Number(revenueData[key].revenue.toFixed(2)), // Round off to 2 decimal places
+      //     fill: revenueData[key].fill,
+      //   })
+      // );
+
+      // formattedDataset.map((pov: any) => {
+      //   totalRevenue = totalRevenue.plus(new Decimal(Number(pov.revenue)));
+      // });
+
+      // console.log("Total Revenue", totalRevenue.toFixed());
+
+      setTotal(Number(totalRevenue));
 
       setNewChartData(formattedDataset);
     };

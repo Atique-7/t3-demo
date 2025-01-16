@@ -608,8 +608,14 @@ export const objToStringArr = (obj: any[]) => {
 
 export const stringToObj = (strings: string[]) => {
   let newObjArr: any[] = [];
-  strings.map((a) => newObjArr.push(JSON.parse(a)));
-  return newObjArr;
+
+  try {
+    strings.map((a) => newObjArr.push(JSON.parse(a)));
+    return newObjArr;
+  } catch (error) {
+    console.log("ERROR IN STRING TO OBJ - ", strings, newObjArr);
+    return strings;
+  }
 };
 
 export const getButtonText = (
@@ -1956,6 +1962,99 @@ export const processItem = async (
   });
 };
 
+export const processJobCardItem = async (
+  itemType: "Part" | "Labour",
+  item: CurrentPart | CurrentLabour
+  // invoice: Invoice
+) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let tempSubTotal = new Decimal(0);
+      let liabilitySubtotalWithoutDisc = new Decimal(0);
+      let discountedSubtotal = new Decimal(0);
+      let liabilitySubtotal = new Decimal(0);
+
+      let tempCgstAmt = new Decimal(0);
+      let tempSgstAmt = new Decimal(0);
+
+      let tempTotalTax = new Decimal(0);
+
+      let tempAmount = new Decimal(0);
+
+      // Convert inputs to Decimal
+      const mrp = new Decimal(item["mrp"]);
+      const quantity = new Decimal(item["quantity"]);
+      const discountAmt = new Decimal(item["discountAmt"] || 0);
+      const discountPercentage = new Decimal(item["discountPercentage"] || 0);
+      const cgst = new Decimal(item["cgst"]);
+      const sgst = new Decimal(item["sgst"]);
+      // const insurancePercentage = new Decimal(item["insurancePercentage"] || 0);
+      // const isInsuranceInvoice = invoice["isInsuranceInvoice"];
+      // const insuranceInvoiceType = invoice["insuranceInvoiceType"];
+
+      // Calculate subtotal
+      tempSubTotal = roundDecimal(mrp.times(quantity));
+
+      // Calculate discounted subtotal
+      if (item["discountPercentage"] && !discountAmt.isZero()) {
+        discountedSubtotal = roundDecimal(tempSubTotal.minus(discountAmt));
+      } else {
+        discountedSubtotal = tempSubTotal;
+      }
+
+      // Calculate liability subtotal
+
+      liabilitySubtotal = discountedSubtotal;
+      liabilitySubtotalWithoutDisc = tempSubTotal;
+
+      // Calculate tax amounts
+      tempCgstAmt = roundDecimal(cgst.dividedBy(100).times(liabilitySubtotal));
+      tempSgstAmt = roundDecimal(sgst.dividedBy(100).times(liabilitySubtotal));
+
+      // Calculate total tax and total amount
+      tempTotalTax = roundDecimal(tempSgstAmt.plus(tempCgstAmt));
+      tempAmount = roundDecimal(liabilitySubtotal.plus(tempTotalTax));
+
+      let updatedItem = {
+        mrp: item.mrp,
+        gst: item.gst,
+        hsn: item.hsn,
+        cgst: item.cgst,
+        sgst: item.sgst,
+        quantity: item.quantity,
+        subTotal: Number(liabilitySubtotalWithoutDisc),
+        cgstAmt: Number(tempCgstAmt),
+        sgstAmt: Number(tempSgstAmt),
+        totalTax: Number(tempTotalTax),
+        amount: Number(tempAmount),
+        discountAmt: Number(discountAmt) || 0,
+        discountPercentage: Number(discountPercentage) || 0,
+      };
+
+      if (itemType == "Part") {
+        (updatedItem as CurrentPart).partId = (item as CurrentPart).partId;
+        (updatedItem as CurrentPart).partName = (item as CurrentPart).partName;
+        (updatedItem as CurrentPart).partNumber = (
+          item as CurrentPart
+        ).partNumber;
+      } else {
+        (updatedItem as CurrentLabour).labourId = (
+          item as CurrentLabour
+        ).labourId;
+        (updatedItem as CurrentLabour).labourName = (
+          item as CurrentLabour
+        ).labourName;
+        (updatedItem as CurrentLabour).labourCode = (
+          item as CurrentLabour
+        ).labourCode;
+      }
+      resolve(updatedItem);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 export const createInvoiceObj = async (
   jobCard: JobCard,
   invoice: Invoice
@@ -2301,6 +2400,155 @@ export const createInvoiceObjReport = async (
 
       resolve({
         invoice,
+        partsTotal: partsTotalNum,
+        labourTotal: labourTotalNum,
+        partsSubtotal: partsSubtotalNum,
+        labourSubtotal: labourSubtotalNum,
+        partsDiscount: partsDiscountNum,
+        labourDiscount: labourDiscountNum,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const createJobCardObjReport = async (
+  jobCard: JobCard
+  // invoice: Invoice
+): Promise<{
+  // invoice: Invoice;
+  partsTotal: Number;
+  labourTotal: Number;
+  partsSubtotal: Number;
+  labourSubtotal: Number;
+  partsDiscount: Number;
+  labourDiscount: Number;
+}> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let partsArr = stringToObj(jobCard.parts);
+      let labourArr = stringToObj(jobCard.labour);
+
+      // console.log("PARTS - ", jobCard.parts);
+      // console.log("LABOUR - ", jobCard.labour);
+
+      let partsTotal = new Decimal(0);
+      let labourTotal = new Decimal(0);
+
+      let partsSubtotal = new Decimal(0);
+      let labourSubtotal = new Decimal(0);
+
+      let partsDiscount = new Decimal(0);
+      let labourDiscount = new Decimal(0);
+
+      let totalTax = new Decimal(0);
+
+      let insuranceDetails;
+
+      // if (invoice.isInsuranceInvoice && invoice.invoiceType != "Quote") {
+      //   insuranceDetails = JSON.parse(jobCard.insuranceDetails);
+      //   //   console.log(true);
+      // }
+
+      const revisedPartsArr: any = await Promise.all(
+        partsArr.map(async (part: CurrentPart) => {
+          const updatedPart = await processJobCardItem("Part", part);
+
+          partsTotal = roundDecimal(
+            partsTotal.add(new Decimal((updatedPart as CurrentPart).amount))
+          );
+          partsSubtotal = roundDecimal(
+            partsSubtotal.add(
+              new Decimal((updatedPart as CurrentPart).subTotal)
+            )
+          );
+          partsDiscount = roundDecimal(
+            partsDiscount.add(
+              new Decimal((updatedPart as CurrentPart).discountAmt!)
+            )
+          );
+          totalTax = roundDecimal(
+            totalTax.add(new Decimal((updatedPart as CurrentPart).totalTax))
+          );
+
+          return updatedPart;
+        })
+      );
+
+      const revisedLabourArr: any = await Promise.all(
+        labourArr.map(async (labour: CurrentLabour) => {
+          const updatedLabour = await processJobCardItem("Labour", labour);
+
+          labourTotal = roundDecimal(
+            labourTotal.add(
+              new Decimal((updatedLabour as CurrentLabour).amount)
+            )
+          );
+          labourSubtotal = roundDecimal(
+            labourSubtotal.add(
+              new Decimal((updatedLabour as CurrentLabour).subTotal)
+            )
+          );
+          labourDiscount = roundDecimal(
+            labourDiscount.add(
+              new Decimal((updatedLabour as CurrentLabour).discountAmt!)
+            )
+          );
+          totalTax = roundDecimal(
+            totalTax.add(new Decimal((updatedLabour as CurrentLabour).totalTax))
+          );
+
+          return updatedLabour;
+        })
+      );
+
+      jobCard.parts = revisedPartsArr;
+      jobCard.labour = revisedLabourArr;
+
+      jobCard.subTotal = Number(
+        roundDecimal(partsSubtotal.plus(labourSubtotal))
+      );
+      jobCard.amount = Number(roundDecimal(partsTotal.plus(labourTotal)));
+
+      jobCard.totalDiscountAmt = Number(
+        roundDecimal(partsDiscount.plus(labourDiscount))
+      );
+      jobCard.totalTax = Number(totalTax);
+      jobCard.placeOfSupply = "Maharashtra";
+      jobCard.totalRoundedOffAmount = Math.round(
+        roundToTwoDecimals(
+          jobCard.subTotal - jobCard.totalDiscountAmt + jobCard.totalTax
+        )
+      );
+      jobCard.roundOffValue = roundToTwoDecimals(
+        jobCard.totalRoundedOffAmount - jobCard.amount
+      );
+
+      // if (
+      //   invoice.isInsuranceInvoice &&
+      //   invoice.invoiceType != "Quote" &&
+      //   invoice.insuranceInvoiceType == "Insurance"
+      // ) {
+      //   jobCard.gstin = insuranceDetails.policyProviderGST;
+      //   jobCard.customerName = insuranceDetails.policyProvider;
+      //   jobCard.customerAddress = insuranceDetails.policyProviderAddress;
+      //   jobCard.customerPhone = "";
+      // }
+
+      const partsTotalNum = Number(partsTotal);
+      const labourTotalNum = Number(labourTotal);
+      const partsSubtotalNum = Number(partsSubtotal);
+      const labourSubtotalNum = Number(labourSubtotal);
+      const partsDiscountNum = Number(partsDiscount);
+      const labourDiscountNum = Number(labourDiscount);
+
+      if (jobCard.jobCardNumber == 271) {
+        console.log("PARTS - ", partsTotalNum);
+        console.log("LABOUR - ", labourTotalNum);
+      }
+
+      resolve({
         partsTotal: partsTotalNum,
         labourTotal: labourTotalNum,
         partsSubtotal: partsSubtotalNum,

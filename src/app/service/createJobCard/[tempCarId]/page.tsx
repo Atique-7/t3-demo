@@ -3,7 +3,7 @@
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
 import {
   createJobCard,
-  getNextJobCardNumber,
+  getCarByCarNumber,
   getTempCarById,
 } from "@/lib/appwrite";
 import { ImageObj, TempCar } from "@/lib/definitions";
@@ -79,8 +79,25 @@ export default function CreateJobCard({
     const getCurrentTempCar = async () => {
       const tempCarObj = await getTempCarById(params.tempCarId);
       console.log("DETAILS - ", tempCarObj);
-      setCurrTempCar(tempCarObj);
+
+      if (tempCarObj) {
+        preFillCustomerDetailsIfCarHistoryExists(tempCarObj.carNumber);
+      }
     };
+
+    const preFillCustomerDetailsIfCarHistoryExists = async (
+      carNumber: string
+    ) => {
+      const carHistory = await getCarByCarNumber(carNumber);
+      if (carHistory.documents[0].customerName !== null) {
+        setCustomerName(carHistory.documents[0].customerName);
+        setCustomerPhone(carHistory.documents[0].customerPhone);
+        setCustomerAddress(carHistory.documents[0].customerAddress);
+      } else {
+        console.log("No History Found");
+      }
+    };
+
     getCurrentTempCar();
   }, []);
 

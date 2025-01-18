@@ -83,6 +83,8 @@ export default function CreateJobCard({
       if (tempCarObj) {
         preFillCustomerDetailsIfCarHistoryExists(tempCarObj.carNumber);
       }
+
+      setCurrTempCar(tempCarObj);
     };
 
     const preFillCustomerDetailsIfCarHistoryExists = async (

@@ -819,7 +819,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.partsTable}>
+            <View style={styles.partsTable} wrap={false}>
               <View style={styles.tableTitleRow}>
                 <Text style={styles.tableTitle}>Parts</Text>
               </View>
@@ -1020,7 +1020,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.partsTable}>
+            <View style={styles.partsTable} wrap={false}>
               <View style={styles.tableTitleRow}>
                 <Text style={styles.tableTitle}>Labour</Text>
               </View>
@@ -1222,7 +1222,7 @@ export const InvoicePDF = ({
               </View>
             </View>
 
-            <View style={styles.partsTable}>
+            <View style={styles.partsTable} wrap={false}>
               <View style={styles.tableTitleRow}>
                 <Text style={styles.tableTitle}>Taxes</Text>
               </View>

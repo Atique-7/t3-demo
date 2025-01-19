@@ -10,9 +10,14 @@ import DisplayCard from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
 import { CarFront, Wrench, ListChecks, Plus } from "lucide-react";
 import { tempCarsColumns } from "@/lib/column-definitions";
-import { getAllJobCards, getAllTempCars } from "@/lib/appwrite";
+import {
+  getAllJobCards,
+  getAllTempCars,
+  getJobCardsBetween,
+} from "@/lib/appwrite";
 import { TempCarsDataTable } from "@/components/data-tables/temp-cars-data-table";
-import { TempCar } from "@/lib/definitions";
+import { JobCard, TempCar } from "@/lib/definitions";
+import { createDateExpandedObj } from "@/lib/helper";
 
 type Props = {};
 

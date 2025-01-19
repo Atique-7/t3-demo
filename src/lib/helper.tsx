@@ -395,8 +395,9 @@ export const policyProvidersDict = [
   },
   {
     insurer: "The Oriental Insurance Co. Ltd.",
-    address: "",
-    GST: "NaN",
+    address:
+      "16/20 WEA, FIRST FLOOR, NEAR SHASTRI PARK, PADAM SINGH ROAD, KAROL BAGH NEW DELHI NEW DELHI DELHI 110005",
+    GST: "07AAACT0627R1Z1",
   },
   {
     insurer: "Raheja QBE General Insurance Co. Ltd.",

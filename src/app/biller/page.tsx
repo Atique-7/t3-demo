@@ -9,7 +9,10 @@ import DisplayCard from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
 import { CarFront, Wrench, ListChecks } from "lucide-react";
 import { jobCardColumns } from "@/lib/column-definitions";
-import { getAllJobCards } from "@/lib/appwrite";
+import { getAllJobCards, getJobCardsBetween } from "@/lib/appwrite";
+import { DateRange } from "react-day-picker";
+import { createDateExpandedObj } from "@/lib/helper";
+import { JobCard } from "@/lib/definitions";
 
 type Props = {};
 
@@ -30,28 +33,46 @@ export default function Biller({}: Props) {
       console.log(parsedToken);
       setName(parsedToken.name);
     };
+    const getJobCardsForTimeline = async () => {
+      const todaysDate = await createDateExpandedObj(new Date());
+
+      // setLoading((prev) => true);
+      const from = new Date(
+        Number(todaysDate.year),
+        Number(todaysDate.month) - 1,
+        1
+      );
+      const to = new Date();
+
+      const jobcards = await getJobCardsBetween(from!, to!);
+
+      console.log("JOB CARDS FOR TIMELINE - ", jobcards);
+
+      const onGoingJobCards = jobcards.documents.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus < 6
+      );
+
+      const completedJobCards = jobcards.documents.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+      );
+
+      setTotalNumberOfCars(jobcards.total);
+      setNumberOfCarsInProgress(onGoingJobCards.length);
+      setCompletedJobCars(completedJobCards.length);
+
+      // return filteredJobCards;
+    };
 
     const getJobCards = async () => {
       const allJobCards = await getAllJobCards();
+
       console.log("THESE ARE THE CURRENT JOB CARDS - ", allJobCards);
-      setTotalNumberOfCars(allJobCards.total);
       setCurrentJobCards(allJobCards.documents);
-
-      const currentJobCardsArray = allJobCards.documents.filter(
-        (jobCard: any) =>
-          (jobCard.jobCardStatus == 0 || jobCard.jobCardStatus == 1) &&
-          jobCard.sendToPartsManager == true
-      );
-      setNumberOfCarsInProgress(currentJobCardsArray.length);
-
-      const completedJobCarsArray = allJobCards.documents.filter(
-        (jobCard: any) => jobCard.jobCardStatus == null
-      );
-      setCompletedJobCars(completedJobCarsArray.length);
     };
 
     getUser();
     getJobCards();
+    getJobCardsForTimeline();
   }, []);
 
   return (

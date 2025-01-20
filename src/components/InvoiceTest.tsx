@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     display: "flex",
     padding: "20px",
     marginTop: "20px",
+    fontFamily: "Open Sans",
   },
   headingRow: {
     width: "100%",
@@ -232,6 +233,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     // marginBottom: 20,
+  },
+
+  customerAcknowledgement: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 40,
+  },
+
+  customerAcknowledgementText: {
+    fontSize: 8,
+  },
+  customerAcknowledgementHeading: {
+    fontSize: 10,
+    fontWeight: "black",
+    marginBottom: 5,
+    textDecoration: "underline",
   },
 });
 
@@ -535,11 +553,12 @@ export const InvoicePDF = ({
               </View>
               <View style={styles.addressBlock}>
                 <Text style={styles.workShopName}>
-                  CHAMUNDA MOTORS PVT. LTD.
+                  Chamunda Motors Pvt. Ltd.
                 </Text>
                 <Text style={styles.workShopAddress}>
-                  21/1-1, RAM BAUGH, OFF S V ROAD, <br />
-                  BORIVALI WEST, MUMBAI SUBURBAN
+                  21/1-1, Ram Baugh, Off SV Road,
+                  <br />
+                  Borivali (West), Mumbai Suburban
                 </Text>
                 <Text style={styles.workShopGST}>GST NO: 27AAACC1903H1Z4</Text>
               </View>
@@ -819,11 +838,11 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.partsTable} wrap={false}>
-              <View style={styles.tableTitleRow}>
+            <View style={styles.partsTable}>
+              <View style={styles.tableTitleRow} wrap={false}>
                 <Text style={styles.tableTitle}>Parts</Text>
               </View>
-              <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeaderRow} wrap={false}>
                 <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Sr.
@@ -871,7 +890,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
               {parts.map((part: CurrentPart, index: number) => (
-                <View key={index} style={styles.tableRow}>
+                <View key={index} style={styles.tableRow} wrap={false}>
                   <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
@@ -986,7 +1005,10 @@ export const InvoicePDF = ({
                   </View>
                 </View>
               ))}
-              <View style={[styles.tableRow, styles.tableFooterRow]}>
+              <View
+                style={[styles.tableRow, styles.tableFooterRow]}
+                wrap={false}
+              >
                 <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
@@ -1020,11 +1042,11 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.partsTable} wrap={false}>
+            <View style={styles.partsTable}>
               <View style={styles.tableTitleRow}>
                 <Text style={styles.tableTitle}>Labour</Text>
               </View>
-              <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeaderRow} wrap={false}>
                 <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Sr
@@ -1072,7 +1094,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
               {labour.map((work: CurrentLabour, index: number) => (
-                <View key={index} style={styles.tableRow}>
+                <View key={index} style={styles.tableRow} wrap={false}>
                   <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
@@ -1187,7 +1209,10 @@ export const InvoicePDF = ({
                   </View>
                 </View>
               ))}
-              <View style={[styles.tableRow, styles.tableFooterRow]}>
+              <View
+                style={[styles.tableRow, styles.tableFooterRow]}
+                wrap={false}
+              >
                 <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
@@ -1222,11 +1247,11 @@ export const InvoicePDF = ({
               </View>
             </View>
 
-            <View style={styles.partsTable} wrap={false}>
-              <View style={styles.tableTitleRow}>
+            <View style={styles.partsTable}>
+              <View style={styles.tableTitleRow} wrap={false}>
                 <Text style={styles.tableTitle}>Taxes</Text>
               </View>
-              <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeaderRow} wrap={false}>
                 <View style={styles.tableHeader}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Tax Type
@@ -1249,7 +1274,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
               {taxObj.map((obj: any, index) => (
-                <View key={index} style={styles.tableRow}>
+                <View key={index} style={styles.tableRow} wrap={false}>
                   <View style={styles.tableCell}>
                     <Text style={styles.tableData}>
                       {obj.taxType == "GOODS" ? (
@@ -1275,7 +1300,10 @@ export const InvoicePDF = ({
                   </View>
                 </View>
               ))}
-              <View style={[styles.tableRow, styles.tableFooterRow]}>
+              <View
+                style={[styles.tableRow, styles.tableFooterRow]}
+                wrap={false}
+              >
                 <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
@@ -1309,7 +1337,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.footerRow}>
+            <View style={styles.footerRow} wrap={false}>
               <View style={styles.observationTable}>
                 <View style={styles.tableTitleRow}>
                   <Text style={styles.tableTitle}>Observation and Remarks</Text>
@@ -1385,10 +1413,42 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.addressRow}>
+            {invoiceType == "Tax Invoice" ||
+              (invoiceType == "Pro-Forma Invoice" && (
+                <>
+                  <View style={styles.customerAcknowledgement} wrap={false}>
+                    <Text style={styles.customerAcknowledgementHeading}>
+                      Customer Acknowledgement
+                    </Text>
+                    <Text style={styles.customerAcknowledgementText}>
+                      I/We acknowlcdge that the work being done on my car, as
+                      well as the associated costs, were explained to me. I have
+                      recieved my vehicle after all repairs have been made to my
+                      satisfaction , and I hearby confirm that it is in good
+                      condition
+                    </Text>
+                    <Text style={styles.customerAcknowledgementText}>
+                      I/We further authorise Chamunda Motors and its employees
+                      to contact me through any channel (Call, SMS, etc.) for
+                      service reminders, feedback, product promotion, queries
+                      and any other legal purposes
+                    </Text>
+                    <Text
+                      style={[
+                        styles.customerAcknowledgementText,
+                        { marginTop: 30, alignSelf: "flex-start" },
+                      ]}
+                    >
+                      (Customer Signature)
+                    </Text>
+                  </View>
+                </>
+              ))}
+
+            <View style={styles.addressRow} wrap={false}>
               <View style={[styles.signBlock, { marginTop: 20 }]}>
                 <Text style={[styles.signName, { marginTop: 60 }]}>
-                  For CHAMUNDA MOTORS PVT. LTD.
+                  For Chamunda Motors Pvt. Ltd.
                 </Text>
                 <Text
                   style={[
@@ -1413,21 +1473,20 @@ export const InvoicePDF = ({
                         { marginTop: 60, alignSelf: "flex-end" },
                       ]}
                     >
-                      CHAMUNDA MOTORS PVT. LTD.
+                      Chamunda Motors Pvt. Ltd.
                     </Text>
                     <View>
                       <Text style={styles.signAddress}>
-                        {" "}
-                        PUNJAB NATIONAL BANK
+                        Punjab National Bank
                       </Text>
                       <Text style={styles.signAddress}>
-                        S. V. ROAD BORIVALI - WEST
+                        S.V. Road, Borivali West
                       </Text>
                       <Text style={styles.signAddress}>
                         Ac No. : 02874010000070
                       </Text>
                       <Text style={styles.signAddress}>
-                        IFSC CODE : PUNB0028710
+                        IFSC Code : PUNB0028710
                       </Text>
                     </View>
                   </View>

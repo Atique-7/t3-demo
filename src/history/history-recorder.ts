@@ -34,12 +34,12 @@ export class HistoryRecorder {
     ) {
         const timestamp = new Date().toISOString();
 
-        console.log("PREV DATA", prevData)
-        console.log("new DATA", newData)
-
         // Check if changes are provided; if not, calculate them
         const trackedChanges = changes || this.trackChanges(prevData, newData);
-        console.log("CHANGES", trackedChanges)
+
+        if (!trackedChanges.length) {
+            return;
+        }
 
         const historyEntry = {
             objectId: objectId,
@@ -52,7 +52,6 @@ export class HistoryRecorder {
             changes: trackedChanges,
         };
 
-        console.log(historyEntry);
 
         const stringifiedHistoryEntry = Object.entries(historyEntry).map(([key, value]) => {
             // Convert complex objects or arrays to a JSON string
@@ -62,8 +61,6 @@ export class HistoryRecorder {
             // For other types, convert to string directly
             return `${key}: ${String(value)}`;
         });
-        
-        console.log(stringifiedHistoryEntry);
 
         await databases.createDocument(config.databaseId, this.historyCollectionId, ID.unique(), {
             history: stringifiedHistoryEntry,

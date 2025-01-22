@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   page: {
     display: "flex",
     padding: "20px",
-    marginTop: "20px",
     fontFamily: "Open Sans",
   },
   headingRow: {
@@ -128,7 +127,6 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // flex: "1 1 0%",
   },
   tableData: {
     fontSize: 8,
@@ -144,6 +142,7 @@ const styles = StyleSheet.create({
   partsTable: {
     width: "100%",
     height: "auto",
+    minHeight: "6%",
     borderWidth: 1.5,
     borderColor: "#000000",
     marginBottom: 20,
@@ -163,9 +162,11 @@ const styles = StyleSheet.create({
   },
   tableFooterRow: {
     backgroundColor: "#D1D5DB",
+    height: "auto",
   },
   tableEmptyCell: {
     width: "50%",
+    minHeight: "auto",
   },
   footerRow: {
     display: "flex",
@@ -295,14 +296,6 @@ export const InvoicePDF = ({
   }
 
   const taxObj = createTaxObj(parts, labour, isInsurance, liabilityType);
-
-  console.log("INVOICE TYPE - ", invoiceType);
-
-  console.log("THESE ARE THE TAXES - ", taxObj);
-
-  if (jobCard.gstin) {
-    console.log("HAI ISME GST NUMBER CUSTOMER KA");
-  }
 
   parts.map((part: CurrentPart) => {
     if (isInsurance && invoiceType != "Quote") {
@@ -838,11 +831,11 @@ export const InvoicePDF = ({
                 </View>
               </View>
             </View>
-            <View style={styles.partsTable} wrap={false}>
-              <View style={styles.tableTitleRow}>
+            <View style={styles.partsTable} wrap={true}>
+              <View style={styles.tableTitleRow} wrap={false}>
                 <Text style={styles.tableTitle}>Parts</Text>
               </View>
-              <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeaderRow} wrap={false}>
                 <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Sr.
@@ -890,7 +883,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
               {parts.map((part: CurrentPart, index: number) => (
-                <View key={index} style={styles.tableRow}>
+                <View key={index} style={styles.tableRow} wrap={false}>
                   <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
@@ -1005,8 +998,16 @@ export const InvoicePDF = ({
                   </View>
                 </View>
               ))}
-              <View style={[styles.tableRow, styles.tableFooterRow]}>
-                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
+              <View
+                style={[styles.tableRow, styles.tableFooterRow]}
+                wrap={false}
+              >
+                <View
+                  style={[
+                    styles.tableEmptyCell,
+                    { width: "10%", textOverflow: "ellipsis" },
+                  ]}
+                >
                   <Text style={styles.tableData}></Text>
                 </View>
                 <View style={[styles.tableEmptyCell, { width: "10%" }]}>
@@ -1027,23 +1028,33 @@ export const InvoicePDF = ({
                 <View style={[styles.tableEmptyCell, { width: "20%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
-                <View style={[styles.tableEmptyCell, { width: "10%" }]}>
+                <View
+                  style={[
+                    styles.tableEmptyCell,
+                    { width: "10%", textOverflow: "ellipsis" },
+                  ]}
+                >
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     SubTotal
                   </Text>
                 </View>
-                <View style={[styles.tableCell, { width: "10%" }]}>
+                <View
+                  style={[
+                    styles.tableCell,
+                    { width: "10%", textOverflow: "ellipsis" },
+                  ]}
+                >
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     {partsSubtotal}
                   </Text>
                 </View>
               </View>
             </View>
-            <View style={styles.partsTable} wrap={false}>
-              <View style={styles.tableTitleRow}>
+            <View style={styles.partsTable} wrap={true}>
+              <View style={styles.tableTitleRow} wrap={false}>
                 <Text style={styles.tableTitle}>Labour</Text>
               </View>
-              <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeaderRow} wrap={false}>
                 <View style={[styles.tableHeader, { width: "5%" }]}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Sr
@@ -1091,7 +1102,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
               {labour.map((work: CurrentLabour, index: number) => (
-                <View key={index} style={styles.tableRow}>
+                <View key={index} style={styles.tableRow} wrap={false}>
                   <View style={[styles.tableCell, { width: "5%" }]}>
                     <Text style={styles.tableData}>{index + 1}.</Text>
                   </View>
@@ -1206,7 +1217,10 @@ export const InvoicePDF = ({
                   </View>
                 </View>
               ))}
-              <View style={[styles.tableRow, styles.tableFooterRow]}>
+              <View
+                style={[styles.tableRow, styles.tableFooterRow]}
+                wrap={false}
+              >
                 <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>
@@ -1241,11 +1255,11 @@ export const InvoicePDF = ({
               </View>
             </View>
 
-            <View style={styles.partsTable} wrap={false}>
-              <View style={styles.tableTitleRow}>
+            <View style={styles.partsTable} wrap={true}>
+              <View style={styles.tableTitleRow} wrap={false}>
                 <Text style={styles.tableTitle}>Taxes</Text>
               </View>
-              <View style={styles.tableHeaderRow}>
+              <View style={styles.tableHeaderRow} wrap={false}>
                 <View style={styles.tableHeader}>
                   <Text style={[styles.tableDataEmphasized, styles.tableData]}>
                     Tax Type
@@ -1268,7 +1282,7 @@ export const InvoicePDF = ({
                 </View>
               </View>
               {taxObj.map((obj: any, index) => (
-                <View key={index} style={styles.tableRow}>
+                <View key={index} style={styles.tableRow} wrap={false}>
                   <View style={styles.tableCell}>
                     <Text style={styles.tableData}>
                       {obj.taxType == "GOODS" ? (
@@ -1294,7 +1308,10 @@ export const InvoicePDF = ({
                   </View>
                 </View>
               ))}
-              <View style={[styles.tableRow, styles.tableFooterRow]}>
+              <View
+                style={[styles.tableRow, styles.tableFooterRow]}
+                wrap={false}
+              >
                 <View style={[styles.tableEmptyCell, { width: "10%" }]}>
                   <Text style={styles.tableData}></Text>
                 </View>

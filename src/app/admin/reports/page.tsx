@@ -140,7 +140,7 @@ export default function DownloadReports({}: Props) {
           customerName: result.customerName,
           mobileNo: result.customerPhone,
           vehicleRegNo: result.carNumber,
-          model: `${selectedCar.carMake} ${selectedCar.carModel}`,
+          model: "",
           roNo: result.jobCardNumber,
           roDate: invoice.invoiceDate,
           serviceAdvisor: result.serviceAdvisorID,
@@ -169,6 +169,10 @@ export default function DownloadReports({}: Props) {
           invoice.insuranceInvoiceType === "Insurance"
         ) {
           returnObj.insCompName = totals.invoice.jobCardDetails!.customerName;
+        }
+
+        if (selectedCar) {
+          returnObj.model = `${selectedCar.carMake} ${selectedCar.carModel}`;
         }
 
         return returnObj;

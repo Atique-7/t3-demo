@@ -7,9 +7,13 @@ import DisplayCard from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
 import { CarFront, Wrench, ListChecks } from "lucide-react";
 import { tempCarsColumns } from "@/lib/column-definitions";
-import { getAllJobCards, getAllTempCars } from "@/lib/appwrite";
+import {
+  getAllJobCards,
+  getAllTempCars,
+  getJobCardsBetween,
+} from "@/lib/appwrite";
 import { TempCarsDataTable } from "@/components/data-tables/temp-cars-data-table";
-import { TempCar } from "@/lib/definitions";
+import { JobCard, TempCar } from "@/lib/definitions";
 
 import {
   Carousel,
@@ -18,7 +22,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { purposeOfVisits } from "@/lib/helper";
+import { createDateExpandedObj, purposeOfVisits } from "@/lib/helper";
 
 type Props = {};
 
@@ -67,6 +71,36 @@ const manageJobCardsAdmin = ({}: Props) => {
       console.log(email);
     };
 
+    const getJobCardsForTimeline = async () => {
+      const todaysDate = await createDateExpandedObj(new Date());
+
+      // setLoading((prev) => true);
+      const from = new Date(
+        Number(todaysDate.year),
+        Number(todaysDate.month) - 1,
+        1
+      );
+      const to = new Date();
+
+      const jobcards = await getJobCardsBetween(from!, to!);
+
+      console.log("JOB CARDS FOR TIMELINE - ", jobcards);
+
+      const onGoingJobCards = jobcards.documents.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus < 6
+      );
+
+      const completedJobCards = jobcards.documents.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+      );
+
+      setTotalNumberOfCars(jobcards.total);
+      setNumberOfCarsInProgress(onGoingJobCards.length);
+      setCompletedJobCars(completedJobCards.length);
+
+      // return filteredJobCards;
+    };
+
     const getTempCars = async () => {
       const allTempCars = await getAllTempCars([0, 1, 2]);
       const token = getCookie("user");
@@ -82,26 +116,12 @@ const manageJobCardsAdmin = ({}: Props) => {
       const allJobCards = await getAllJobCards();
       console.log("THESE ARE THE CURRENT JOB CARDS - ", allJobCards);
       //currentCounter = allJobCards.documents[0].jobCardNumber + 1;
-
-      //Set jobcard counter
-      setTotalNumberOfCars(allJobCards.total);
       setCurrentJobCards(allJobCards.documents);
-
-      const currentJobCardsArray = allJobCards.documents.filter(
-        (jobCard: any) =>
-          (jobCard.jobCardStatus == 0 || jobCard.jobCardStatus == 1) &&
-          jobCard.sendToPartsManager == true
-      );
-      setNumberOfCarsInProgress(currentJobCardsArray.length);
-
-      const completedJobCarsArray = allJobCards.documents.filter(
-        (jobCard: any) => jobCard.jobCardStatus == null
-      );
-      setCompletedJobCars(completedJobCarsArray.length);
     };
 
     getUser();
     getJobCards();
+    getJobCardsForTimeline();
     getTempCars();
   }, []);
 

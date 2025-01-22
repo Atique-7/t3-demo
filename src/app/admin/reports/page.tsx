@@ -130,6 +130,8 @@ export default function DownloadReports({}: Props) {
 
         let carObj = await getCarByCarNumber(result.carNumber);
 
+        const selectedCar = carObj.documents[0];
+
         const totals = await createInvoiceObjReport(result, invoice);
 
         const returnObj = {
@@ -138,7 +140,7 @@ export default function DownloadReports({}: Props) {
           customerName: result.customerName,
           mobileNo: result.customerPhone,
           vehicleRegNo: result.carNumber,
-          model: carObj.carModel,
+          model: `${selectedCar.carMake} ${selectedCar.carModel}`,
           roNo: result.jobCardNumber,
           roDate: invoice.invoiceDate,
           serviceAdvisor: result.serviceAdvisorID,
@@ -147,6 +149,8 @@ export default function DownloadReports({}: Props) {
           ),
           labourAmt: Number(totals.labourTotal),
           partAmt: Number(totals.partsTotal),
+          partsSubTotal: Number(totals.partsSubtotal),
+          labourSubTotal: Number(totals.labourSubtotal),
           workType: result.purposeOfVisit,
 
           roundOff: totals.invoice.jobCardDetails!.roundOffValue,
@@ -155,6 +159,8 @@ export default function DownloadReports({}: Props) {
           ),
           partDisc: Number(totals.partsDiscount),
           labourDisc: Number(totals.labourDiscount),
+          partsTax: Number(totals.partsTax),
+          labourTax: Number(totals.labourTax),
           insCompName: "",
         };
 

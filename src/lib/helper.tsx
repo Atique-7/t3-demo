@@ -2270,6 +2270,8 @@ export const createInvoiceObjReport = async (
   labourSubtotal: Number;
   partsDiscount: Number;
   labourDiscount: Number;
+  partsTax: Number;
+  labourTax: Number;
 }> => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -2285,7 +2287,8 @@ export const createInvoiceObjReport = async (
       let partsDiscount = new Decimal(0);
       let labourDiscount = new Decimal(0);
 
-      let totalTax = new Decimal(0);
+      let partsTax = new Decimal(0);
+      let labourTax = new Decimal(0);
 
       let insuranceDetails;
 
@@ -2311,8 +2314,8 @@ export const createInvoiceObjReport = async (
               new Decimal((updatedPart as CurrentPart).discountAmt!)
             )
           );
-          totalTax = roundDecimal(
-            totalTax.add(new Decimal((updatedPart as CurrentPart).totalTax))
+          partsTax = roundDecimal(
+            partsTax.add(new Decimal((updatedPart as CurrentPart).totalTax))
           );
 
           return updatedPart;
@@ -2338,8 +2341,10 @@ export const createInvoiceObjReport = async (
               new Decimal((updatedLabour as CurrentLabour).discountAmt!)
             )
           );
-          totalTax = roundDecimal(
-            totalTax.add(new Decimal((updatedLabour as CurrentLabour).totalTax))
+          labourTax = roundDecimal(
+            labourTax.add(
+              new Decimal((updatedLabour as CurrentLabour).totalTax)
+            )
           );
 
           return updatedLabour;
@@ -2357,7 +2362,7 @@ export const createInvoiceObjReport = async (
       jobCard.totalDiscountAmt = Number(
         roundDecimal(partsDiscount.plus(labourDiscount))
       );
-      jobCard.totalTax = Number(totalTax);
+      jobCard.totalTax = Number(partsTax.plus(labourTax));
       jobCard.placeOfSupply = "Maharashtra";
       jobCard.totalRoundedOffAmount = Math.round(
         roundToTwoDecimals(
@@ -2399,6 +2404,8 @@ export const createInvoiceObjReport = async (
       const labourSubtotalNum = Number(labourSubtotal);
       const partsDiscountNum = Number(partsDiscount);
       const labourDiscountNum = Number(labourDiscount);
+      const partsTaxNum = Number(partsTax);
+      const labourTaxNum = Number(labourTax);
 
       resolve({
         invoice,
@@ -2408,6 +2415,8 @@ export const createInvoiceObjReport = async (
         labourSubtotal: labourSubtotalNum,
         partsDiscount: partsDiscountNum,
         labourDiscount: labourDiscountNum,
+        partsTax: partsTaxNum,
+        labourTax: labourTaxNum,
       });
     } catch (error) {
       reject(error);

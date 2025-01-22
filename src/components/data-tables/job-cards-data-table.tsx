@@ -14,6 +14,9 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
 import {
   Select,
   SelectContent,
@@ -33,10 +36,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { jobCardStatusKey } from "@/lib/helper";
+import { createDateExpandedObj, jobCardStatusKey } from "@/lib/helper";
 import { usePathname } from "next/navigation";
 import { getCookie } from "cookies-next";
 import Link from "next/link";
+import { BanIcon, DownloadIcon } from "lucide-react";
+import { getJobCardsBetween } from "@/lib/appwrite";
+import { JobCard } from "@/lib/definitions";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -51,6 +57,9 @@ export function JobCardsDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+
+  const [currentStatusFilter, setCurrentStatusFilter] =
+    React.useState<number>(999);
 
   const table = useReactTable({
     data,
@@ -86,6 +95,47 @@ export function JobCardsDataTable<TData, TValue>({
         <div>{statusObj?.description}</div>
       </div>
     );
+  };
+
+  const getJobCardsCurrentlyOpenWithStatus = async (
+    currentStatusFilter: number
+  ) => {
+    const todaysDate = await createDateExpandedObj(new Date());
+
+    // setLoading((prev) => true);
+    const from = new Date(
+      Number(todaysDate.year),
+      Number(todaysDate.month) - 1,
+      1
+    );
+    const to = new Date();
+
+    const jobcards = await getJobCardsBetween(from!, to!);
+
+    // console.log("JOB CARDS FOR TIMELINE - ", jobcards);
+
+    const onGoingJobCards = jobcards.documents.filter(
+      (jobCard: JobCard) => jobCard.jobCardStatus < 6
+    );
+
+    if (currentStatusFilter != 999) {
+      return onGoingJobCards.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus == currentStatusFilter
+      );
+    } else {
+      return onGoingJobCards;
+    }
+  };
+
+  const downloadCurrentJobCardsReport = async () => {
+    const filteredJobCards = await getJobCardsCurrentlyOpenWithStatus(
+      currentStatusFilter
+    );
+    console.log("Download Report", filteredJobCards);
+    const csvContent: any = convertArrayToCSV(filteredJobCards);
+    downloadCSV(csvContent, `current_job_cards_report_.csv`);
+
+    // toast("Report Generated \u2705");
   };
 
   const displayActionButton = (row: any) => {
@@ -166,9 +216,10 @@ export function JobCardsDataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <div>
+        <div className="flex items-center space-x-4">
           <Select
             onValueChange={(value) => {
+              setCurrentStatusFilter(Number(value));
               if (value == "999") {
                 table.resetColumnFilters();
               } else {
@@ -187,6 +238,14 @@ export function JobCardsDataTable<TData, TValue>({
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant={"default"}
+            size={"icon"}
+            onClick={downloadCurrentJobCardsReport}
+            className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white `}
+          >
+            <DownloadIcon />
+          </Button>
         </div>
       </div>
       <div className="rounded-md border">
@@ -274,3 +333,29 @@ export function JobCardsDataTable<TData, TValue>({
     </div>
   );
 }
+
+const convertArrayToCSV = (array: any[] | any) => {
+  const header = Object.keys(array[0]).join(",") + "\n";
+  const rows = array
+    .map((item: any) =>
+      Object.values(item)
+        .map((value) => `"${String(value).replace(/"/g, '""')}"`)
+        .join(",")
+    )
+    .join("\n");
+  return header + rows;
+};
+
+const downloadCSV = (csvContent: string, fileName: string) => {
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};

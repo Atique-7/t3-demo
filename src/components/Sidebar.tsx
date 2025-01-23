@@ -131,6 +131,14 @@ export default function Sidebar({ home }: any) {
                     <ClipboardList />
                     <div>Manage Jobcards</div>
                   </Button>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/add-car`)}
+                    variant={"link"}
+                  >
+                    <PlusIcon />
+                    <div>Add Car Model</div>
+                  </Button>
                 </DrawerClose>
               )}
               {home == "/admin" && (

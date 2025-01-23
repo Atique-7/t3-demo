@@ -17,7 +17,7 @@ import {
 } from "./helper";
 import { JobCard } from "./definitions";
 import { toast } from "sonner";
-import { HistoryRecorder, ObjectType } from "@/history/history-recorder";
+import { ObjectType } from "@/history/history-recorder";
 import { BaseRepository } from "./BaseRepo";
 
 export const config = {
@@ -33,6 +33,7 @@ export const config = {
   invoicesCollectionId: "6710ba53003b4b25a23d",
   historyCollectionId: "670cbc13003d80c32176",
   invoiceStorageBucketId: "677e05b70025ceed10e4",
+  carModelsCollectionId: "678e143f003c388e2603",
 };
 
 export let client: any;
@@ -1577,4 +1578,60 @@ export const inputLabourAppwrite = async (labourArr: any[]) => {
       // return null;
     }
   });
+};
+
+export const addCarModel = async (carMakeId: string, carModel: string) => {
+  try {
+    // Fetch the current document
+    const BaseRepo: BaseRepository = new BaseRepository(
+      config.carModelsCollectionId,
+      ObjectType.CAR_MODEL
+    );
+    const document = await BaseRepo.getDocumentById(carMakeId);
+    // Append the string to the array
+    let updatedArray = document.models || []; // Replace `arrayField` with your field name
+
+    updatedArray.push(carModel);
+
+    //updatedArray = convertToStrings(updatedArray);
+
+    // Update the document
+    const response = await BaseRepo.updateDocumentById(carMakeId, {
+      models: updatedArray,
+    });
+    console.log("Document updated successfully:", response);
+  } catch (error) {
+    console.error("Error updating document:", error);
+  }
+};
+
+export const fetchCarMakeAndModels = async () => {
+  const BaseRepo: BaseRepository = new BaseRepository(
+    config.carModelsCollectionId,
+    ObjectType.CAR_MODEL
+  );
+  const document = await BaseRepo.listDocuments([Query.limit(999999)]);
+  console.log("Makes: ", document);
+
+  return document;
+};
+
+export const checkIfAnotherJobCardCanBeOpened = (tempCar: any) => {
+  const valid = tempCar.purposeOfVisitAndAdvisors.length < 2;
+
+  if (!valid) return [false, ""];
+
+  const purposeOfVisitAndAdvisors = convertStringsToArray(
+    tempCar.purposeOfVisitAndAdvisors
+  );
+
+  const canBeOpenedIn = purposeOfVisitAndAdvisors.map((item: any) => {
+    if (item.purposeOfVisitCode === 1) {
+      return "service";
+    } else {
+      return "bodyshop";
+    }
+  });
+
+  return [valid, canBeOpenedIn];
 };

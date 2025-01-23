@@ -17,17 +17,15 @@ import {
   searchTempCar,
   client,
   listAllUsers,
+  fetchCarMakeAndModels,
 } from "@/lib/appwrite";
 import Image from "next/image";
 import loader from "../../public/assets/t3-loader.gif";
 import { toast } from "sonner";
 
 import {
-  carMakeModels,
-  carMakes,
   convertStringsToArray,
   convertToStrings,
-  getAllCarMakes,
   purposeOfVisits,
   serviceAdvisors,
 } from "@/lib/helper";
@@ -45,8 +43,46 @@ export default function AddCarCards({}: Props) {
   const [currentState, setCurrentState] = useState(0);
 
   const [carNumber, setCarNumber] = useState("");
-  const [carMake, setCarMake] = useState("");
-  const [carModel, setCarModel] = useState("");
+
+  const [carMake, setCarMake] = useState<string>("");
+  const [carModel, setCarModel] = useState<string>("");
+  const [handleModelDisable, setHandleModelDisable] = useState(true);
+  const [selectedCarMakeModels, setSelectedCarMakeModels] = useState<string[]>(
+    []
+  );
+  const [carMakeModels, setCarMakeModels] = useState<
+    { company: string; models: string[] }[]
+  >([]);
+
+  useEffect(() => {
+    // Fetch car makes and models from the backend
+    const fetchData = async () => {
+      try {
+        const data = await fetchCarMakeAndModels();
+        const formattedData = data.documents.map((doc: any) => ({
+          company: doc.make,
+          models: doc.models || [],
+        }));
+        setCarMakeModels(formattedData);
+      } catch (error) {
+        console.error("Failed to fetch car makes and models:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCarMakeChange = (value: string) => {
+    setHandleModelDisable(true); // Disable model selection temporarily
+    setCarMake(value);
+
+    const foundObj = carMakeModels.find((make) => make.company === value);
+
+    if (foundObj) {
+      setSelectedCarMakeModels(foundObj.models);
+      setHandleModelDisable(false); // Enable model selection
+    }
+  };
 
   // Storing purposeOfVisitCode (number) and advisorEmail (string)
   const [purposeOfVisitSelections, setPurposeOfVisitSelections] = useState<
@@ -85,11 +121,6 @@ export default function AddCarCards({}: Props) {
 
   const [isCorrectCarNumber, setIsCorrectCarNumber] = useState(false);
   const [isNewCar, setIsNewCar] = useState<string | null>(null);
-
-  const [handleModelDisable, setHandleModelDisable] = useState(true);
-  const [selectedCarMakeModels, setSelectedCarMakeModels] = useState<string[]>(
-    []
-  );
 
   // Fetch users and set up advisors based on advisorRoleId
   useEffect(() => {
@@ -131,71 +162,6 @@ export default function AddCarCards({}: Props) {
     setCarNumber(inputText);
     setIsCorrectCarNumber((prev) => indianCarNumberRegex.test(inputText));
   }
-
-  // Handling checkbox change for Purpose of Visit
-  const handleCheckboxChange = (code: number) => {
-    console.log(advisorsByPurpose);
-    setDropdownVisible((prev) => ({
-      ...prev,
-      [code]: !prev[code], // Toggle the dropdown for the selected purposeOfVisitCode
-    }));
-
-    setSelectedPurposeCode(code);
-
-    // Update purposeOfVisitSelections state
-    setPurposeOfVisitSelections((prev) => {
-      const alreadyExists = prev.find(
-        (item) => item.purposeOfVisitCode === code
-      );
-      if (alreadyExists) {
-        // Remove the purposeOfVisit if it's unchecked
-        return prev.filter((item) => item.purposeOfVisitCode !== code);
-      } else {
-        // Add the purposeOfVisitCode and initialize its service advisor
-        const povDescription = purposeOfVisits.find(
-          (item) => item.code === code
-        )?.description;
-        return [
-          ...prev,
-          {
-            purposeOfVisitCode: code,
-            description: povDescription,
-            advisorEmail: "",
-            open: false,
-          },
-        ];
-      }
-    });
-
-    // Update the currentServiceAdvisors state
-    setCurrentServiceAdvisors((prev) => {
-      const selectedAdvisors = serviceAdvisors.find(
-        (item) => item.purposeOfVisitCode === code
-      );
-
-      const advisorExists = prev.some(
-        (item) => item.purposeOfVisitCode === code
-      );
-
-      if (advisorExists) {
-        // Replace existing advisors for the given purposeOfVisitCode
-        return prev.map((item) =>
-          item.purposeOfVisitCode === code
-            ? { ...item, advisors: selectedAdvisors?.advisors || [] }
-            : item
-        );
-      } else {
-        // Add new advisors for the given purposeOfVisitCode
-        return [
-          ...prev,
-          {
-            purposeOfVisitCode: code,
-            advisors: selectedAdvisors?.advisors || [],
-          },
-        ];
-      }
-    });
-  };
 
   const handleCheckboxToggle = (code: number, checked: boolean) => {
     // Toggle dropdown visibility for the checkbox
@@ -252,30 +218,9 @@ export default function AddCarCards({}: Props) {
     setSelectedPurposeCode(code); // Update the selected code state
 
     setPurposeOfVisitSelections((prev) => {
-      // const existingSelection = prev.find(
-      //   (item) => item.purposeOfVisitCode === code
-      // );
-
       const retainedSelections = prev.filter(
         (item) => item.purposeOfVisitCode === 1
       );
-
-      // if (!existingSelection) {
-      //   // Append the new selection if it doesn't already exist
-      //   const povDescription = purposeOfVisits.find(
-      //     (item) => item.code === code
-      //   )?.description;
-
-      //   return [
-      //     ...prev,
-      //     {
-      //       purposeOfVisitCode: code,
-      //       description: povDescription,
-      //       advisorEmail: "",
-      //       open: false,
-      //     },
-      //   ];
-      // }
 
       const povDescription = purposeOfVisits.find(
         (item) => item.code === code
@@ -291,9 +236,6 @@ export default function AddCarCards({}: Props) {
           open: false,
         },
       ];
-
-      // If the selection already exists, leave the state unchanged
-      //return prev;
     });
 
     setCurrentServiceAdvisors(() => {
@@ -477,18 +419,18 @@ export default function AddCarCards({}: Props) {
         <div className="flex w-full flex-col space-y-5">
           <div className="w-full">
             <SearchSelect
-              data={getAllCarMakes()}
+              data={carMakeModels.map((make) => make.company)} // Provide car makes as options
               type="Car Makes"
-              setDataValue={setCarMake}
+              setDataValue={handleCarMakeChange} // Handle car make selection
               value={carMake}
             />
           </div>
           <div>
             <SearchSelect
-              data={selectedCarMakeModels}
+              data={selectedCarMakeModels} // Provide models of the selected make
               type="Car Models"
-              setDataValue={setCarModel}
-              disabled={handleModelDisable}
+              setDataValue={setCarModel} // Handle model selection
+              disabled={handleModelDisable} // Disable if no make is selected
               value={carModel}
             />
           </div>
@@ -596,44 +538,3 @@ export default function AddCarCards({}: Props) {
     </div>
   );
 }
-// {purposeOfVisits.map((pov, index) => (
-//   <div key={index} className="mb-4">
-//     {/* Aligning checkbox and label */}
-//     <div className="flex items-center mb-2">
-
-//       <Checkbox
-//         id={`checkbox-${pov.code}`}
-//         className="mr-2 cursor-pointer"
-//         checked={dropdownVisible[pov.code] || false}
-//         onCheckedChange={() => handleCheckboxChange(pov.code)} // Use code for checkbox change
-//       />
-//       <label
-//         htmlFor={`checkbox-${pov.code}`}
-//         className="cursor-pointer"
-//       >
-//         {pov.description}{" "}
-//         {/* Keep the description for user clarity */}
-//       </label>
-//     </div>
-
-//     {/* Only show the dropdown if the checkbox is selected */}
-//     {dropdownVisible[pov.code] && (
-//       <Select
-//         onValueChange={(advisorEmail) =>
-//           handleServiceAdvisorChange(pov.code, advisorEmail)
-//         }
-//       >
-//         <SelectTrigger className="w-full">
-//           <SelectValue placeholder="Select Service Advisor" />
-//         </SelectTrigger>
-//         <SelectContent>
-//           {advisorsByPurpose[pov.code]?.map((advisor, index) => (
-//             <SelectItem key={index} value={advisor.email}>
-//               {advisor.name}
-//             </SelectItem>
-//           ))}
-//         </SelectContent>
-//       </Select>
-//     )}
-//   </div>
-// ))}

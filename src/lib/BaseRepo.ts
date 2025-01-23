@@ -1,5 +1,5 @@
 import { databases, config, account } from '@/lib/appwrite';
-import { ID } from 'appwrite';
+import { ID, Query } from 'appwrite';
 import { HistoryRecorder, HistoryOperations, ObjectType } from '@/history/history-recorder';
 
 export class BaseRepository {

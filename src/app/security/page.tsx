@@ -1,23 +1,16 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { deleteCookie, getCookie } from "cookies-next";
-import PrimaryButton from "@/components/PrimaryButton";
-import { JobCardsDataTable } from "@/components/data-tables/job-cards-data-table";
+import { getCookie } from "cookies-next";
 import DisplayCard from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
-import { CarFront, Wrench, ListChecks, Plus } from "lucide-react";
+import { Wrench, Plus } from "lucide-react";
 import { tempCarsColumns } from "@/lib/column-definitions";
-import {
-  getAllJobCards,
-  getAllTempCars,
-  getJobCardsBetween,
-} from "@/lib/appwrite";
+import { getAllTempCars } from "@/lib/appwrite";
 import { TempCarsDataTable } from "@/components/data-tables/temp-cars-data-table";
-import { JobCard, TempCar } from "@/lib/definitions";
-import { createDateExpandedObj } from "@/lib/helper";
+import { TempCar } from "@/lib/definitions";
 
 type Props = {};
 

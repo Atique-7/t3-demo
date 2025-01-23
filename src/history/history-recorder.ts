@@ -8,8 +8,10 @@ export enum ObjectType {
     LABOUR = 'labour',
     TEMP_CARS = 'temp-cars',
     INVOICE = 'invoice',
+    CAR_MODEL = 'car-model',
   }
-  export enum HistoryOperations {
+
+export enum HistoryOperations {
     CREATE = 'created',
     UPDATE = 'updated',
     DELETE = 'deleted',
@@ -37,7 +39,7 @@ export class HistoryRecorder {
         // Check if changes are provided; if not, calculate them
         const trackedChanges = changes || this.trackChanges(prevData, newData);
 
-        if (!trackedChanges.length) {
+        if (!trackedChanges.length || objectType === ObjectType.CAR_MODEL) {
             return;
         }
 

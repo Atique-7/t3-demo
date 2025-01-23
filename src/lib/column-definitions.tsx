@@ -19,7 +19,7 @@ import {
   Labour,
   TempCar,
 } from "@/lib/definitions";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getCookie } from "cookies-next";
 
@@ -244,9 +244,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { config, databases, deleteTempCar, listAllUsers } from "./appwrite";
+import {
+  checkIfAnotherJobCardCanBeOpened,
+  config,
+  databases,
+  deleteTempCar,
+  listAllUsers,
+} from "./appwrite";
 import { toast } from "sonner";
-import { stat } from "node:fs/promises";
 
 export const tempCarsColumns: ColumnDef<TempCar>[] = [
   {
@@ -291,9 +296,24 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
       const parsedToken = JSON.parse(String(token));
       const userAccess = parsedToken.labels[0];
 
+      const [tempCarStatus, setTempCarStatus] = useState<{
+        isValid: boolean;
+        type: string;
+      } | null>(null);
+
       const purposeOfVisitAndAdvisors = convertStringsToArray(
         tempCar.purposeOfVisitAndAdvisors
       );
+
+      useEffect(() => {
+        const result = checkIfAnotherJobCardCanBeOpened(tempCar);
+        if (result) {
+          setTempCarStatus({
+            isValid: result[0],
+            type: result[1], // "service" or "bodyshop"
+          });
+        }
+      }, [tempCar]);
 
       // For Case: Service;
       const advisorEmail = parsedToken.email;
@@ -383,6 +403,16 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
         }
       };
 
+      const router = useRouter();
+
+      const handleOpenJobCard = async () => {
+        const type = tempCarStatus?.type;
+        const url = `${pathname}/open-jobcard/?tempcarId=${tempCar.$id}&type=${type}`;
+        console.log("Navigating to:", url);
+        router.push(url);
+        window.location.href = url; // Navigate to the URL
+      };
+
       switch (userAccess) {
         case "admin":
           return (
@@ -393,6 +423,11 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
                   {pov.open === false ? (
                     <button
                       onClick={() => {
+                        console.log(
+                          "Clicked Purpose of Visit Code:",
+                          pov.purposeOfVisitCode
+                        );
+                        console.log("Current Advisor Email:", pov.advisorEmail);
                         setSelectedPovCode(pov.purposeOfVisitCode);
                         setSelectedAdvisor(pov.advisorEmail);
                       }}
@@ -408,9 +443,9 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
                 </div>
               ))}
 
-              {selectedPovCode && (
+              {selectedPovCode !== null && (
                 <Dialog
-                  open={!!selectedPovCode}
+                  open={selectedPovCode !== null} // Explicitly check for null
                   onOpenChange={() => setSelectedPovCode(null)}
                 >
                   <DialogContent className="sm:max-w-[425px]">
@@ -458,6 +493,18 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
+              )}
+
+              {/* Add "Open Job Card" button */}
+              {tempCarStatus?.isValid && (
+                <div>
+                  <button
+                    onClick={handleOpenJobCard}
+                    className="text-blue-500 underline"
+                  >
+                    Open Job Card
+                  </button>
+                </div>
               )}
             </div>
           );

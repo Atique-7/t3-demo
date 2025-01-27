@@ -34,6 +34,7 @@ export const config = {
   historyCollectionId: "670cbc13003d80c32176",
   invoiceStorageBucketId: "677e05b70025ceed10e4",
   carModelsCollectionId: "678e143f003c388e2603",
+  insuranceProvidersCollectionId: "67963228001b5bf116e6",
 };
 
 export let client: any;

@@ -9,6 +9,7 @@ export enum ObjectType {
     TEMP_CARS = 'temp-cars',
     INVOICE = 'invoice',
     CAR_MODEL = 'car-model',
+    INSURANCE_DETAILS = 'insurance-details',
   }
 
 export enum HistoryOperations {

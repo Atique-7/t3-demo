@@ -1636,3 +1636,19 @@ export const checkIfAnotherJobCardCanBeOpened = (tempCar: any) => {
 
   return [valid, canBeOpenedIn];
 };
+
+export const fetchPolicyProviders = async () => {
+  const BaseRepo: BaseRepository = new BaseRepository(
+    config.insuranceProvidersCollectionId, // Replace with the actual collection ID
+    ObjectType.INSURANCE_DETAILS // Replace with the actual object type
+  );
+
+  const document = await BaseRepo.listDocuments([Query.limit(999999)]);
+  console.log("Policy Providers: ", document);
+
+  return document.documents.map((doc: any) => ({
+    insurer: doc.insurer,
+    address: doc.address,
+    GST: doc.GST,
+  }));
+};

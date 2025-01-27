@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, Shield } from "lucide-react";
 import {
+  fetchPolicyProviders,
   getAllInvoices,
   getAllLabour,
   getAllParts,
@@ -34,8 +35,6 @@ import {
   jobCardStatusKey,
   objToStringArr,
   openInNewTab,
-  policyProviders,
-  policyProvidersDict,
   purposeOfVisits,
   roundToTwoDecimals,
   stringToObj,
@@ -117,6 +116,7 @@ export default function jobCard({
   const [currentJobCardStatus, setCurrentJobCardStatus] = useState<number>();
   const [user, setUser] = useState<UserType>();
 
+  const [policyProviders, setPolicyProviders] = useState<any[]>([]);
   const [policyProvider, setPolicyProvider] = useState<string>();
   const [policyNumber, setPolicyNumber] = useState<string>();
 
@@ -530,26 +530,37 @@ export default function jobCard({
     });
   };
 
+  useEffect(() => {
+    const loadPolicyProviders = async () => {
+      try {
+        const data = await fetchPolicyProviders();
+        setPolicyProviders(data);
+      } catch (error) {
+        console.error("Error fetching policy providers:", error);
+      }
+    };
+
+    loadPolicyProviders();
+  }, []);
+
   const saveInsuranceDetails = async () => {
-    const foundObj = policyProvidersDict.find(
-      (a) => a.insurer == policyProvider
-    );
+    const foundObj = policyProviders.find((a) => a.insurer === policyProvider);
 
     const insuranceDetails = JSON.stringify({
-      policyProvider: policyProvider,
+      policyProvider,
       policyProviderAddress: foundObj?.address,
       policyProviderGST: foundObj?.GST,
-      policyNumber: policyNumber,
+      policyNumber,
     });
 
-    console.log(insuranceDetails);
+    console.log("Saving Insurance Details: ", insuranceDetails);
 
     const isDone = await updateJobCardInsuranceDetails(
       params.jobCardId,
       insuranceDetails
     );
 
-    console.log(isDone);
+    console.log("Update Result: ", isDone);
     if (isDone) {
       toast("Insurance Details have been Updated \u2705");
       setIsInsuranceDetails(true);
@@ -838,32 +849,31 @@ export default function jobCard({
                         )}
                       </Button>
                     )}
-                  {currentJobCardStatus == 5 && (
+                  {currentJobCardStatus == 5 &&
                     user.email != "billermiraroad@t3cars.in" && (
-                    <Button
-                      variant="outline"
-                      className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
-                        buttonLoading ? "opacity-50" : ""
-                      }`}
-                      size="lg"
-                      onClick={generateGatePass}
-                      disabled={buttonLoading}
-                    >
-                      {buttonLoading ? (
-                        <>
-                          <Image
-                            src={loader}
-                            width={50}
-                            height={50}
-                            alt="Logo"
-                          />
-                        </>
-                      ) : (
-                        <>Generate Gate Pass</>
-                      )}
-                    </Button>
-                    )
-                  )}
+                      <Button
+                        variant="outline"
+                        className={`px-8 py-2 bg-red-500 text-white hover:bg-red-400 hover:text-white ${
+                          buttonLoading ? "opacity-50" : ""
+                        }`}
+                        size="lg"
+                        onClick={generateGatePass}
+                        disabled={buttonLoading}
+                      >
+                        {buttonLoading ? (
+                          <>
+                            <Image
+                              src={loader}
+                              width={50}
+                              height={50}
+                              alt="Logo"
+                            />
+                          </>
+                        ) : (
+                          <>Generate Gate Pass</>
+                        )}
+                      </Button>
+                    )}
                 </>
               )}
             </div>
@@ -942,7 +952,9 @@ export default function jobCard({
                       </Label>
                       <div className="col-span-3">
                         <SearchSelectNEW
-                          data={policyProviders}
+                          data={policyProviders.map(
+                            (provider) => provider.insurer
+                          )}
                           placeholder="Select a provider"
                           value={policyProvider || ""}
                           onChange={setPolicyProvider}

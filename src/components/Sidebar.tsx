@@ -8,6 +8,7 @@ import loader from "../../public/assets/t3-loader.gif";
 // import { Home01Icon, Layers01Icon, Logout04Icon } from "hugeicons-react";
 import {
   Car,
+  CarFront,
   ClipboardList,
   Download,
   House,
@@ -15,6 +16,7 @@ import {
   LogOut,
   Menu,
   PlusIcon,
+  UmbrellaIcon,
   UserRoundCog,
 } from "lucide-react";
 
@@ -131,18 +133,7 @@ export default function Sidebar({ home }: any) {
                     <ClipboardList />
                     <div>Manage Jobcards</div>
                   </Button>
-                  <Button
-                    className="flex justify-between p-4 border-b w-full"
-                    onClick={() => router.push(`${home}/add-car`)}
-                    variant={"link"}
-                  >
-                    <PlusIcon />
-                    <div>Add Car Model</div>
-                  </Button>
-                </DrawerClose>
-              )}
-              {home == "/admin" && (
-                <DrawerClose>
+
                   <Button
                     className="flex justify-between p-4 border-b w-full"
                     onClick={() => router.push(`${home}/reports`)}
@@ -151,8 +142,25 @@ export default function Sidebar({ home }: any) {
                     <Download />
                     <div>Reports</div>
                   </Button>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/add-car`)}
+                    variant={"link"}
+                  >
+                    <CarFront />
+                    <div>Add Car Model</div>
+                  </Button>
+                  <Button
+                    className="flex justify-between p-4 border-b w-full"
+                    onClick={() => router.push(`${home}/add-insuranceProvider`)}
+                    variant={"link"}
+                  >
+                    <UmbrellaIcon />
+                    <div>Add Policy Provider</div>
+                  </Button>
                 </DrawerClose>
               )}
+
               {home == "/security" && (
                 <DrawerClose>
                   <Button
@@ -202,21 +210,34 @@ export default function Sidebar({ home }: any) {
             )}
 
             {home == "/admin" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/manage-jobcards`}
-              >
-                <ClipboardList />
-              </Link>
+              <>
+                <Link
+                  className="border-2 rounded-md shadow-md p-3"
+                  href={`${home}/manage-jobcards`}
+                >
+                  <ClipboardList />
+                </Link>
+                <Link
+                  className="border-2 rounded-md shadow-md p-3"
+                  href={`${home}/reports`}
+                >
+                  <Download />
+                </Link>
+                <Link
+                  className="border-2 rounded-md shadow-md p-3"
+                  href={`${home}/add-car`}
+                >
+                  <CarFront />
+                </Link>
+                <Link
+                  className="border-2 rounded-md shadow-md p-3"
+                  href={`${home}/add-insuranceProvider`}
+                >
+                  <UmbrellaIcon />
+                </Link>
+              </>
             )}
-            {home == "/admin" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/reports`}
-              >
-                <Download />
-              </Link>
-            )}
+
             {home == "/biller" && (
               <Link
                 className="border-2 rounded-md shadow-md p-3"

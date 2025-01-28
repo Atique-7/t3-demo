@@ -1424,7 +1424,7 @@ export const InvoicePDF = ({
             {invoiceType == "Tax Invoice" ||
               (invoiceType == "Pro-Forma Invoice" && (
                 <>
-                  <View style={styles.customerAcknowledgement}>
+                  <View style={styles.customerAcknowledgement} wrap={false}>
                     <Text style={styles.customerAcknowledgementHeading}>
                       Customer Acknowledgement
                     </Text>
@@ -1453,7 +1453,7 @@ export const InvoicePDF = ({
                 </>
               ))}
 
-            <View style={styles.addressRow}>
+            <View style={styles.addressRow} wrap={false}>
               <View style={[styles.signBlock, { marginTop: 20 }]}>
                 <Text style={[styles.signName, { marginTop: 60 }]}>
                   For Chamunda Motors Pvt. Ltd.

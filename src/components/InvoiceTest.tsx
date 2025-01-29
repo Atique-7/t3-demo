@@ -1429,7 +1429,7 @@ export const InvoicePDF = ({
                       Customer Acknowledgement
                     </Text>
                     <Text style={styles.customerAcknowledgementText}>
-                      I/We acknowlcdge that the work being done on my car, as
+                      I/We acknowledge that the work being done on my car, as
                       well as the associated costs, were explained to me. I have
                       recieved my vehicle after all repairs have been made to my
                       satisfaction , and I hearby confirm that it is in good

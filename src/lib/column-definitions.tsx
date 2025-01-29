@@ -23,6 +23,30 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getCookie } from "cookies-next";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  checkIfAnotherJobCardCanBeOpened,
+  config,
+  databases,
+  deleteTempCar,
+  listAllUsers,
+} from "./appwrite";
+import { toast } from "sonner";
+
 export const jobCardColumns: ColumnDef<JobCard>[] = [
   {
     accessorKey: "carNumber",
@@ -228,30 +252,6 @@ export const labourColumns: ColumnDef<Labour>[] = [
     },
   },
 ];
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  checkIfAnotherJobCardCanBeOpened,
-  config,
-  databases,
-  deleteTempCar,
-  listAllUsers,
-} from "./appwrite";
-import { toast } from "sonner";
 
 export const tempCarsColumns: ColumnDef<TempCar>[] = [
   {
@@ -540,5 +540,95 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
           break;
       }
     },
+  },
+];
+
+export const viewCurrentPartsColumns: ColumnDef<CurrentPart>[] = [
+  {
+    accessorKey: "partName",
+    header: "Part Name",
+  },
+  {
+    accessorKey: "partNumber",
+    header: "Part Number",
+  },
+  {
+    accessorKey: "hsn",
+    header: "HSN",
+  },
+
+  {
+    accessorKey: "gst",
+    header: "GST",
+    cell: ({ row }) => {
+      const gst: number = row.getValue("gst");
+      return <div>{gst}%</div>;
+    },
+  },
+  {
+    accessorKey: "mrp",
+    header: "Basic Price",
+    cell: ({ row }) => {
+      const price: number = row.getValue("mrp");
+      return <div>&#8377;{price}</div>;
+    },
+  },
+  {
+    accessorKey: "quantity",
+    header: "Quantity",
+  },
+  {
+    accessorKey: "discountPercentage",
+    header: "Discount %",
+  },
+  {
+    accessorKey: "insurancePercentage",
+    header: "Insurance %",
+  },
+  {
+    accessorKey: "amount",
+  },
+];
+
+export const viewCurrentLabourColumns: ColumnDef<CurrentLabour>[] = [
+  {
+    accessorKey: "labourName",
+    header: "Labour Name",
+  },
+  {
+    accessorKey: "labourCode",
+    header: "Labour Code",
+  },
+  {
+    accessorKey: "hsn",
+    header: "HSN",
+  },
+  {
+    accessorKey: "mrp",
+    header: "MRP",
+    cell: ({ row }) => {
+      const price: number = row.getValue("mrp");
+      return <div>&#8377;{price}</div>;
+    },
+  },
+  {
+    accessorKey: "gst",
+    header: "GST",
+    cell: ({ row }) => {
+      const gst: number = row.getValue("gst");
+      return <div>{gst}%</div>;
+    },
+  },
+  {
+    accessorKey: "quantity",
+  },
+  {
+    accessorKey: "discountPercentage",
+  },
+  {
+    accessorKey: "insurancePercentage",
+  },
+  {
+    accessorKey: "amount",
   },
 ];

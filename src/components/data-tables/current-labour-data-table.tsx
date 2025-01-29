@@ -540,7 +540,7 @@ export function CurrentLabourDataTable<TData, TValue>({
                   {row.getValue("labourCode") == MISCELLANEOUS_LABOUR_CODE ? (
                     <>
                       <TableRow
-                        key={row.id}
+                        key={row.id + Math.random()}
                         data-state={row.getIsSelected() && "selected"}
                       >
                         <TableCell

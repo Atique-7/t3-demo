@@ -184,8 +184,17 @@ export function JobCardsDataTable<TData, TValue>({
           </div>
         );
 
-      case "security":
-        return <></>;
+      case "admin":
+        return (
+          <div className="flex justify-center items-center">
+            <Link
+              href={`${pathname}/viewJobCard/${jobCard.$id}`}
+              className={`flex justify-center items-center rounded-md w-fit px-3 py-2 border border-gray-200 bg-white text-gray-700 hover:bg-gray-200}`}
+            >
+              View
+            </Link>
+          </div>
+        );
       case "service":
         return (
           <div className="flex justify-center items-center">

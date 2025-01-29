@@ -37,6 +37,10 @@ import { set } from "react-datepicker/dist/date_utils";
 import { ServiceAdvisorPerformance } from "@/components/graphs/ServiceAdvisorPerformance";
 import { PartsLabourSplit } from "@/components/graphs/PartsLabourSplit";
 import { RevenueHistory } from "@/components/graphs/RevenueHistory";
+import { JobCardsDataTable } from "@/components/data-tables/job-cards-data-table";
+import { jobCardColumns } from "@/lib/column-definitions";
+import { Switch } from "@/components/ui/switch";
+import { ChartLineIcon, TablePropertiesIcon } from "lucide-react";
 
 type Props = {};
 
@@ -48,6 +52,8 @@ export default function Admin({}: Props) {
   const [jobCards, setJobCards] = useState<JobCard[]>([]);
   const [cars, setCars] = useState<Car[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+
+  const [showTableSwitch, setShowTableSwitch] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -239,8 +245,25 @@ export default function Admin({}: Props) {
       ) : (
         <>
           <div>
-            <div className="font-semibold text-3xl">Hello {name}! </div>
-            <div className="font-medium">T3, Mira Road</div>
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="font-semibold text-3xl">Hello {name}! </div>
+                <div className="font-medium">T3, Mira Road</div>
+              </div>
+              <div className="flex items-center text-gray-400 justify-between space-x-5">
+                <div>
+                  <ChartLineIcon />
+                </div>
+                <Switch
+                  checked={showTableSwitch}
+                  onCheckedChange={(value) => setShowTableSwitch(value)}
+                />
+                <div>
+                  <TablePropertiesIcon />
+                </div>
+              </div>
+            </div>
+
             <div className="mt-10">
               <Select
                 onValueChange={(reportTimeline) =>
@@ -281,83 +304,102 @@ export default function Admin({}: Props) {
             </>
           ) : (
             <>
-              <div>
-                <div className="flex flex-col mt-10 justify-evenly items-center h-fit mb-10">
-                  {currentSelectedTimeline === "thisMonth" ? (
-                    <>
-                      <div className="flex flex-row w-full justify-evenly items-center">
-                        <div className="w-1/3">
-                          <CustomerSplit
-                            jobCards={jobCards}
-                            currentSelectedTimeline={currentSelectedTimeline}
-                          />
+              {showTableSwitch ? (
+                <>
+                  <div className="w-full">
+                    <JobCardsDataTable
+                      columns={jobCardColumns}
+                      data={jobCards}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <div className="flex flex-col mt-10 justify-evenly items-center h-fit mb-10">
+                      {currentSelectedTimeline === "thisMonth" ? (
+                        <>
+                          <div className="flex flex-row w-full justify-evenly items-center">
+                            <div className="w-1/3">
+                              <CustomerSplit
+                                jobCards={jobCards}
+                                currentSelectedTimeline={
+                                  currentSelectedTimeline
+                                }
+                              />
+                            </div>
+                            <div className="w-1/3">
+                              <RevenueSplit
+                                jobCards={jobCards}
+                                currentSelectedTimeline={
+                                  currentSelectedTimeline
+                                }
+                              />
+                            </div>
+                          </div>
+                          <div className="flex flex-row w-full justify-evenly items-center mt-10">
+                            <div className="w-1/3">
+                              <PartsLabourSplit
+                                jobCards={jobCards}
+                                currentSelectedTimeline={
+                                  currentSelectedTimeline
+                                }
+                              />
+                            </div>
+                            <div className="w-1/3">
+                              <NightStockNew
+                                jobCards={jobCards}
+                                tempCars={tempCars}
+                              />
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex flex-row w-full justify-evenly items-center">
+                          <div className="w-1/4">
+                            <CustomerSplit
+                              jobCards={jobCards}
+                              currentSelectedTimeline={currentSelectedTimeline}
+                            />
+                          </div>
+                          <div className="w-1/4">
+                            <RevenueSplit
+                              jobCards={jobCards}
+                              currentSelectedTimeline={currentSelectedTimeline}
+                            />
+                          </div>
+                          <div className="w-1/4">
+                            <PartsLabourSplit
+                              jobCards={jobCards}
+                              currentSelectedTimeline={currentSelectedTimeline}
+                            />
+                          </div>
                         </div>
-                        <div className="w-1/3">
-                          <RevenueSplit
-                            jobCards={jobCards}
-                            currentSelectedTimeline={currentSelectedTimeline}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-row w-full justify-evenly items-center mt-10">
-                        <div className="w-1/3">
-                          <PartsLabourSplit
-                            jobCards={jobCards}
-                            currentSelectedTimeline={currentSelectedTimeline}
-                          />
-                        </div>
-                        <div className="w-1/3">
-                          <NightStockNew
-                            jobCards={jobCards}
-                            tempCars={tempCars}
-                          />
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex flex-row w-full justify-evenly items-center">
-                      <div className="w-1/4">
-                        <CustomerSplit
+                      )}
+                    </div>
+                    <div className="flex flex-col justify-center items-center w-full space-y-10 mb-10">
+                      <div className="flex flex-col space-y-5 justify-center items-center w-full">
+                        <RevenueHistory
                           jobCards={jobCards}
                           currentSelectedTimeline={currentSelectedTimeline}
                         />
                       </div>
-                      <div className="w-1/4">
-                        <RevenueSplit
+                      <div className="flex flex-col space-y-5 justify-center items-center w-full">
+                        <ServiceAdvisorPerformance
                           jobCards={jobCards}
                           currentSelectedTimeline={currentSelectedTimeline}
                         />
                       </div>
-                      <div className="w-1/4">
-                        <PartsLabourSplit
+                      <div className="w-[90%]">
+                        <InsuranceCasesBar
                           jobCards={jobCards}
                           currentSelectedTimeline={currentSelectedTimeline}
                         />
                       </div>
                     </div>
-                  )}
-                </div>
-                <div className="flex flex-col justify-center items-center w-full space-y-10 mb-10">
-                  <div className="flex flex-col space-y-5 justify-center items-center w-full">
-                    <RevenueHistory
-                      jobCards={jobCards}
-                      currentSelectedTimeline={currentSelectedTimeline}
-                    />
                   </div>
-                  <div className="flex flex-col space-y-5 justify-center items-center w-full">
-                    <ServiceAdvisorPerformance
-                      jobCards={jobCards}
-                      currentSelectedTimeline={currentSelectedTimeline}
-                    />
-                  </div>
-                  <div className="w-[90%]">
-                    <InsuranceCasesBar
-                      jobCards={jobCards}
-                      currentSelectedTimeline={currentSelectedTimeline}
-                    />
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </>
           )}
         </>

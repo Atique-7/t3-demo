@@ -200,6 +200,7 @@ export function RevenueHistory({ jobCards, currentSelectedTimeline }: any) {
                   {chartConfig[chart].label}
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-3xl">
+                  {key != "numberOfJobCards" && <>&#8377;</>}
                   {chartTotals[key as keyof typeof total].toLocaleString()}
                 </span>
               </button>
@@ -230,7 +231,7 @@ export function RevenueHistory({ jobCards, currentSelectedTimeline }: any) {
               tickFormatter={(value) => {
                 const date = new Date(value);
                 return date.toLocaleDateString("en-GB", {
-                  month: "numeric",
+                  month: "short",
                   day: "numeric",
                 });
               }}
@@ -242,7 +243,7 @@ export function RevenueHistory({ jobCards, currentSelectedTimeline }: any) {
                   nameKey="views"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("en-GB", {
-                      month: "numeric",
+                      month: "short",
                       day: "numeric",
                       year: "numeric",
                     });

@@ -2536,17 +2536,6 @@ export const createJobCardObjReport = async (
         jobCard.totalRoundedOffAmount - jobCard.amount
       );
 
-      // if (
-      //   invoice.isInsuranceInvoice &&
-      //   invoice.invoiceType != "Quote" &&
-      //   invoice.insuranceInvoiceType == "Insurance"
-      // ) {
-      //   jobCard.gstin = insuranceDetails.policyProviderGST;
-      //   jobCard.customerName = insuranceDetails.policyProvider;
-      //   jobCard.customerAddress = insuranceDetails.policyProviderAddress;
-      //   jobCard.customerPhone = "";
-      // }
-
       const partsTotalNum = Number(partsTotal);
       const labourTotalNum = Number(labourTotal);
       const partsSubtotalNum = Number(partsSubtotal);

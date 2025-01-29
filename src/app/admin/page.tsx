@@ -36,6 +36,7 @@ import { DateRange } from "react-day-picker";
 import { set } from "react-datepicker/dist/date_utils";
 import { ServiceAdvisorPerformance } from "@/components/graphs/ServiceAdvisorPerformance";
 import { PartsLabourSplit } from "@/components/graphs/PartsLabourSplit";
+import { RevenueHistory } from "@/components/graphs/RevenueHistory";
 
 type Props = {};
 
@@ -337,6 +338,12 @@ export default function Admin({}: Props) {
                   )}
                 </div>
                 <div className="flex flex-col justify-center items-center w-full space-y-10 mb-10">
+                  <div className="flex flex-col space-y-5 justify-center items-center w-full">
+                    <RevenueHistory
+                      jobCards={jobCards}
+                      currentSelectedTimeline={currentSelectedTimeline}
+                    />
+                  </div>
                   <div className="flex flex-col space-y-5 justify-center items-center w-full">
                     <ServiceAdvisorPerformance
                       jobCards={jobCards}

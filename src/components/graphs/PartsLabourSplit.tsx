@@ -61,56 +61,79 @@ export function PartsLabourSplit({ jobCards, currentSelectedTimeline }: any) {
   const [newChartData, setNewChartData] = useState<any[]>(chartData);
   const [selectedTimeline, setSelectedTimeline] = useState<string>();
 
-  let totalPartsWithoutTax = new Decimal(0);
-  let totalLabourWithoutTax = new Decimal(0);
-
   useEffect(() => {
     const refreshData = async () => {
       jobCards = await jobCards.filter(
         (jobCard: JobCard) => jobCard.jobCardStatus >= 6
       );
 
-      totalPartsWithoutTax = new Decimal(0);
-      totalLabourWithoutTax = new Decimal(0);
+      let totalPartsWithoutTax = new Decimal(0);
+      let totalLabourWithoutTax = new Decimal(0);
+      let totalRevenue = new Decimal(0);
 
       await Promise.all(
         jobCards.map(async (jobCard: JobCard) => {
           let jobCardParts = new Decimal(0);
           let jobCardLabour = new Decimal(0);
+          let jobCardRevenue = new Decimal(0);
 
           const jobCardTotals = await createJobCardObjReport(jobCard);
 
           jobCardParts = jobCardParts.add(
             new Decimal(Number(jobCardTotals.partsSubtotal))
           );
-          if (jobCard.jobCardNumber == 271) {
-            console.log("totalPartsWithoutTax - ", Number(jobCardParts));
-          }
 
           jobCardLabour = jobCardLabour.add(
             new Decimal(Number(jobCardTotals.labourSubtotal))
           );
-          if (jobCard.jobCardNumber == 271) {
-            console.log("totalLabourWithoutTax - ", Number(jobCardLabour));
-          }
 
           jobCardParts = jobCardParts.minus(
             new Decimal(Number(jobCardTotals.partsDiscount))
           );
-          if (jobCard.jobCardNumber == 271) {
-            console.log("totalPartsWithoutTax - ", Number(jobCardParts));
-          }
+
           jobCardLabour = jobCardLabour.minus(
             new Decimal(Number(jobCardTotals.labourDiscount))
           );
-          if (jobCard.jobCardNumber == 271) {
-            console.log("totalLabourWithoutTax - ", Number(jobCardLabour));
-          }
+
+          jobCardRevenue = jobCardRevenue.add(jobCardParts);
+          jobCardRevenue = jobCardRevenue.add(jobCardLabour);
 
           totalPartsWithoutTax = totalPartsWithoutTax.add(jobCardParts);
           totalLabourWithoutTax = totalLabourWithoutTax.add(jobCardLabour);
+          totalRevenue = totalRevenue.add(jobCardRevenue);
         })
       );
+
+      // totalPartsWithoutTax = new Decimal(0);
+      // totalLabourWithoutTax = new Decimal(0);
+
+      // await Promise.all(
+      //   jobCards.map(async (jobCard: JobCard) => {
+      //     let jobCardParts = new Decimal(0);
+      //     let jobCardLabour = new Decimal(0);
+
+      //     const jobCardTotals = await createJobCardObjReport(jobCard);
+
+      //     jobCardParts = jobCardParts.add(
+      //       new Decimal(Number(jobCardTotals.partsSubtotal))
+      //     );
+
+      //     jobCardLabour = jobCardLabour.add(
+      //       new Decimal(Number(jobCardTotals.labourSubtotal))
+      //     );
+
+      //     jobCardParts = jobCardParts.minus(
+      //       new Decimal(Number(jobCardTotals.partsDiscount))
+      //     );
+
+      //     jobCardLabour = jobCardLabour.minus(
+      //       new Decimal(Number(jobCardTotals.labourDiscount))
+      //     );
+
+      //     totalPartsWithoutTax = totalPartsWithoutTax.add(jobCardParts);
+      //     totalLabourWithoutTax = totalLabourWithoutTax.add(jobCardLabour);
+      //   })
+      // );
 
       // totalPartsWithoutTax = roundToTwoDecimals(totalParts);
       // totalLabour = roundToTwoDecimals(totalLabour);
@@ -152,9 +175,9 @@ export function PartsLabourSplit({ jobCards, currentSelectedTimeline }: any) {
             <Pie data={newChartData} dataKey="totalRevenue">
               <LabelList
                 dataKey="totalRevenue"
-                className="fill-background"
+                className="fill-background font-bold"
                 stroke="none"
-                fontSize={14}
+                fontSize={16}
                 formatter={(value: keyof typeof chartConfig) => value}
               />
             </Pie>

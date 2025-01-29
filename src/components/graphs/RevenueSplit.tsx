@@ -59,47 +59,48 @@ export default function RevenueSplit({
 
   const [selectedTimeline, setSelectedTimeline] = useState<string>();
 
-  let totalRevenue = new Decimal(0);
-
   useEffect(() => {
-    // console.log("SETTING NEW CHAT DATA REVENUE SPLIT");
     const refreshData = async () => {
-      totalRevenue = new Decimal(0);
-      // Group data by purposeOfVisit and calculate revenue
       jobCards = await jobCards.filter(
         (jobCard: JobCard) => jobCard.jobCardStatus >= 6
-        // jobCard.purposeOfVisit == "General Visit"
       );
 
       let tempReturnObj: any = {};
 
+      let totalPartsWithoutTax = new Decimal(0);
+      let totalLabourWithoutTax = new Decimal(0);
+      let totalRevenue = new Decimal(0);
+
       await Promise.all(
         jobCards.map(async (jobCard: JobCard) => {
+          let jobCardParts = new Decimal(0);
+          let jobCardLabour = new Decimal(0);
           let jobCardRevenue = new Decimal(0);
 
           const jobCardTotals = await createJobCardObjReport(jobCard);
 
-          jobCardRevenue = jobCardRevenue.add(
+          jobCardParts = jobCardParts.add(
             new Decimal(Number(jobCardTotals.partsSubtotal))
           );
-          jobCardRevenue = jobCardRevenue.add(
+
+          jobCardLabour = jobCardLabour.add(
             new Decimal(Number(jobCardTotals.labourSubtotal))
           );
 
-          jobCardRevenue = jobCardRevenue.minus(
+          jobCardParts = jobCardParts.minus(
             new Decimal(Number(jobCardTotals.partsDiscount))
           );
-          jobCardRevenue = jobCardRevenue.minus(
+
+          jobCardLabour = jobCardLabour.minus(
             new Decimal(Number(jobCardTotals.labourDiscount))
           );
 
-          if (jobCard.jobCardNumber == 271) {
-            console.log(
-              "jobCardRevenue - ",
-              jobCard.jobCardNumber,
-              jobCardRevenue.toFixed()
-            );
-          }
+          jobCardRevenue = jobCardRevenue.add(jobCardParts);
+          jobCardRevenue = jobCardRevenue.add(jobCardLabour);
+
+          totalPartsWithoutTax = totalPartsWithoutTax.add(jobCardParts);
+          totalLabourWithoutTax = totalLabourWithoutTax.add(jobCardLabour);
+          totalRevenue = totalRevenue.add(jobCardRevenue);
 
           if (!tempReturnObj[jobCard.purposeOfVisit]) {
             tempReturnObj[jobCard.purposeOfVisit] = {
@@ -115,10 +116,48 @@ export default function RevenueSplit({
               )
             );
           }
-
-          totalRevenue = totalRevenue.add(jobCardRevenue);
         })
       );
+
+      // await Promise.all(
+      //   jobCards.map(async (jobCard: JobCard) => {
+      //     let jobCardRevenue = new Decimal(0);
+
+      //     const jobCardTotals = await createJobCardObjReport(jobCard);
+
+      //     jobCardRevenue = jobCardRevenue.add(
+      //       new Decimal(Number(jobCardTotals.partsSubtotal))
+      //     );
+      //     jobCardRevenue = jobCardRevenue.add(
+      //       new Decimal(Number(jobCardTotals.labourSubtotal))
+      //     );
+
+      //     jobCardRevenue = jobCardRevenue.minus(
+      //       new Decimal(Number(jobCardTotals.partsDiscount))
+      //     );
+      //     jobCardRevenue = jobCardRevenue.minus(
+      //       new Decimal(Number(jobCardTotals.labourDiscount))
+      //     );
+
+      //     if (!tempReturnObj[jobCard.purposeOfVisit]) {
+      //       tempReturnObj[jobCard.purposeOfVisit] = {
+      //         revenue: 0,
+      //         fill: `var(--color-${jobCard.purposeOfVisit
+      //           .replace(/\s+/g, "")
+      //           .toLowerCase()})`,
+      //       };
+      //     } else {
+      //       tempReturnObj[jobCard.purposeOfVisit].revenue = Number(
+      //         new Decimal(tempReturnObj[jobCard.purposeOfVisit].revenue).add(
+      //           jobCardRevenue
+      //         )
+      //       );
+      //     }
+
+      //     totalRevenue = totalRevenue.add(jobCardRevenue);
+      //     console.log("totalRevenue", Number(totalRevenue));
+      //   })
+      // );
 
       console.log("tempReturnObj", tempReturnObj);
 
@@ -179,7 +218,7 @@ export default function RevenueSplit({
                           y={viewBox.cy}
                           className="fill-foreground text-xl font-bold"
                         >
-                          &#8377;{total.toFixed()}
+                          &#8377;{total.toLocaleString()}
                         </tspan>
                       </text>
                     );

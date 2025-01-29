@@ -218,7 +218,7 @@ export default function RevenueSplit({
                           y={viewBox.cy}
                           className="fill-foreground text-xl font-bold"
                         >
-                          &#8377;{total.toLocaleString()}
+                          &#8377;{Math.round(total).toLocaleString()}
                         </tspan>
                       </text>
                     );

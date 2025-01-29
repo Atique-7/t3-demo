@@ -201,7 +201,9 @@ export function RevenueHistory({ jobCards, currentSelectedTimeline }: any) {
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-3xl">
                   {key != "numberOfJobCards" && <>&#8377;</>}
-                  {chartTotals[key as keyof typeof total].toLocaleString()}
+                  {Math.round(
+                    chartTotals[key as keyof typeof total]
+                  ).toLocaleString()}
                 </span>
               </button>
             );

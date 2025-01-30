@@ -55,10 +55,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { viewCurrentPartsColumns } from "@/lib/column-definitions";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ViewCurrentPartsDataTable } from "@/components/data-tables/view-parts-data-table";
 
 type Props = {};
 

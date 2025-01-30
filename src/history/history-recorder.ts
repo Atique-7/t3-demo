@@ -10,6 +10,7 @@ export enum ObjectType {
     INVOICE = 'invoice',
     CAR_MODEL = 'car-model',
     INSURANCE_DETAILS = 'insurance-details',
+    DELETEDJOBCARD = 'deleted-jobcard',
   }
 
 export enum HistoryOperations {

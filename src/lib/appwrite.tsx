@@ -35,6 +35,7 @@ export const config = {
   invoiceStorageBucketId: "677e05b70025ceed10e4",
   carModelsCollectionId: "678e143f003c388e2603",
   insuranceProvidersCollectionId: "67963228001b5bf116e6",
+  deletedJobCardsCollectionId: "67989f07000005e743d4",
 };
 
 export let client: any;
@@ -862,6 +863,21 @@ export const updateTempCarById = async (id: string, carStatus: number) => {
   }
 };
 
+export const updateTempCarFieldsById = async (id: string, data: any) => {
+  try {
+    const tempCarsBaseRepo: BaseRepository = new BaseRepository(
+      config.tempCarsCollectionId,
+      ObjectType.TEMP_CARS
+    );
+    let result = await tempCarsBaseRepo.updateDocumentById(id, data);
+
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const getAllParts = async () => {
   // console.log("Hitting Backend");
 
@@ -1324,13 +1340,32 @@ export const getAllInvoices = async () => {
   }
 };
 
-export const deleteJobCardById = async (id: string) => {
+export const deleteJobCardById = async (id: string, reason: string = "") => {
   try {
-    const result = await databases.deleteDocument(
-      config.databaseId,
+    if (reason !== "") {
+      const DeletedJobCardRepo: BaseRepository = new BaseRepository(
+        config.deletedJobCardsCollectionId,
+        ObjectType.DELETEDJOBCARD
+      );
+
+      const details = await getJobCardById(id);
+      //const user = await account.get();
+      const entry = {
+        jobcardDetails: details,
+        // user: user,
+        reason: reason,
+      };
+
+      await DeletedJobCardRepo.createDocument({
+        details: JSON.stringify(entry),
+      });
+    }
+
+    const BaseRepo: BaseRepository = new BaseRepository(
       config.jobCardsCollectionId,
-      id // documentId
+      ObjectType.JOB_CARD
     );
+    const result = await BaseRepo.deleteDocumentById(id);
     return result;
   } catch (error: any) {
     console.log(error.message);

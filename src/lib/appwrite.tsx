@@ -515,7 +515,7 @@ export const getCarByCarNumber = async (carNumber: string) => {
       [Query.equal("carNumber", carNumber), Query.orderDesc("$createdAt")]
     );
 
-    console.log("FETCHED INVOICEs ", result);
+    // console.log("FETCHED INVOICEs ", result);
     return result;
   } catch (error: any) {
     console.log(error.message);

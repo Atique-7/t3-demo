@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  getAllInvoices,
   getCarByCarNumber,
   getInvoicesBetween,
   getJobCardById,
@@ -21,10 +22,12 @@ import {
   adminReportTimelineDrop,
   createDateExpandedObj,
   createInvoiceObjReport,
+  createJobCardObjReport,
   curateInvoices,
   roundDecimal,
   stringToObj,
 } from "@/lib/helper";
+import Decimal from "decimal.js";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { toast } from "sonner";
@@ -179,6 +182,92 @@ export default function DownloadReports({}: Props) {
       })
     );
 
+    console.log("RECIEVED INVOICES", updatedNewInvoices);
+    const csvContent = convertArrayToCSV(updatedNewInvoices);
+    downloadCSV(csvContent, `accounts_report_${currentSelectedTimeline}.csv`);
+
+    toast("Report Generated \u2705");
+    setIsMakingAccountsReport(false);
+  };
+
+  const downloadAccountsReportJobCard = async () => {
+    setIsMakingAccountsReport(true);
+    console.log("Downloading Accounts Report");
+
+    let jobCardIds: string[] = [];
+
+    const filteredjobCards = await jobCards.filter((jobCard: JobCard) => {
+      if (jobCard.jobCardStatus >= 6) {
+        jobCardIds.push(jobCard.$id);
+        return jobCard;
+      }
+    });
+
+    const invoices = await getAllInvoices();
+    const curatedInvoices = await curateInvoices(invoices.documents);
+
+    const jobCardInvoicesArr = curatedInvoices.filter(
+      (invoice: Invoice) =>
+        jobCardIds.includes(invoice.jobCardId) &&
+        invoice.invoiceType === "Tax Invoice"
+    );
+
+    const updatedNewInvoices = await Promise.all(
+      jobCardInvoicesArr.map(async (invoice: Invoice, index: number) => {
+        // console.log("INVOICE", invoice.invoiceCode);
+
+        let result: JobCard = await getJobCardById(invoice.jobCardId);
+
+        let carObj = await getCarByCarNumber(result.carNumber);
+
+        const selectedCar = carObj.documents[0];
+
+        const totals = await createInvoiceObjReport(result, invoice);
+
+        const returnObj = {
+          invoiceCode: invoice.invoiceCode,
+          billType: invoice.invoiceType,
+          customerName: result.customerName,
+          mobileNo: result.customerPhone,
+          vehicleRegNo: result.carNumber,
+          model: "",
+          roNo: result.jobCardNumber,
+          roDate: invoice.invoiceDate,
+          serviceAdvisor: result.serviceAdvisorID,
+          totalAmt: roundDecimal(
+            Number(totals.partsTotal) + Number(totals.labourTotal)
+          ),
+          labourAmt: Number(totals.labourTotal),
+          partAmt: Number(totals.partsTotal),
+          partsSubTotal: Number(totals.partsSubtotal),
+          labourSubTotal: Number(totals.labourSubtotal),
+          workType: result.purposeOfVisit,
+
+          roundOff: totals.invoice.jobCardDetails!.roundOffValue,
+          totalDisc: roundDecimal(
+            Number(totals.partsDiscount) + Number(totals.labourDiscount)
+          ),
+          partDisc: Number(totals.partsDiscount),
+          labourDisc: Number(totals.labourDiscount),
+          partsTax: Number(totals.partsTax),
+          labourTax: Number(totals.labourTax),
+          insCompName: "",
+        };
+
+        if (
+          invoice.isInsuranceInvoice &&
+          invoice.insuranceInvoiceType === "Insurance"
+        ) {
+          returnObj.insCompName = totals.invoice.jobCardDetails!.customerName;
+        }
+
+        if (selectedCar) {
+          returnObj.model = `${selectedCar.carMake} ${selectedCar.carModel}`;
+        }
+
+        return returnObj;
+      })
+    );
     console.log("RECIEVED INVOICES", updatedNewInvoices);
     const csvContent = convertArrayToCSV(updatedNewInvoices);
     downloadCSV(csvContent, `accounts_report_${currentSelectedTimeline}.csv`);
@@ -369,9 +458,14 @@ export default function DownloadReports({}: Props) {
                   />
                   <PrimaryButton
                     title={"Download Accounts Report"}
-                    handleButtonPress={downloadAccountsReport}
+                    handleButtonPress={downloadAccountsReportJobCard}
                     isLoading={isMakingAccountsReport}
                   />
+                  {/* <PrimaryButton
+                    title={"Download Accounts Report JobCard"}
+                    handleButtonPress={downloadAccountsReportJobCard}
+                    isLoading={isMakingAccountsReport}
+                  /> */}
                 </>
               )}
             </>

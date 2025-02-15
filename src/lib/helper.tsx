@@ -10,6 +10,7 @@ import {
   TaxObj,
   UserType,
 } from "./definitions";
+import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 
 export const jobCardStatusKey = [
   { code: 999, description: "All" },
@@ -1785,7 +1786,7 @@ export const curateInvoices = (invoices: Invoice[]) => {
   let total = 0;
 
   Object.keys(groupedByJobCardId).map((key) => {
-    const latestInvoices = getLatestInvoices(groupedByJobCardId[key]);
+    const latestInvoices = getLatestInvoices(groupedByJobCardId[key], key);
     total = total + groupedByJobCardId[key].length;
     invoiceArr = [...invoiceArr, ...latestInvoices];
   });
@@ -1801,7 +1802,7 @@ export const curateInvoices = (invoices: Invoice[]) => {
   return invoiceArr;
 };
 
-export const getLatestInvoices = (invoices: Invoice[]) => {
+export const getLatestInvoices = (invoices: Invoice[], key: string) => {
   const latestInvoices: Record<string, any> = {};
 
   invoices.forEach((invoice: any) => {
@@ -1837,8 +1838,20 @@ export const getLatestInvoices = (invoices: Invoice[]) => {
     }
   });
 
+  if (
+    Object.keys(latestInvoices).includes("Tax Invoice-Insurance") &&
+    Object.keys(latestInvoices).includes("Tax Invoice")
+  ) {
+    if (latestInvoices["Tax Invoice"]) {
+      delete latestInvoices["Tax Invoice"];
+    }
+    if (latestInvoices["Pro-Forma Invoice"]) {
+      delete latestInvoices["Pro-Forma Invoice"];
+    }
+  }
   // Validate final output to ensure no duplicate keys
   const uniqueInvoices = Object.values(latestInvoices);
+
   // console.log("Final Unique Invoices:", uniqueInvoices);
 
   return uniqueInvoices; // Return only the latest invoices

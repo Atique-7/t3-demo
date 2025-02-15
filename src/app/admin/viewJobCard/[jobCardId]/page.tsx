@@ -55,10 +55,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { viewCurrentPartsColumns } from "@/lib/column-definitions";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ViewCurrentPartsDataTable } from "@/components/data-tables/view-parts-data-table";
 
 type Props = {};
 
@@ -72,13 +71,7 @@ if (useDev) {
   apiUrl = "https://t3-next-dev.vercel.app";
 }
 
-const jobCard = ({
-  params,
-  disable = true,
-}: {
-  params: { jobCardId: any };
-  disable: boolean;
-}) => {
+const jobCard = ({ params }: { params: { jobCardId: any } }) => {
   const pathname = usePathname();
 
   const [jobCard, setJobCard] = useState<JobCard | null>(null); // Properly typed state
@@ -116,7 +109,7 @@ const jobCard = ({
 
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  const [isDisabled, setIsDisabled] = useState<boolean>(disable);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     // console.log("THERE WAS AN EDIT");
@@ -427,13 +420,13 @@ const jobCard = ({
                 </div>
               )}
 
-              {disable && (
+              {
                 <span className="px-8 py-2 bg-red-500 text-white rounded-md">
                   {jobCardStatusKey.find(
                     (item) => item.code === currentJobCardStatus
                   )?.description || "Status not found"}
                 </span>
-              )}
+              }
             </div>
           </div>
           <div>

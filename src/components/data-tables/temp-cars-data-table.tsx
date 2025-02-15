@@ -35,7 +35,7 @@ import {
 } from "../ui/select";
 import { usePathname } from "next/navigation";
 import { getCookie } from "cookies-next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { set } from "react-datepicker/dist/date_utils";
 import {
   Dialog,
@@ -52,9 +52,13 @@ import {
   getInvoicesByJobCardId,
   getJobCardById,
   updateJobCardJobCardStatus,
+  updateTempCarById,
+  updateTempCarFieldsById,
 } from "@/lib/appwrite";
 import { Invoice, TempCar } from "@/lib/definitions";
 import { Trash2 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
+import { convertStringsToArray, convertToStrings } from "@/lib/helper";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -89,28 +93,104 @@ export function TempCarsDataTable<TData, TValue>({
   const [reopeningJobCard, setReopeningJobCard] = useState("");
   const [deletingTempCar, setDeletingTempCar] = useState("");
 
+  const [selectedJobCardId, setSelectedJobCardId] = useState("");
+  const [jobCardPovs, setJobCardPovs] = useState<Record<string, string>>({});
+  const [reason, setReason] = useState("");
+  const [isLoadingPovs, setIsLoadingPovs] = useState(false);
+
+  // Function to fetch purposes of visit for job card IDs
+  const fetchPurposesOfVisit = async (jobCardIds: string[]) => {
+    setIsLoadingPovs(true);
+    const povMap: Record<string, string> = {};
+    for (const jobCardId of jobCardIds) {
+      const res = await getJobCardById(jobCardId);
+      const pov = res.purposeOfVisit;
+      console.log(res);
+      povMap[jobCardId] = pov || `JobCard: ${jobCardId}`;
+    }
+
+    setJobCardPovs(povMap);
+    setIsLoadingPovs(false);
+  };
+
+  // Fetch purposes of visit when the dialog opens
+  useEffect(() => {
+    if (deletingJobCard) {
+      const tempCarObj: TempCar = JSON.parse(deletingJobCard);
+      console.log(tempCarObj.allJobCardIds.length);
+      fetchPurposesOfVisit(tempCarObj.allJobCardIds);
+    }
+  }, [deletingJobCard]);
+
+  // Delete JobCard function
+  const deleteJobCard = async (tempCar: any) => {
+    const tempCarObj: TempCar = JSON.parse(tempCar);
+
+    if (selectedJobCardId) {
+      const invoices = await getInvoicesByJobCardId(selectedJobCardId);
+      await Promise.all(
+        invoices.documents.map(async (invoice: Invoice) => {
+          await deleteInvoiceById(invoice.$id);
+        })
+      );
+
+      await deleteJobCardById(selectedJobCardId, reason);
+
+      // Remove the deleted job card ID from allJobCardIds
+      const updatedJobCardIds = tempCarObj.allJobCardIds.filter(
+        (id) => id !== selectedJobCardId
+      );
+      console.log(updatedJobCardIds);
+
+      // Find and update the purposeOfVisitAndAdvisors entry
+      const pov = convertStringsToArray(tempCarObj.purposeOfVisitAndAdvisors);
+      const updatedPovAndAdvisors = pov.map((entry: any) => {
+        if (entry.description === jobCardPovs[selectedJobCardId]) {
+          return { ...entry, open: false }; // Set open to false for matching entry
+        }
+        return entry; // Keep other entries unchanged
+      });
+      console.log(updatedPovAndAdvisors);
+
+      // Update the TempCar object
+      await updateTempCarFieldsById(tempCarObj.$id, {
+        allJobCardIds: updatedJobCardIds,
+        purposeOfVisitAndAdvisors: convertToStrings(updatedPovAndAdvisors),
+      });
+      //remove it from temp cars
+      console.log(
+        `Deleted JobCard ID: ${selectedJobCardId}, Purpose: ${jobCardPovs[selectedJobCardId]}, Reason: ${reason}`
+      );
+    }
+
+    // Reset states after deletion
+    setDeletingJobCard("");
+    setSelectedJobCardId("");
+    setReason("");
+  };
+
   const token = getCookie("user");
   const parsedToken = JSON.parse(String(token));
   const userAccess = parsedToken.labels[0];
 
-  const deleteJobCard = async (tempCar: any) => {
-    const tempCarObj: TempCar = JSON.parse(tempCar);
-    console.log(tempCarObj);
+  // const deleteJobCard = async (tempCar: any) => {
+  //   const tempCarObj: TempCar = JSON.parse(tempCar);
+  //   console.log(tempCarObj);
 
-    if (tempCarObj.jobCardId) {
-      const invoices = await getInvoicesByJobCardId(tempCarObj.jobCardId);
-      await Promise.all(
-        invoices.documents.map(async (invoice: Invoice) => {
-          const result = await deleteInvoiceById(invoice.$id);
-          console.log(result);
-        })
-      );
+  //   if (tempCarObj.jobCardId) {
+  //     const invoices = await getInvoicesByJobCardId(tempCarObj.jobCardId);
+  //     await Promise.all(
+  //       invoices.documents.map(async (invoice: Invoice) => {
+  //         const result = await deleteInvoiceById(invoice.$id);
+  //         console.log(result);
+  //       })
+  //     );
 
-      const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
-      const deletedTempCar = await deleteTempCarById(tempCarObj.$id);
-    }
-    setDeletingJobCard("");
-  };
+  //     const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
+  //     const deletedTempCar = await deleteTempCarById(tempCarObj.$id);
+  //   }
+  //   setDeletingJobCard("");
+  // };
 
   const deleteTempCar = async (tempCar: any) => {
     const tempCarObj: TempCar = JSON.parse(tempCar);
@@ -203,7 +283,8 @@ export function TempCarsDataTable<TData, TValue>({
                     <>
                       <TableCell>
                         <div className="flex space-x-4 justify-center">
-                          {(row.original as TempCar).jobCardId ? (
+                          {(row.original as TempCar).allJobCardIds.length >
+                          0 ? (
                             <>
                               {(row.original as TempCar).carStatus === 2 && (
                                 <>
@@ -234,7 +315,7 @@ export function TempCarsDataTable<TData, TValue>({
                                 <Trash2 className="h-4 w-4" />
                               </Button>
 
-                              {deletingJobCard && (
+                              {/* {deletingJobCard && (
                                 <Dialog
                                   open={deletingJobCard != ""}
                                   onOpenChange={() => setDeletingJobCard("")}
@@ -268,7 +349,82 @@ export function TempCarsDataTable<TData, TValue>({
                                     </DialogFooter>
                                   </DialogContent>
                                 </Dialog>
+                              )} */}
+                              {deletingJobCard && (
+                                <Dialog
+                                  open={deletingJobCard !== ""}
+                                  onOpenChange={() => setDeletingJobCard("")}
+                                >
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Select JobCard to Delete
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        This action cannot be undone. Please
+                                        select the job card you want to delete
+                                        and provide a reason.
+                                      </DialogDescription>
+                                    </DialogHeader>
+
+                                    {isLoadingPovs ? (
+                                      // Show loading message while fetching purposes of visit
+                                      <p>Loading purposes of visit...</p>
+                                    ) : (
+                                      // Render radio buttons once purposes of visit are fetched
+                                      <RadioGroup
+                                        value={selectedJobCardId}
+                                        onValueChange={(value) =>
+                                          setSelectedJobCardId(value)
+                                        }
+                                        className="space-y-2"
+                                      >
+                                        {(
+                                          JSON.parse(deletingJobCard) as TempCar
+                                        ).allJobCardIds.map((jobCardId) => (
+                                          <RadioGroupItem
+                                            key={jobCardId}
+                                            id={`radio-${jobCardId}`}
+                                            value={jobCardId}
+                                          >
+                                            {jobCardPovs[jobCardId]
+                                              ? jobCardPovs[jobCardId]
+                                              : `JobCard: ${jobCardId}`}
+                                          </RadioGroupItem>
+                                        ))}
+                                      </RadioGroup>
+                                    )}
+
+                                    <Input
+                                      placeholder="Reason for deletion"
+                                      value={reason}
+                                      onChange={(e) =>
+                                        setReason(e.target.value)
+                                      }
+                                      className="mt-4"
+                                    />
+                                    <DialogFooter>
+                                      <Button
+                                        type="submit"
+                                        className="bg-red-500"
+                                        onClick={() =>
+                                          deleteJobCard(deletingJobCard)
+                                        }
+                                        disabled={!selectedJobCardId || !reason}
+                                      >
+                                        Delete
+                                      </Button>
+                                      <Button
+                                        type="submit"
+                                        onClick={() => setDeletingJobCard("")}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
                               )}
+
                               {reopeningJobCard && (
                                 <Dialog
                                   open={reopeningJobCard != ""}

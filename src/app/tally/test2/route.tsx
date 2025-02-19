@@ -8,6 +8,7 @@ import {
 import {
   createTaxObj,
   createTaxObjNew,
+  formatDate,
   roundToTwoDecimals,
   stringToObj,
 } from "@/lib/helper";
@@ -369,14 +370,10 @@ export async function POST(request: NextRequest) {
 
         const dateTemp = new Date(invoice["$createdAt"]);
 
-        const day = String(dateTemp.getDate()).padStart(2, "0"); // Ensures 2 digits
-        const month = String(dateTemp.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-        const year = dateTemp.getFullYear();
-
         // Combine into the desired format
-        const formattedDate = `${day}-${month}-${year}`;
+        const formattedDate = formatDate(dateTemp);
 
-        invoice.invoiceDate = formattedDate;
+        invoice.invoiceDate = `${formattedDate.day}-${formattedDate.month}-${formattedDate.year}`;
 
         invoice.jobCardDetails = result;
 

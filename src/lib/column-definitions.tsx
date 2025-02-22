@@ -42,6 +42,7 @@ import {
   checkIfAnotherJobCardCanBeOpened,
   config,
   databases,
+  deletePartItem,
   deleteTempCar,
   listAllUsers,
 } from "./appwrite";
@@ -124,6 +125,41 @@ export const partColumns: ColumnDef<Part>[] = [
     cell: ({ row }) => {
       const gst: number = row.getValue("gst");
       return <div>{gst}%</div>;
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const part = row.original;
+      const token = getCookie("user");
+      const parsedToken = JSON.parse(String(token));
+      const userAccess = parsedToken.labels[0];
+
+      const deletePart = async (part: any) => {
+        console.log("Deleting Part", part);
+        const deletedPart = await deletePartItem(part.$id);
+        if (deletedPart) {
+          toast("Part deleted successfully! \u2705");
+          setTimeout(() => {
+            window.location.reload(); // Refresh the page
+          }, 2000);
+        } else {
+          console.error("Error deleting part");
+        }
+      };
+
+      switch (userAccess) {
+        case "parts":
+          return (
+            <div>
+              <Button className="bg-red-500" onClick={() => deletePart(part)}>
+                Delete
+              </Button>
+            </div>
+          );
+        default:
+          return null;
+      }
     },
   },
 ];

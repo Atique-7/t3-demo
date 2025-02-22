@@ -746,6 +746,20 @@ export const deleteTempCar = async (carId: string) => {
   }
 };
 
+export const deletePartItem = async (partId: string) => {
+  try {
+    let result = await databases.deleteDocument(
+      config.databaseId, // databaseId
+      config.partsCollectionId, // collectionId
+      partId // documentId
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export const searchCarHistory = async (searchTerm: string) => {
   try {
     let result = await databases.listDocuments(

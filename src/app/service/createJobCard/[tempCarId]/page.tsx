@@ -109,56 +109,6 @@ export default function CreateJobCard({
     console.log(images);
   };
 
-  // const handleCreateJobCard = async () => {
-  //   // /if (isButtonLoading) return;
-
-  //   setIsButtonLoading(true);
-
-  //   const diagnosisStrings = carDiagnosis.map((item) => item.diagnosis);
-  //   console.log(diagnosisStrings);
-
-  //   const carImages = objToStringArr(images);
-  //   console.log("Current Images - ", carImages);
-
-  //   // const jobCardPdfURL = await generateJobCardPDF({})
-
-  //   if (currTempCar) {
-  //     const token = getCookie("user");
-  //     const parsedToken = JSON.parse(String(token));
-  //     const advisorEmail = parsedToken.email;
-
-  //     const purposeOfVisitAndAdvisors = convertStringsToArray(
-  //       currTempCar.purposeOfVisitAndAdvisors
-  //     );
-  //     const purposeOfVisit = purposeOfVisitAndAdvisors.find((pov: any) => {
-  //       if (pov.advisorEmail === advisorEmail) return true;
-  //     }).description;
-
-  //     let newJobCard = await createJobCard(
-  //       currTempCar.$id,
-  //       currTempCar.carNumber,
-  //       carImages,
-  //       carOdometer,
-  //       carFuel,
-  //       diagnosisStrings,
-  //       customerName,
-  //       customerPhone,
-  //       customerAddress,
-  //       sendToPartsManager,
-  //       String(currTempCar.carsTableId),
-  //       Number(currentCounter!),
-  //       "jobCardPdfURL"
-  //     );
-
-  //     if (newJobCard) {
-  //       toast("Job Card has been Created \u2705");
-  //       setTimeout(() => {
-  //         router.push("/service");
-  //       }, 2000);
-  //     }
-  //   }
-  //   // setIsButtonLoading((prev) => false);
-  // };
   const handleCreateJobCard = async () => {
     if (isButtonLoading) {
       return;

@@ -8,9 +8,10 @@ import DisplayCard from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
 import { Wrench, Plus } from "lucide-react";
 import { tempCarsColumns } from "@/lib/column-definitions";
-import { getAllTempCars } from "@/lib/appwrite";
+import { getAllTempCars, getJobCardsBetween } from "@/lib/appwrite";
 import { TempCarsDataTable } from "@/components/data-tables/temp-cars-data-table";
-import { TempCar } from "@/lib/definitions";
+import { JobCard, TempCar } from "@/lib/definitions";
+import { createDateExpandedObj } from "@/lib/helper";
 
 type Props = {};
 
@@ -31,6 +32,36 @@ export default function Security({}: Props) {
       setName(parsedToken.name);
     };
 
+    const getJobCardsForTimeline = async () => {
+      const todaysDate = await createDateExpandedObj(new Date());
+
+      // setLoading((prev) => true);
+      const from = new Date(
+        Number(todaysDate.year),
+        Number(todaysDate.month) - 1,
+        1
+      );
+      const to = new Date();
+
+      const jobcards = await getJobCardsBetween(from!, to!);
+
+      console.log("JOB CARDS FOR TIMELINE - ", jobcards);
+
+      const onGoingJobCards = jobcards.documents.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus < 6
+      );
+
+      const completedJobCards = jobcards.documents.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+      );
+
+      // setTotalNumberOfCars(jobcards.total);
+      setNumberOfCarsInProgress(onGoingJobCards.length);
+      // setCompletedJobCars(completedJobCards.length);
+
+      // return filteredJobCards;
+    };
+
     const getTempCars = async () => {
       const allTempCars = await getAllTempCars();
       const toExitCars = allTempCars.documents.filter(
@@ -38,10 +69,11 @@ export default function Security({}: Props) {
       );
       console.log("TEMP CARS - ", allTempCars);
       setTempCars(toExitCars);
-      setNumberOfCarsInProgress(allTempCars.total);
+      // setNumberOfCarsInProgress(allTempCars.total);
     };
 
     getUser();
+    getJobCardsForTimeline();
     getTempCars();
   }, []);
 

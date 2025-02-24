@@ -21,8 +21,6 @@ export async function POST(request: NextRequest) {
 
     const updatedNewInvoices = await Promise.all(
       curatedInvoices.map(async (invoice: Invoice, index: number) => {
-        // console.log("INVOICE", invoice.invoiceCode);
-
         let result: JobCard = await getJobCardById(invoice.jobCardId);
 
         invoice = await createInvoiceObj(result, invoice);
@@ -32,13 +30,6 @@ export async function POST(request: NextRequest) {
         } else {
           falseCounter++;
         }
-
-        // if (
-        //   invoice.invoiceCode == "BDS/1120" ||
-        //   invoice.invoiceCode == "BDS/1123"
-        // ) {
-        //   console.log("INVOICE HAIIIII", invoice);
-        // }
 
         return invoice;
       })

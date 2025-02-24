@@ -210,7 +210,6 @@ export default function jobCard({
         setIsDisabled(true);
       }
       const prevParts = stringToObj(jobCardObj.parts);
-      console.log("Current Parts - ", prevParts);
       setCurrentParts(prevParts);
 
       const prevLabour = stringToObj(jobCardObj.labour);
@@ -682,11 +681,11 @@ export default function jobCard({
               </Link>
             </div>
             <div className="flex flex-row space-x-5 justify-normal items-center">
-              {/* <CarHistory
+              <CarHistory
                 carsTableId={carsTableId}
                 currentJobCardId={params.jobCardId}
                 currentJobCardStatus={currentJobCardStatus || 0}
-              /> */}
+              />
 
               <div>
                 <Button

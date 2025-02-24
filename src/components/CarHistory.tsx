@@ -16,6 +16,7 @@ import { Label } from "./ui/label";
 import { History } from "lucide-react";
 import { Car, JobCard, TempCar } from "@/lib/definitions";
 import { getCarById, getJobCardById } from "@/lib/appwrite";
+import { CarHistoryCollapsible } from "./CarHistoryCollapsible";
 
 type Props = {
   carsTableId: string;
@@ -25,6 +26,8 @@ type Props = {
 
 const CarHistory = (props: Props) => {
   const [car, setCar] = useState<Car>();
+  const [carHistory, setCarHistory] = useState<JobCard[]>([]);
+
   useEffect(() => {
     const getCarDetails = async (id: string) => {
       const carObj = await getCarById(id);
@@ -33,12 +36,18 @@ const CarHistory = (props: Props) => {
     };
 
     const createCarHistoryModel = async (carObj: Car) => {
-      let testObj: any = {};
-      carObj.allJobCards.map(async (jobCardId: string) => {
-        const jobCardObj: JobCard = await getJobCardById(jobCardId);
-        testObj[jobCardId] = jobCardObj;
-      });
-      console.log("CREATED HISTORY - ", testObj);
+      const carHistoryObj: any = await Promise.all(
+        carObj.allJobCards.map(async (jobCardId: string) => {
+          const jobCardObj: JobCard = await getJobCardById(jobCardId);
+          return jobCardObj;
+        })
+      );
+
+      const filteredHistory = carHistoryObj.filter((item: any) => item != null);
+
+      console.log("CREATED HISTORY - ", filteredHistory);
+
+      setCarHistory(filteredHistory);
     };
 
     getCarDetails(props.carsTableId);
@@ -56,7 +65,7 @@ const CarHistory = (props: Props) => {
             <div className="font-semibold">History</div>
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] overflow-visible max-h-screen focus:outline-none">
+        <DialogContent className="overflow-scroll max-h-dvh focus:outline-none">
           <DialogHeader>
             <DialogTitle className="flex justify-start items-center space-x-2">
               <History />
@@ -65,21 +74,31 @@ const CarHistory = (props: Props) => {
             <DialogDescription>Previous entries for this car</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            {car?.allJobCards.map((a, index) => (
-              <div
-                key={index}
-                className="p-5 flex justify-between items-center rounded-xl border-2 border-red-500"
-              >
-                <div
-                  className={`font-semibold ${
-                    a == props.currentJobCardId ? "text-red-500" : ""
-                  }`}
-                >
-                  {a}
-                </div>
-                <div className="text-white font-semibold text-sm py-2 px-4 bg-red-500 rounded-full">
-                  {a == props.currentJobCardId ? <>Current</> : <></>}
-                </div>
+            {carHistory.map((jobCard: JobCard, index: number) => (
+              // <div
+              //   key={index}
+              //   className="p-5 flex justify-between items-center rounded-xl border-2 border-red-500"
+              // >
+              //   <div
+              //     className={`font-semibold ${
+              //       jobCard.$id == props.currentJobCardId ? "text-red-500" : ""
+              //     }`}
+              //   >
+              //     {jobCard.$id}
+              //   </div>
+              //   {jobCard.$id == props.currentJobCardId ? (
+              //     <div className="text-white font-semibold text-sm py-2 px-4 bg-red-500 rounded-full">
+              //       Current
+              //     </div>
+              //   ) : (
+              //     <></>
+              //   )}
+              // </div>
+              <div key={index}>
+                <CarHistoryCollapsible
+                  jobCard={jobCard}
+                  current={jobCard.$id === props.currentJobCardId}
+                />
               </div>
             ))}
           </div>

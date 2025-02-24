@@ -815,7 +815,7 @@ export const getJobCardById = async (id: string) => {
     // console.log("FETCHED CAR + ", result);
     return result;
   } catch (error: any) {
-    console.log(error.message);
+    // console.log(error.message);
     return null;
   }
 };

@@ -1701,3 +1701,17 @@ export const fetchPolicyProviders = async () => {
     GST: doc.GST,
   }));
 };
+
+export const getHistory = async () => {
+  try {
+    let result = await databases.listDocuments(
+      config.databaseId,
+      config.historyCollectionId,
+      [Query.limit(99999), Query.orderDesc("$createdAt")]
+    );
+    return result;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};

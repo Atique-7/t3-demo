@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import {
   convertStringsToArray,
   convertToStrings,
+  createDateExpandedObj,
   jobCardStatusKey,
 } from "../lib/helper";
 
@@ -666,5 +667,68 @@ export const viewCurrentLabourColumns: ColumnDef<CurrentLabour>[] = [
   },
   {
     accessorKey: "amount",
+  },
+];
+
+export const changesHistoryColumns: ColumnDef<any>[] = [
+  {
+    accessorKey: "timestamp",
+    header: "Date",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("timestamp"));
+
+      const day = Number(String(date.getDate()).padStart(2, "0")); // Ensures 2 digits
+      const month = Number(String(date.getMonth() + 1).padStart(2, "0")); // Months are 0-indexed
+      const year = Number(date.getFullYear());
+
+      const time = date.toLocaleTimeString();
+
+      // Combine into the desired format
+      const formattedDate = `${day}-${month}-${year}`;
+      return <div>{formattedDate}</div>;
+    },
+  },
+  {
+    accessorKey: "timestamp",
+    header: "Time",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("timestamp"));
+
+      const time = date.toLocaleTimeString();
+
+      // Combine into the desired format
+      return <div>{time}</div>;
+    },
+  },
+  {
+    accessorKey: "userEmail",
+    header: "User Email",
+  },
+  {
+    accessorKey: "userName",
+    header: "User Name",
+  },
+  {
+    accessorKey: "objectType",
+    header: "Collection",
+    cell: ({ row }) => {
+      const helperArr = [
+        { key: "job_cards", value: "Job Cards" },
+        { key: "parts", value: "Parts" },
+        { key: "labour", value: "Labour" },
+        { key: "temp-cars", value: "Temp Cars" },
+        { key: "cars", value: "Cars" },
+      ];
+
+      const objectType = row.getValue("objectType");
+
+      const object = helperArr.find((item) => item.key === objectType)?.value;
+
+      return <div>{object}</div>;
+    },
+  },
+  {
+    accessorKey: "operationType",
+    header: "Operation Type",
   },
 ];

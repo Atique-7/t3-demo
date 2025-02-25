@@ -2,7 +2,12 @@
 
 import { ChangesHistoryDataTable } from "@/components/data-tables/changes-history-data-table";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
-import { getHistory } from "@/lib/appwrite";
+import {
+  getCarById,
+  getHistory,
+  getJobCardById,
+  getTempCarById,
+} from "@/lib/appwrite";
 import { changesHistoryColumns } from "@/lib/column-definitions";
 import React, { use, useEffect, useState } from "react";
 
@@ -31,7 +36,41 @@ function ViewChanges({}: Props) {
           return historyItemObj;
         })
       );
+      // await Promise.all(formattedObj.map((obj: any) => {
+      //   // console.log(obj.objectType, obj.objectId);
+
+      // });
+
+      // console.log(formattedObj);
+      await Promise.all(
+        formattedObj.map(async (obj: any) => {
+          switch (obj.objectType) {
+            case "job_cards":
+              const jobCard = await getJobCardById(obj.objectId);
+              if (jobCard) {
+                obj.identifier = jobCard.carNumber;
+              }
+              break;
+            case "temp-cars":
+              const TempCar = await getTempCarById(obj.objectId);
+              if (TempCar) {
+                obj.identifier = TempCar.carNumber;
+              }
+              break;
+            case "cars":
+              const CarObj = await getCarById(obj.objectId);
+              if (CarObj) {
+                obj.identifier = CarObj.carNumber;
+              }
+              break;
+
+            default:
+              break;
+          }
+        })
+      );
       console.log(formattedObj);
+
       setHistory(formattedObj);
     };
     getAllHistory();

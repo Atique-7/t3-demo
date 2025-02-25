@@ -58,22 +58,22 @@ export function ChangesHistoryDataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center py-4 justify-between">
-        {/* <Input
-          placeholder="Filter Parts"
+        <Input
+          placeholder="Car Number"
           value={
-            (table.getColumn("partNumber")?.getFilterValue() as string) ?? ""
+            (table.getColumn("identifier")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("partNumber")?.setFilterValue(event.target.value)
+            table.getColumn("identifier")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        /> */}
+        />
       </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+            {table.getHeaderGroups().map((headerGroup, index) => (
+              <TableRow key={index}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, MoveRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -31,7 +31,18 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import {
   Select,
   SelectContent,
@@ -45,6 +56,7 @@ import {
   databases,
   deletePartItem,
   deleteTempCar,
+  getJobCardById,
   listAllUsers,
 } from "./appwrite";
 import { toast } from "sonner";
@@ -705,10 +717,6 @@ export const changesHistoryColumns: ColumnDef<any>[] = [
     header: "User Email",
   },
   {
-    accessorKey: "userName",
-    header: "User Name",
-  },
-  {
     accessorKey: "objectType",
     header: "Collection",
     cell: ({ row }) => {
@@ -724,11 +732,160 @@ export const changesHistoryColumns: ColumnDef<any>[] = [
 
       const object = helperArr.find((item) => item.key === objectType)?.value;
 
-      return <div>{object}</div>;
+      return <div className="font-semibold">{object}</div>;
+    },
+  },
+  {
+    accessorKey: "identifier",
+    header: "Car Number",
+    cell: ({ row }) => {
+      return <div className="font-bold">{row.getValue("identifier")}</div>;
     },
   },
   {
     accessorKey: "operationType",
     header: "Operation Type",
+    cell: ({ row }) => {
+      const helperArr = [
+        { key: "created", value: "Created", color: "green-500" },
+        { key: "updated", value: "Updated", color: "blue-500" },
+        { key: "deleted", value: "Deleted", color: "red-500" },
+      ];
+      const operationType: string = row.getValue("operationType");
+
+      const operation = helperArr.find((item) => item.key === operationType);
+      const objectId = row.getValue("objectId");
+
+      return (
+        <div
+          className={`px-4 py-2 rounded-full font-bold text-${operation?.color}`}
+          onClick={() => console.log("Clicked", objectId)}
+        >
+          {operation?.value}
+          <div className="text-green-500"></div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "changes",
+    header: "Changes",
+    cell: ({ row }) => {
+      const changes: any[] = row.getValue("changes");
+      // console.log("Changes:", changes);
+      const identifier: string = row.getValue("identifier");
+      const helperArr = [
+        { key: "created", value: "Created", color: "green-500" },
+        { key: "updated", value: "Updated", color: "blue-500" },
+        { key: "deleted", value: "Deleted", color: "red-500" },
+      ];
+      const operationType: string = row.getValue("operationType");
+
+      const operation = helperArr.find((item) => item.key === operationType);
+
+      return (
+        <Sheet>
+          <SheetTrigger className="bg-red-500 px-4 py-2 rounded-lg text-white hover:bg-red-400">
+            View Changes
+          </SheetTrigger>
+          <SheetContent className="h-fit" side={"bottom"}>
+            <SheetHeader>
+              <SheetTitle className="flex w-full justify-between items-center mt-5">
+                <div className={`text-${operation?.color} font-bold`}>
+                  {operation?.value}
+                </div>
+                <div className="text-base px-4 py-2 rounded-full bg-red-500 text-white">
+                  {identifier}
+                </div>
+              </SheetTitle>
+              <SheetDescription>
+                <div className="mt-5 divide-y-2 space-y-4">
+                  {changes.map((change: any, index: number) => (
+                    <div key={index} className="flex flex-col space-y-4">
+                      <div className="text-base">
+                        Change in{" "}
+                        <span className="font-bold">{change.object}</span>
+                      </div>
+                      {change.object === "parts" ||
+                      change.object === "labour" ? (
+                        <div className="flex justify-between font-bold text-white items-center">
+                          <div className="p-5 rounded-xl bg-slate-600 max-w-[40%] text-wrap">
+                            {change.prevState || "null"}
+                          </div>
+                          <div className="text-slate-700">
+                            <MoveRight />
+                          </div>
+                          <div className="px-4 py-2 rounded-lg bg-green-600 max-w-[40%] text-wrap">
+                            {change.currentState || "null"}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between font-bold text-white items-center">
+                          <div className="px-4 py-2 rounded-full bg-slate-600">
+                            {change.prevState || "null"}
+                          </div>
+                          <div className="text-slate-700">
+                            <MoveRight />
+                          </div>
+                          <div className="px-4 py-2 rounded-full bg-green-600">
+                            {change.currentState || "null"}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+
+        // <Dialog>
+        //   <DialogTrigger className="bg-red-500 px-4 py-2 rounded-lg text-white hover:bg-red-400">
+        //     View Changes
+        //   </DialogTrigger>
+        //   <DialogContent className="h-fit w-fit">
+        //     <DialogHeader className="w-full h-full">
+        //       <DialogTitle className="flex w-full justify-between items-center mt-5">
+        //         <div className={`text-${operation?.color} font-bold`}>
+        //           {operation?.value}
+        //         </div>
+        //         <div className="text-base px-4 py-2 rounded-full bg-red-500 text-white">
+        //           {identifier}
+        //         </div>
+        //       </DialogTitle>
+        //       <DialogDescription>
+        //         <div className="mt-5">
+        //           {changes.map((change: any, index: number) => (
+        //             <div key={index} className="flex flex-col space-y-4">
+        //               <div className="text-base">
+        //                 Change in{" "}
+        //                 <span className="font-bold">{change.object}</span>
+        //               </div>
+        //               {change.object === "parts" ||
+        //               change.object === "labour" ? (
+        //                 <></>
+        //               ) : (
+        //                 <div className="flex justify-between font-bold text-white">
+        //                   <div className="px-4 py-2 rounded-full bg-slate-600 max-w-[40%] text-wrap">
+        //                     {change.prevState || "null"}
+        //                   </div>
+        //                   <div className="text-slate-700">
+        //                     <MoveRight />
+        //                   </div>
+        //                   <div className="px-4 py-2 rounded-full bg-green-600">
+        //                     {change.currentState || "null"}
+        //                   </div>
+        //                 </div>
+        //               )}
+        //             </div>
+        //           ))}
+        //         </div>
+        //       </DialogDescription>
+        //     </DialogHeader>
+        //   </DialogContent>
+        // </Dialog>
+      );
+    },
   },
 ];

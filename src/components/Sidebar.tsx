@@ -11,6 +11,7 @@ import {
   CarFront,
   ClipboardList,
   Download,
+  HistoryIcon,
   House,
   Layers3,
   LogOut,
@@ -234,6 +235,12 @@ export default function Sidebar({ home }: any) {
                   href={`${home}/add-insuranceProvider`}
                 >
                   <UmbrellaIcon />
+                </Link>
+                <Link
+                  className="border-2 rounded-md shadow-md p-3"
+                  href={`${home}/viewChanges`}
+                >
+                  <HistoryIcon />
                 </Link>
               </>
             )}

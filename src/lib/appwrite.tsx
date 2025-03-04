@@ -33,6 +33,7 @@ export const config = {
   invoicesCollectionId: "6710ba53003b4b25a23d",
   historyCollectionId: "670cbc13003d80c32176",
   invoiceStorageBucketId: "677e05b70025ceed10e4",
+  imageStorageBucketId: "67053962002be8598a04",
   carModelsCollectionId: "678e143f003c388e2603",
   insuranceProvidersCollectionId: "67963228001b5bf116e6",
   deletedJobCardsCollectionId: "67989f07000005e743d4",
@@ -477,6 +478,48 @@ export const createTempCar = async (
     return carsResult;
   } catch (error: any) {
     console.log("THIS IS ERROR - ", error.message);
+    return null;
+  }
+};
+
+export const uploadImage = async (file: File) => {
+  try {
+    const result = await storage.createFile(
+      config.imageStorageBucketId, // bucketId
+      ID.unique(), // fileId
+      file, // file
+      [] // permissions (optional)
+    );
+
+    // Generate the image URL
+    const imageUrl = storage.getFileView(
+      config.imageStorageBucketId,
+      result.$id
+    ).href;
+
+    // Generate a thumbnail URL (resized preview)
+    const thumbnailUrl = storage.getFilePreview(
+      config.imageStorageBucketId,
+      result.$id
+    ).href; // Adjust width & height as needed
+
+    return {
+      id: result.$id,
+      imageUrl,
+      thumbnailUrl,
+    };
+  } catch (error: any) {
+    console.log("UPLOAD ERROR - ", error.message);
+    return null;
+  }
+};
+
+export const getImageUrl = async (id: string) => {
+  try {
+    const result = storage.getFileView(config.imageStorageBucketId, id);
+    return result;
+  } catch (error: any) {
+    console.log("FETCH ERROR - ", error.message);
     return null;
   }
 };

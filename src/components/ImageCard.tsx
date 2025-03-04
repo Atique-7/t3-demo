@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { TicketX, Upload, X } from "lucide-react";
-import { uploadCarImage } from "@/lib/appwrite";
+import { uploadCarImage, uploadImage } from "@/lib/appwrite";
 import loader from "../../public/assets/t3-loader.gif";
 import { ImageObj } from "@/lib/definitions";
 
@@ -28,7 +28,7 @@ export default function ImageCard({ type, images, setImages }: any) {
 
     if (fileUploaded) {
       setShowLoading(true);
-      uploadCarImage(fileUploaded).then((res: any) => {
+      uploadImage(fileUploaded).then((res: any) => {
         console.log("UPLOADED RES - ", res);
         setImageUrl(res.thumbnailUrl);
         setImageUploaded(true);
@@ -38,7 +38,7 @@ export default function ImageCard({ type, images, setImages }: any) {
           {
             imageType: type,
             thumbnailURL: res.thumbnailUrl,
-            imageURL: res.url,
+            imageURL: res.ImageUrl,
           },
         ]);
       });
@@ -61,14 +61,33 @@ export default function ImageCard({ type, images, setImages }: any) {
   };
 
   if (imageUploaded) {
+    // return (
+    //   <div className="relative transition ease-in-out flex justify-around rounded-xl p-4 w-full h-32 border-2 border-red-500 text-red-500 overflow-hidden">
+    //     <Image
+    //       src={imageUrl}
+    //       alt=""
+    //       fill={true}
+    //       style={{ objectFit: "cover", zIndex: 0 }}
+    //     />
+    //     <div className="flex flex-col text-sm h-full justify-between w-full z-10">
+    //       <button className="flex w-full justify-end" onClick={removeImg}>
+    //         <X />
+    //       </button>
+    //     </div>
+    //   </div>
+    // );
     return (
       <div className="relative transition ease-in-out flex justify-around rounded-xl p-4 w-full h-32 border-2 border-red-500 text-red-500 overflow-hidden">
-        <Image
-          src={imageUrl}
-          alt=""
-          fill={true}
-          style={{ objectFit: "cover", zIndex: 0 }}
-        />
+        {imageUrl ? (
+          <Image
+            src={imageUrl} // Now a valid URL string
+            alt="Uploaded Image"
+            fill
+            style={{ objectFit: "cover", zIndex: 0 }}
+          />
+        ) : (
+          <p>Loading image...</p>
+        )}
         <div className="flex flex-col text-sm h-full justify-between w-full z-10">
           <button className="flex w-full justify-end" onClick={removeImg}>
             <X />

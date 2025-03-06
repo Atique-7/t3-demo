@@ -596,9 +596,11 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+
+      console.log("RESULT", result);
 
       result.json().then((invoices: any) => {
         invoices.map((invoice: any) => {

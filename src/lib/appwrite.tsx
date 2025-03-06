@@ -61,7 +61,7 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
-const useDev = true;
+const useDev = false;
 
 let apiUrl: string;
 

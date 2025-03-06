@@ -34,6 +34,7 @@ export const config = {
   historyCollectionId: "670cbc13003d80c32176",
   invoiceStorageBucketId: "677e05b70025ceed10e4",
   imageStorageBucketId: "67053962002be8598a04",
+  pdfStorageBucketId: "67c97ee0000a45e85251",
   carModelsCollectionId: "678e143f003c388e2603",
   insuranceProvidersCollectionId: "67963228001b5bf116e6",
   deletedJobCardsCollectionId: "67989f07000005e743d4",
@@ -60,7 +61,7 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
-const useDev = false;
+const useDev = true;
 
 let apiUrl: string;
 
@@ -513,6 +514,67 @@ export const uploadImage = async (file: File) => {
     return null;
   }
 };
+
+export const uploadPDF = async (buffer: Buffer, fileName = "document.pdf") => {
+  try {
+    const blob = new Blob([buffer], { type: "application/pdf" });
+
+    // Create a File object (if needed)
+    const file = new File([blob], fileName, { type: "application/pdf" });
+
+    const result = await storage.createFile(
+      config.pdfStorageBucketId, // Your Appwrite bucket ID
+      ID.unique(), // Generate a unique file ID
+      file
+    );
+
+    // Generate the file download URL
+    const downloadUrl = storage.getFileDownload(
+      config.pdfStorageBucketId,
+      result.$id
+    ).href;
+
+    return {
+      id: result.$id,
+      downloadUrl,
+    };
+  } catch (error: any) {
+    console.error("UPLOAD ERROR:", error.message);
+    return null;
+  }
+};
+
+// export const uploadPdf = async (file: File) => {
+//   try {
+//     const result = await storage.createFile(
+//       config.imageStorageBucketId, // bucketId
+//       ID.unique(), // fileId
+//       file, // file
+//       [] // permissions (optional)
+//     );
+
+//     // Generate the image URL
+//     const imageUrl = storage.getFileView(
+//       config.imageStorageBucketId,
+//       result.$id
+//     ).href;
+
+//     // Generate a thumbnail URL (resized preview)
+//     const thumbnailUrl = storage.getFilePreview(
+//       config.imageStorageBucketId,
+//       result.$id
+//     ).href; // Adjust width & height as needed
+
+//     return {
+//       id: result.$id,
+//       imageUrl,
+//       thumbnailUrl,
+//     };
+//   } catch (error: any) {
+//     console.log("UPLOAD ERROR - ", error.message);
+//     return null;
+//   }
+// };
 
 export const getImageUrl = async (id: string) => {
   try {

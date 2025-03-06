@@ -3,6 +3,7 @@ import {
   getJobCardById,
   getTempCarById,
   imagekit,
+  uploadPDF,
 } from "@/lib/appwrite";
 import {
   base64Logo,
@@ -35,6 +36,14 @@ export async function POST(
         invoiceType={"Job Card"}
       />
     );
+    // Upload the buffer to ImageKit
+    // const uploadResponse = await imagekit.upload({
+    //   file: buffer, // Buffer object
+    //   fileName: `${params.jobCardId}_jobCard_${uniqueStr}.pdf`, // Name of the file
+    //   folder: "/pdfs/", // Optional folder
+    //   useUniqueFileName: false, // Ensure file name uniqueness
+    //   isPrivateFile: false, // If you want a public URL
+    // });
 
     const buffer = await streamToBuffer(stream);
 
@@ -47,17 +56,13 @@ export async function POST(
       uniqueStr += characters.charAt(randomIndex);
     }
 
-    // Upload the buffer to ImageKit
-    const uploadResponse = await imagekit.upload({
-      file: buffer, // Buffer object
-      fileName: `${params.jobCardId}_jobCard_${uniqueStr}.pdf`, // Name of the file
-      folder: "/pdfs/", // Optional folder
-      useUniqueFileName: false, // Ensure file name uniqueness
-      isPrivateFile: false, // If you want a public URL
-    });
+    const uploadResponse = await uploadPDF(
+      buffer,
+      `${params.jobCardId}_jobCard_${uniqueStr}.pdf`
+    );
 
     // Get the URL of the uploaded PDF
-    const pdfUrl = uploadResponse.url;
+    const pdfUrl = uploadResponse?.downloadUrl;
 
     console.log("PDF uploaded to ImageKit, URL:", pdfUrl);
 

@@ -588,26 +588,60 @@ export default function jobCard({
   };
 
   const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
-      method: "POST",
-      body: JSON.stringify({
-        jobCard,
-        car,
-      }),
-    }).then((result: any) => {
-      // Set a short timeout before refreshing the page
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
+    // await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     jobCard,
+    //     car,
+    //   }),
+    // }).then((result: any) => {
+    //   // Set a short timeout before refreshing the page
+    //   // setTimeout(() => {
+    //   //   window.location.reload();
+    //   // }, 1000);
 
-      console.log("RESULT", result);
+    //   console.log("RESULT", result);
 
-      result.json().then((invoices: any) => {
-        invoices.map((invoice: any) => {
-          openInNewTab(invoice);
-        });
+    //   result.json().then((invoices: any) => {
+    //     invoices.map((invoice: any) => {
+    //       openInNewTab(invoice);
+    //     });
+    //   });
+    // });
+
+    try {
+      const response = await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jobCard,
+          car,
+        }),
       });
-    });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      // Convert response to blob (PDF file)
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Open in new tab
+      window.open(url, "_blank");
+
+      // If you want to trigger a download instead of opening:
+      // const a = document.createElement("a");
+      // a.href = url;
+      // a.download = "jobCard.pdf"; // Change filename as needed
+      // document.body.appendChild(a);
+      // a.click();
+      // document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+    }
   };
 
   const handleInvoicePDF = (selectedValue: string) => {

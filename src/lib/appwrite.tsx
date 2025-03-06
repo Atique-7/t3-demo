@@ -529,7 +529,7 @@ export const uploadPDF = async (buffer: Buffer, fileName = "document.pdf") => {
     );
 
     // Generate the file download URL
-    const downloadUrl = storage.getFileDownload(
+    const downloadUrl = storage.getFileView(
       config.pdfStorageBucketId,
       result.$id
     ).href;

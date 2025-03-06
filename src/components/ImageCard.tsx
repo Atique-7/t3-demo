@@ -28,7 +28,7 @@ export default function ImageCard({ type, images, setImages }: any) {
 
     if (fileUploaded) {
       setShowLoading(true);
-      uploadImage(fileUploaded).then((res: any) => {
+      await uploadImage(fileUploaded).then((res: any) => {
         console.log("UPLOADED RES - ", res);
         setImageUrl(res.thumbnailUrl);
         setImageUploaded(true);
@@ -37,7 +37,7 @@ export default function ImageCard({ type, images, setImages }: any) {
           ...images,
           {
             imageType: type,
-            thumbnailURL: res.thumbnailUrl,
+            thumbnailURL: res.ImageUrl,
             imageURL: res.ImageUrl,
           },
         ]);

@@ -228,7 +228,7 @@ export const JobCardPDF = ({
   const imagesArr = stringToObj(jobCard.images);
   // const diagnosisStrings = stringToObj(jobCard.diagnosis);
   // jobCard.images = stringToObj(jobCard.images);
-  console.log(jobCard.diagnosis);
+  console.log(jobCard.imagesArr);
 
   return (
     <Document>

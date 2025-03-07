@@ -502,8 +502,8 @@ export const uploadImage = async (file: File) => {
     const thumbnailUrl = storage.getFilePreview(
       config.imageStorageBucketId,
       result.$id,
-      800,
-      800,
+      960,
+      540,
       "center"
     ).href; // Adjust width & height as needed
 

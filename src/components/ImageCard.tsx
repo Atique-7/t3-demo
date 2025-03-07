@@ -37,7 +37,7 @@ export default function ImageCard({ type, images, setImages }: any) {
           ...images,
           {
             imageType: type,
-            thumbnailURL: res.ImageUrl,
+            thumbnailURL: res.thumbnailUrl,
             imageURL: res.ImageUrl,
           },
         ]);

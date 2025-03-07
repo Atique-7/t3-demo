@@ -501,7 +501,10 @@ export const uploadImage = async (file: File) => {
     // Generate a thumbnail URL (resized preview)
     const thumbnailUrl = storage.getFilePreview(
       config.imageStorageBucketId,
-      result.$id
+      result.$id,
+      800,
+      800,
+      "center"
     ).href; // Adjust width & height as needed
 
     return {
@@ -536,7 +539,7 @@ export const uploadPDF = async (buffer: Buffer, fileName = "document.pdf") => {
 
     return {
       id: result.$id,
-      downloadUrl,
+      downloadUrl: downloadUrl.toString(),
     };
   } catch (error: any) {
     console.error("UPLOAD ERROR:", error.message);

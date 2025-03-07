@@ -369,11 +369,13 @@ export const JobCardPDF = ({
                 {imagesArr.map((a, index) => (
                   <View key={index}>
                     <Text style={styles.imageHeading}>{a.imageType}</Text>
-                    <Image
-                      style={styles.carImages}
-                      src={a.thumbnailURL}
-                      alt-text={".."}
-                    />
+                    {a.thumbnailURL && (
+                      <Image
+                        style={styles.carImages}
+                        src={a.thumbnailURL}
+                        alt-text={".."}
+                      />
+                    )}
                   </View>
                 ))}
               </View>

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/chart";
 import { useEffect } from "react";
 
-const TOTAL_PARKING_SPACE = 200;
+const TOTAL_PARKING_SPACE = 100;
 
 let carsBeingWorkedOn = 0;
 let gatePassGenerated = 0;

@@ -88,11 +88,6 @@ function ViewChanges({}: Props) {
 
           <div className="flex flex-col mt-16">
             <div className="font-semibold text-2xl mb-5">Changes History</div>
-            {/* <TempCarsDataTable
-              columns={tempCarsColumns}
-              data={tempCars}
-              povCategories={servicePOV}
-            /> */}
             <ChangesHistoryDataTable
               columns={changesHistoryColumns}
               data={history}

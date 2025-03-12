@@ -38,7 +38,7 @@ const chartConfig = {
   },
   bodyshop: {
     label: "Bodyshop",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--chart-5))",
   },
   paidservice: {
     label: "Paid Service",
@@ -47,6 +47,10 @@ const chartConfig = {
   runningrepair: {
     label: "Running Repair",
     color: "hsl(var(--chart-4))",
+  },
+  closed: {
+    label: "Closed Jobcards",
+    color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
@@ -58,28 +62,49 @@ export default function CustomerSplit({
   const [selectedTimeline, setSelectedTimeline] = useState<string>();
 
   useEffect(() => {
-    const groupedData = jobCards.reduce((acc: any, curr: any) => {
-      acc[curr.purposeOfVisit] = (acc[curr.purposeOfVisit] || 0) + 1;
-      return acc;
-    }, {});
+    const calculateVisitors = async () => {
+      const closedJobCards = await jobCards.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus >= 6
+      );
+      jobCards = await jobCards.filter(
+        (jobCard: JobCard) => jobCard.jobCardStatus < 6
+      );
 
-    // Create the formatted dataset
-    const formattedDataset = Object.keys(groupedData).map((key) => ({
-      pov: key,
-      visitors: groupedData[key],
-      fill: `var(--color-${key.replace(/\s+/g, "").toLowerCase()})`,
-    }));
+      console.log("FILTERED", jobCards);
 
-    setNewChartData(formattedDataset);
+      const groupedData = jobCards.reduce((acc: any, curr: any) => {
+        acc[curr.purposeOfVisit] = (acc[curr.purposeOfVisit] || 0) + 1;
+        return acc;
+      }, {});
 
-    manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
+      // Create the formatted dataset
+      const formattedDataset = Object.keys(groupedData).map((key) => ({
+        pov: key,
+        visitors: groupedData[key],
+        fill: `var(--color-${key.replace(/\s+/g, "").toLowerCase()})`,
+      }));
+
+      console.log("FORMATTED", formattedDataset);
+
+      formattedDataset.push({
+        pov: "Closed Jobcards",
+        visitors: closedJobCards.length,
+        fill: "var(--color-closed)",
+      });
+
+      setNewChartData(formattedDataset);
+
+      manageTimelineChange({ currentSelectedTimeline, setSelectedTimeline });
+    };
+
+    calculateVisitors();
   }, [jobCards]);
 
   // console.log("FORMATTED", formattedDataset);
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Total Visitors</CardTitle>
+        <CardTitle>Total Jobcards Opened</CardTitle>
         <CardDescription>{selectedTimeline}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -121,7 +146,7 @@ export default function CustomerSplit({
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          Jobcards
                         </tspan>
                       </text>
                     );

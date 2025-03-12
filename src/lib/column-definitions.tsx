@@ -5,6 +5,7 @@ import { ArrowUpDown, MoveRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+
 import {
   convertStringsToArray,
   convertToStrings,
@@ -822,13 +823,26 @@ export const changesHistoryColumns: ColumnDef<any>[] = [
                       ) : (
                         <div className="flex justify-between font-bold text-white items-center">
                           <div className="px-4 py-2 rounded-full bg-slate-600">
-                            {change.prevState || "null"}
+                            {change.object == "jobCardStatus"
+                              ? `${
+                                  jobCardStatusKey.find(
+                                    (item) => item.code === change.prevState
+                                  )?.description
+                                }`
+                              : `${change.prevState || "null"}`}
+                            {/* {change.prevState || "null"} */}
                           </div>
                           <div className="text-slate-700">
                             <MoveRight />
                           </div>
                           <div className="px-4 py-2 rounded-full bg-green-600">
-                            {change.currentState || "null"}
+                            {change.object == "jobCardStatus"
+                              ? `${
+                                  jobCardStatusKey.find(
+                                    (item) => item.code === change.currentState
+                                  )?.description
+                                }`
+                              : `${change.currentState || "null"}`}
                           </div>
                         </div>
                       )}
@@ -839,52 +853,6 @@ export const changesHistoryColumns: ColumnDef<any>[] = [
             </SheetHeader>
           </SheetContent>
         </Sheet>
-
-        // <Dialog>
-        //   <DialogTrigger className="bg-red-500 px-4 py-2 rounded-lg text-white hover:bg-red-400">
-        //     View Changes
-        //   </DialogTrigger>
-        //   <DialogContent className="h-fit w-fit">
-        //     <DialogHeader className="w-full h-full">
-        //       <DialogTitle className="flex w-full justify-between items-center mt-5">
-        //         <div className={`text-${operation?.color} font-bold`}>
-        //           {operation?.value}
-        //         </div>
-        //         <div className="text-base px-4 py-2 rounded-full bg-red-500 text-white">
-        //           {identifier}
-        //         </div>
-        //       </DialogTitle>
-        //       <DialogDescription>
-        //         <div className="mt-5">
-        //           {changes.map((change: any, index: number) => (
-        //             <div key={index} className="flex flex-col space-y-4">
-        //               <div className="text-base">
-        //                 Change in{" "}
-        //                 <span className="font-bold">{change.object}</span>
-        //               </div>
-        //               {change.object === "parts" ||
-        //               change.object === "labour" ? (
-        //                 <></>
-        //               ) : (
-        //                 <div className="flex justify-between font-bold text-white">
-        //                   <div className="px-4 py-2 rounded-full bg-slate-600 max-w-[40%] text-wrap">
-        //                     {change.prevState || "null"}
-        //                   </div>
-        //                   <div className="text-slate-700">
-        //                     <MoveRight />
-        //                   </div>
-        //                   <div className="px-4 py-2 rounded-full bg-green-600">
-        //                     {change.currentState || "null"}
-        //                   </div>
-        //                 </div>
-        //               )}
-        //             </div>
-        //           ))}
-        //         </div>
-        //       </DialogDescription>
-        //     </DialogHeader>
-        //   </DialogContent>
-        // </Dialog>
       );
     },
   },

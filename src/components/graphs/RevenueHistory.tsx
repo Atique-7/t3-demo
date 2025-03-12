@@ -38,7 +38,7 @@ const chartConfig = {
     label: "Total",
     color: "hsl(var(--chart-3))",
   },
-  numberOfJobCards: { label: "JobCards", color: "hsl(var(--chart-4))" },
+  numberOfJobCards: { label: "Closed JobCards", color: "hsl(var(--chart-4))" },
 } satisfies ChartConfig;
 
 export function RevenueHistory({ jobCards, currentSelectedTimeline }: any) {

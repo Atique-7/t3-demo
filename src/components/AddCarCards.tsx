@@ -37,6 +37,9 @@ import { RadioGroup, RadioGroupItem } from "./ui/radioGroup";
 
 type Props = {};
 
+const indianCarNumberRegex =
+  /^(?:[A-Z]{2}\d{2}[A-Z]{1,5}\d{4}|\d{2}BH\d{4}[A-Z]{1,2})$/;
+
 export default function AddCarCards({}: Props) {
   const router = useRouter();
 
@@ -157,8 +160,6 @@ export default function AddCarCards({}: Props) {
   }, []);
 
   function checkIndianCarNumber(inputText: string) {
-    const indianCarNumberRegex =
-      /^([A-Z]{2}\d{2}[A-Z]{1,5}\d{4})|(\d{2}BH\d{4}[A-Z]{1,2})$/;
     setCarNumber(inputText);
     setIsCorrectCarNumber((prev) => indianCarNumberRegex.test(inputText));
   }
@@ -264,34 +265,38 @@ export default function AddCarCards({}: Props) {
   };
 
   const handleContinueCarNumber = async () => {
-    //
-    setIsButtonLoading((prev) => true);
-
-    let prevHistory = await searchCarHistory(carNumber);
-    console.log("CAR HISTORY - ", prevHistory);
-
-    let searchedTempCar = await searchTempCar(carNumber);
-    console.log("CAR TEMP - ", searchedTempCar);
-
-    if (searchedTempCar.total > 0) {
-      toast("Vehicle Already in the System");
+    if (!indianCarNumberRegex.test(carNumber)) {
+      toast("Invalid Car Number");
     } else {
-      if (prevHistory.total == 0) {
-        console.log("THIS IS A NEW CAR");
-        setIsNewCar((prev) => null);
-        //   console.log("Updated Details -", carDetails);
+      setIsButtonLoading((prev) => true);
+
+      let prevHistory = await searchCarHistory(carNumber);
+      console.log("CAR HISTORY - ", prevHistory);
+
+      let searchedTempCar = await searchTempCar(carNumber);
+      console.log("CAR TEMP - ", searchedTempCar);
+
+      if (searchedTempCar.total > 0) {
+        toast("Vehicle Already in the System");
       } else {
-        console.log("THIS IS AN OLD CAR", prevHistory.documents[0]["$id"]);
-        setIsNewCar((prev) => prevHistory.documents[0]["$id"]);
-        console.log(prevHistory.documents[0].carMake);
-        setCarMake(prevHistory.documents[0].carMake);
-        setCarModel(prevHistory.documents[0].carModel);
+        if (prevHistory.total == 0) {
+          console.log("THIS IS A NEW CAR");
+          setIsNewCar((prev) => null);
+          //   console.log("Updated Details -", carDetails);
+        } else {
+          console.log("THIS IS AN OLD CAR", prevHistory.documents[0]["$id"]);
+          setIsNewCar((prev) => prevHistory.documents[0]["$id"]);
+          console.log(prevHistory.documents[0].carMake);
+          setCarMake(prevHistory.documents[0].carMake);
+          setCarModel(prevHistory.documents[0].carModel);
+        }
+
+        setCurrentState((prev) => 1);
       }
 
-      setCurrentState((prev) => 1);
+      setIsButtonLoading((prev) => false);
     }
-
-    setIsButtonLoading((prev) => false);
+    //
   };
 
   const handleLog = () => {

@@ -12,6 +12,7 @@ export interface Car {
   customerName: string;
   customerPhone: string;
   customerAddress?: string;
+  customerEmail?: string;
   allJobCards: string[];
   carsTableId: string;
 }
@@ -44,6 +45,7 @@ export interface JobCard {
   customerName: string;
   customerPhone: string;
   customerAddress?: string;
+  customerEmail?: string;
   parts: string[];
   labour: string[];
   observationRemarks: string;

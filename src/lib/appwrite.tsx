@@ -642,6 +642,7 @@ export const createJobCard = async (
   customerName: string,
   customerPhone: string,
   customerAddress: string,
+  customerEmail: string,
   sendToPartsManager: boolean,
   carsTableId: string,
   jobCardPDF: string
@@ -691,6 +692,7 @@ export const createJobCard = async (
       purposeOfVisit,
       jobCardPDF,
       serviceAdvisorID: advisorEmail,
+      customerEmail,
     });
 
     // let result = await databases.createDocument(
@@ -788,6 +790,7 @@ export const createJobCard = async (
       customerName,
       customerPhone,
       customerAddress,
+      customerEmail,
     });
 
     console.log("The created Job Card is - ", result);

@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import loader from "../../../../../public/assets/t3-loader.gif";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
+import { set } from "date-fns";
 
 type Props = {};
 
@@ -53,6 +54,7 @@ export default function CreateJobCard({
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
 
   const [carFuel, setCarFuel] = useState("");
   const [carOdometer, setCarOdometer] = useState("");
@@ -95,6 +97,7 @@ export default function CreateJobCard({
         setCustomerName(carHistory.documents[0].customerName);
         setCustomerPhone(carHistory.documents[0].customerPhone);
         setCustomerAddress(carHistory.documents[0].customerAddress);
+        setCustomerEmail(carHistory.documents[0].customerEmail || "");
       } else {
         console.log("No History Found");
       }
@@ -133,6 +136,7 @@ export default function CreateJobCard({
           customerName,
           customerPhone,
           customerAddress,
+          customerEmail,
           sendToPartsManager,
           String(currTempCar.carsTableId),
           "jobCardPdfURL"
@@ -222,6 +226,11 @@ export default function CreateJobCard({
                   placeholder="Customer Address"
                   onChange={(e) => setCustomerAddress(e.target.value)}
                 />
+                <Input
+                  id="customerEmail"
+                  placeholder="Customer Email"
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                />
               </div>
             )}
             {currentState == 1 && (
@@ -234,7 +243,8 @@ export default function CreateJobCard({
                     images.length >= 2 &&
                     customerName != "" &&
                     customerPhone != "" &&
-                    customerAddress != ""
+                    customerAddress != "" &&
+                    customerEmail != ""
                   )
                 }
               >

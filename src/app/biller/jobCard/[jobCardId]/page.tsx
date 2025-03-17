@@ -645,8 +645,9 @@ export default function jobCard({
   };
 
   const handleInvoicePDF = (selectedValue: string) => {
-    // console.log("SELECTED PDF - ", selectedValue);
+    console.log("SELECTED PDF - ", selectedValue);
     if (selectedValue == "Gate Pass") {
+      console.log("GATE PASS PDF - ", jobCard?.gatePassPDF);
       if (jobCard) {
         openInNewTab(jobCard.gatePassPDF);
       }
@@ -666,31 +667,37 @@ export default function jobCard({
   };
 
   const handleInsuranceInvoicePDF = (selectedValue: any) => {
-    console.log("SELECTED PDF - ", selectedValue);
+    if (selectedValue == "Gate Pass") {
+      console.log("GATE PASS PDF - ", jobCard?.gatePassPDF);
+      if (jobCard) {
+        openInNewTab(jobCard.gatePassPDF);
+      }
+    } else {
+      const selectedInvoice = InsuranceinvoiceTypes.find(
+        (a) => a.description == selectedValue
+      );
+      if (selectedInvoice) {
+        console.log("SELECTED OBJECT - ", selectedInvoice);
 
-    const selectedInvoice = InsuranceinvoiceTypes.find(
-      (a) => a.description == selectedValue
-    );
-    if (selectedInvoice) {
-      console.log("SELECTED OBJECT - ", selectedInvoice);
+        let currentInvoiceType = selectedInvoice?.name;
+        let currentInvoiceFor = selectedInvoice?.type;
 
-      let currentInvoiceType = selectedInvoice?.name;
-      let currentInvoiceFor = selectedInvoice?.type;
+        if (jobCardInvoices) {
+          const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
+            (invoice: Invoice) =>
+              invoice.invoiceType == currentInvoiceType &&
+              invoice.insuranceInvoiceType == currentInvoiceFor
+          );
+          filteredInvoices?.sort(
+            (a, b) =>
+              new Date(b.$createdAt).getTime() -
+              new Date(a.$createdAt).getTime()
+          );
+          const selectedInvoice = filteredInvoices[0];
 
-      if (jobCardInvoices) {
-        const filteredInvoices: Invoice[] = jobCardInvoices?.filter(
-          (invoice: Invoice) =>
-            invoice.invoiceType == currentInvoiceType &&
-            invoice.insuranceInvoiceType == currentInvoiceFor
-        );
-        filteredInvoices?.sort(
-          (a, b) =>
-            new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
-        );
-        const selectedInvoice = filteredInvoices[0];
-
-        console.log("FILTE$RED INVOICES", selectedInvoice);
-        openInNewTab(selectedInvoice.invoiceUrl);
+          console.log("FILTE$RED INVOICES", selectedInvoice);
+          openInNewTab(selectedInvoice.invoiceUrl);
+        }
       }
     }
   };

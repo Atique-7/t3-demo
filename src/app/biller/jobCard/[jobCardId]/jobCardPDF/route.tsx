@@ -3,7 +3,6 @@ import {
   getJobCardById,
   getTempCarById,
   imagekit,
-  uploadPDF,
 } from "@/lib/appwrite";
 import {
   base64Logo,

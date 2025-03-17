@@ -516,34 +516,34 @@ export const uploadImage = async (file: File) => {
   }
 };
 
-export const uploadPDF = async (buffer: Buffer, fileName = "document.pdf") => {
-  try {
-    const blob = new Blob([buffer], { type: "application/pdf" });
+// export const uploadPDF = async (buffer: Buffer, fileName = "document.pdf") => {
+//   try {
+//     const blob = new Blob([buffer], { type: "application/pdf" });
 
-    // Create a File object (if needed)
-    const file = new File([blob], fileName, { type: "application/pdf" });
+//     // Create a File object (if needed)
+//     const file = new File([blob], fileName, { type: "application/pdf" });
 
-    const result = await storage.createFile(
-      config.pdfStorageBucketId, // Your Appwrite bucket ID
-      ID.unique(), // Generate a unique file ID
-      file
-    );
+//     const result = await storage.createFile(
+//       config.pdfStorageBucketId, // Your Appwrite bucket ID
+//       ID.unique(), // Generate a unique file ID
+//       file
+//     );
 
-    // Generate the file download URL
-    const downloadUrl = storage.getFileView(
-      config.pdfStorageBucketId,
-      result.$id
-    ).href;
+//     // Generate the file download URL
+//     const downloadUrl = storage.getFileView(
+//       config.pdfStorageBucketId,
+//       result.$id
+//     ).href;
 
-    return {
-      id: result.$id,
-      downloadUrl: downloadUrl.toString(),
-    };
-  } catch (error: any) {
-    console.error("UPLOAD ERROR:", error.message);
-    return null;
-  }
-};
+//     return {
+//       id: result.$id,
+//       downloadUrl: downloadUrl.toString(),
+//     };
+//   } catch (error: any) {
+//     console.error("UPLOAD ERROR:", error.message);
+//     return null;
+//   }
+// };
 
 // export const uploadPdf = async (file: File) => {
 //   try {

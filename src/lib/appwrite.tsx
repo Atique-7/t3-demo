@@ -69,46 +69,6 @@ if (useDev) {
   apiUrl = "https://t3-next-dev.vercel.app";
 }
 
-// export async function fetchJobCardsBasedonTime(filterType = "all") {
-//   try {
-//     const queries = [];
-
-//     // Get current date and time
-//     const currentDate = new Date();
-//     const currentYear = currentDate.getFullYear();
-//     const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-
-//     if (filterType === "month") {
-//       // Filter for the current month
-//       const startOfMonth = `${currentYear}-${currentMonth}-01T00:00:00Z`;
-//       const endOfMonth = new Date(currentYear, currentMonth, 0).toISOString();
-//       queries.push(Query.greaterThanEqual("createdAt", startOfMonth));
-//       queries.push(Query.lessThanEqual("createdAt", endOfMonth));
-//     } else if (filterType === "year") {
-//       // Filter for the current yearD
-//       const startOfYear = `${currentYear}-01-01T00:00:00Z`;
-//       const endOfYear = `${currentYear}-12-31T23:59:59Z`;
-//       queries.push(Query.greaterThanEqual("createdAt", startOfYear));
-//       queries.push(Query.lessThanEqual("createdAt", endOfYear));
-//     }
-
-//     // Fetch documents based on queries
-//     const response = await databases.listDocuments(
-//       config.databaseId,
-//       config.jobCardsCollectionId,
-//       queries
-//     );
-
-//     console.log(
-//       `Fetched ${response.documents.length} job cards for filter: ${filterType}`
-//     );
-//     return response.documents;
-//   } catch (error) {
-//     console.error("Error fetching job cards:", error);
-//     throw error;
-//   }
-// }
-
 export const getInvoiceNumber = async (
   jobCardId: string,
   invoiceType: string,

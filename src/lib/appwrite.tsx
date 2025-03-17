@@ -22,22 +22,20 @@ import { BaseRepository } from "./BaseRepo";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
-  // platform: "com.index.t3",
-  projectId: "66b10a0100095b4634e4",
-  databaseId: "66b10c670021dc021477",
-  carsCollectionId: "66deb8920021a5819b2c",
-  tempCarsCollectionId: "66e933af0022ed863b96",
-  jobCardsCollectionId: "66e80a830013e7a81f31",
-  partsCollectionId: "66f6ce58000446f6aeaf",
-  labourCollectionId: "66fa5dc6003941f79697",
-  invoicesCollectionId: "6710ba53003b4b25a23d",
-  historyCollectionId: "670cbc13003d80c32176",
-  invoiceStorageBucketId: "677e05b70025ceed10e4",
-  imageStorageBucketId: "67053962002be8598a04",
-  pdfStorageBucketId: "67c97ee0000a45e85251",
-  carModelsCollectionId: "678e143f003c388e2603",
-  insuranceProvidersCollectionId: "67963228001b5bf116e6",
-  deletedJobCardsCollectionId: "67989f07000005e743d4",
+  projectId: "67cbecaa002877aff9d1",
+  databaseId: "67cbf28e001bd9202750",
+  carsCollectionId: "67d7de21003c86b8560c",
+  tempCarsCollectionId: "67d7de3d0031ba6acf15",
+  jobCardsCollectionId: "67d7de2d0011a38fb849",
+  partsCollectionId: "67d7de480017e6ef3ab0",
+  labourCollectionId: "67d7de52000eb43d616c",
+  invoicesCollectionId: "67d7de6300233b0a014f",
+  historyCollectionId: "67d7de5c000bf1a62cf6",
+  carModelsCollectionId: "67d7de73003c99a6b40e",
+  insuranceProvidersCollectionId: "67d7de7b0025ff32fdd1",
+  deletedJobCardsCollectionId: "67d7de83001e7cc6f569",
+  invoiceStorageBucketId: "67d7d77b000b20e7b15a",
+  imageStorageBucketId: "67d7d791000f4f810abf",
 };
 
 export let client: any;
@@ -340,7 +338,7 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const listAllUsers = async () => {
-  const response = await functions.createExecution("6731d19d00250e7e0b6f");
+  const response = await functions.createExecution("67d7dbc2002b45a542bc");
   const obj = JSON.parse(response.responseBody);
   const users = obj.users.users;
   return users;

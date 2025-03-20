@@ -211,7 +211,7 @@ export function TempCarsDataTable<TData, TValue>({
     <div>
       <div className="flex flex-col items-center py-4 justify-between space-y-5">
         <Input
-          placeholder="Filter Cars"
+          placeholder="Search Cars"
           value={
             (table.getColumn("carNumber")?.getFilterValue() as string) ?? ""
           }

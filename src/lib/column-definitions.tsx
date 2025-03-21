@@ -468,28 +468,45 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
           return (
             <div>
               {purposeOfVisitAndAdvisors.map((pov: any) => (
-                <div key={pov.purposeOfVisitCode} className="mb-4">
-                  <h3 className="text-lg font-semibold">{pov.description}</h3>
-                  {pov.open === false ? (
-                    <button
-                      onClick={() => {
-                        console.log(
-                          "Clicked Purpose of Visit Code:",
-                          pov.purposeOfVisitCode
-                        );
-                        console.log("Current Advisor Email:", pov.advisorEmail);
-                        setSelectedPovCode(pov.purposeOfVisitCode);
-                        setSelectedAdvisor(pov.advisorEmail);
-                      }}
-                      className="text-blue-500 underline"
-                    >
-                      Change Advisor
-                    </button>
-                  ) : (
-                    <p className="text-red-500">
-                      Cannot change advisor for open Job Card.
-                    </p>
-                  )}
+                <div className="flex items-center space-x-8">
+                  <div key={pov.purposeOfVisitCode} className="mb-4">
+                    <h3 className="text-lg font-semibold">{pov.description}</h3>
+                    {pov.open === false ? (
+                      <button
+                        onClick={() => {
+                          console.log(
+                            "Clicked Purpose of Visit Code:",
+                            pov.purposeOfVisitCode
+                          );
+                          console.log(
+                            "Current Advisor Email:",
+                            pov.advisorEmail
+                          );
+                          setSelectedPovCode(pov.purposeOfVisitCode);
+                          setSelectedAdvisor(pov.advisorEmail);
+                        }}
+                        className="text-blue-500 underline"
+                      >
+                        Change Advisor
+                      </button>
+                    ) : (
+                      <p className="text-red-500">
+                        Cannot change advisor for open Job Card.
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    {pov.open && (
+                      <Link
+                        href={`${pathname.slice(0, -15)}/viewJobCard/${
+                          tempCar.jobCardId
+                        }`}
+                        className="flex justify-center items-center rounded-md w-fit px-3 py-2 border border-gray-200 bg-white text-gray-700 hover:bg-gray-200"
+                      >
+                        View JobCard
+                      </Link>
+                    )}
+                  </div>
                 </div>
               ))}
 
@@ -552,7 +569,7 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
                     onClick={handleOpenJobCard}
                     className="text-blue-500 underline"
                   >
-                    Open Job Card
+                    Open <span className="font-bold">Second (+1)</span> Job Card
                   </button>
                 </div>
               )}

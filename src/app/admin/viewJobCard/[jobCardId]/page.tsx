@@ -58,6 +58,13 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { ViewCurrentPartsDataTable } from "@/components/data-tables/view-parts-data-table";
+import { ViewCurrentLabourDataTable } from "@/components/data-tables/view-labour-data-table";
+import {
+  currentLabourColumns,
+  currentPartsColumns,
+  viewCurrentPartsColumns,
+} from "@/lib/column-definitions";
 
 type Props = {};
 
@@ -761,17 +768,18 @@ const jobCard = ({ params }: { params: { jobCardId: any } }) => {
           </div>
           <div className="font-semibold text-3xl">Invoice Details</div>
           <div className="flex flex-col space-y-8 mb-10">
-            {/* <ViewCurrentPartsDataTable
+            <ViewCurrentPartsDataTable
               data={currentParts}
-              columns={viewCurrentPartsColumns}
+              columns={currentPartsColumns}
+              currentParts={currentParts}
               partsTotal={partsTotal}
-            /> */}
-            {/* <ViewCurrentLabourDataTable
+            />
+            <ViewCurrentLabourDataTable
               data={currentLabour}
               columns={currentLabourColumns}
               currentLabours={currentLabour}
               labourTotal={labourTotal}
-            /> */}
+            />
           </div>
         </>
       )}

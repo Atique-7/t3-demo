@@ -59,7 +59,7 @@ export function ViewCurrentLabourDataTable<TData, TValue>({
   data,
   currentLabours,
   labourTotal,
-  disable = false,
+  disable = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

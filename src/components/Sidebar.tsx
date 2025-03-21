@@ -32,6 +32,12 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
 import { useRouter } from "next/navigation";
 import { logoutUser } from "@/lib/appwrite";
 import { deleteCookie } from "cookies-next";
@@ -198,84 +204,137 @@ export default function Sidebar({ home }: any) {
         </div>
         <div className="flex flex-col h-full justify-between">
           <div className="flex flex-col space-y-5">
-            <Link className="border-2 rounded-md shadow-md p-3" href={home}>
-              <House />
-            </Link>
+            <HoverCard>
+              <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                <Link href={home}>
+                  <House />
+                </Link>
+              </HoverCardTrigger>
+              <HoverCardContent className="ml-10 -mt-5">Home</HoverCardContent>
+            </HoverCard>
+
             {(home == "/parts" || home == "/biller") && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/parts-inventory`}
-              >
-                <ClipboardList />
-              </Link>
+              <HoverCard>
+                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                  <Link href={`${home}/parts-inventory`}>
+                    <ClipboardList />
+                  </Link>
+                </HoverCardTrigger>
+                <HoverCardContent className="ml-10 -mt-5">
+                  Parts Inventory
+                </HoverCardContent>
+              </HoverCard>
             )}
 
             {home == "/admin" && (
               <>
-                <Link
-                  className="border-2 rounded-md shadow-md p-3"
-                  href={`${home}/manage-jobcards`}
-                >
-                  <ClipboardList />
-                </Link>
-                <Link
-                  className="border-2 rounded-md shadow-md p-3"
-                  href={`${home}/reports`}
-                >
-                  <Download />
-                </Link>
-                <Link
-                  className="border-2 rounded-md shadow-md p-3"
-                  href={`${home}/add-car`}
-                >
-                  <CarFront />
-                </Link>
-                <Link
-                  className="border-2 rounded-md shadow-md p-3"
-                  href={`${home}/add-insuranceProvider`}
-                >
-                  <UmbrellaIcon />
-                </Link>
-                <Link
-                  className="border-2 rounded-md shadow-md p-3"
-                  href={`${home}/viewChanges`}
-                >
-                  <HistoryIcon />
-                </Link>
+                <HoverCard>
+                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                    <Link href={`${home}/manage-jobcards`}>
+                      <ClipboardList />
+                    </Link>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="ml-10 -mt-5">
+                    Manage Jobcards
+                  </HoverCardContent>
+                </HoverCard>
+
+                <HoverCard>
+                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                    <Link href={`${home}/reports`}>
+                      <Download />
+                    </Link>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="ml-10 -mt-5">
+                    Download Reports
+                  </HoverCardContent>
+                </HoverCard>
+                <HoverCard>
+                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                    <Link href={`${home}/add-car`}>
+                      <CarFront />
+                    </Link>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="ml-10 -mt-5">
+                    Add Car Model
+                  </HoverCardContent>
+                </HoverCard>
+                <HoverCard>
+                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                    <Link href={`${home}/add-insuranceProvider`}>
+                      <UmbrellaIcon />
+                    </Link>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="ml-10 -mt-5">
+                    Add Insurance Provider
+                  </HoverCardContent>
+                </HoverCard>
+                <HoverCard>
+                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                    <Link href={`${home}/viewChanges`}>
+                      <HistoryIcon />
+                    </Link>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="ml-10 -mt-5">
+                    View Change History
+                  </HoverCardContent>
+                </HoverCard>
               </>
             )}
 
             {home == "/biller" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/labour-inventory`}
-              >
-                <UserRoundCog />
-              </Link>
+              <HoverCard>
+                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                  <Link href={`${home}/labour-inventory`}>
+                    <UserRoundCog />
+                  </Link>
+                </HoverCardTrigger>
+                <HoverCardContent className="ml-10 -mt-5">
+                  Labour Inventory
+                </HoverCardContent>
+              </HoverCard>
             )}
             {home == "/security" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/addCar`}
-              >
-                <Car />
-              </Link>
+              <HoverCard>
+                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                  <Link href={`${home}/addCar`}>
+                    <Car />
+                  </Link>
+                </HoverCardTrigger>
+                <HoverCardContent className="ml-10 -mt-5">
+                  Add Car
+                </HoverCardContent>
+              </HoverCard>
             )}
             {home == "/parts" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/addParts`}
-              >
-                <PlusIcon />
-              </Link>
+              <HoverCard>
+                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                  <Link
+                    className="border-2 rounded-md shadow-md p-3"
+                    href={`${home}/addParts`}
+                  >
+                    <PlusIcon />
+                  </Link>
+                </HoverCardTrigger>
+                <HoverCardContent className="ml-10 -mt-5">
+                  Add Parts
+                </HoverCardContent>
+              </HoverCard>
             )}
             {home == "/biller" && (
-              <Link
-                className="border-2 rounded-md shadow-md p-3"
-                href={`${home}/addLabour`}
-              >
-                <PlusIcon />
-              </Link>
+              <HoverCard>
+                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
+                  <Link
+                    className="border-2 rounded-md shadow-md p-3"
+                    href={`${home}/addLabour`}
+                  >
+                    <PlusIcon />
+                  </Link>
+                </HoverCardTrigger>
+                <HoverCardContent className="ml-10 -mt-5">
+                  Add Labour
+                </HoverCardContent>
+              </HoverCard>
             )}
           </div>
           <div>

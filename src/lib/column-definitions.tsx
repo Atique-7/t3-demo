@@ -380,7 +380,7 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
       useEffect(() => {
         const fetchUsers = async () => {
           const users = await listAllUsers();
-          console.log("USERS", users);
+          // console.log("USERS", users);
 
           // Map advisors for each purposeOfVisitCode
           const advisorsMap = purposeOfVisitAndAdvisors.reduce(

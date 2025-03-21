@@ -5,14 +5,15 @@ import React, { useEffect, useState } from "react";
 import { deleteCookie, getCookie } from "cookies-next";
 import PrimaryButton from "@/components/PrimaryButton";
 import { JobCardsDataTable } from "@/components/data-tables/job-cards-data-table";
-import DisplayCard from "@/components/DisplayCard";
+import DisplayCard, { DisplayAdvisorJobCards } from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
-import { CarFront, Wrench, ListChecks } from "lucide-react";
+import { CarFront, Wrench, ListChecks, IndianRupee } from "lucide-react";
 import { jobCardColumns } from "@/lib/column-definitions";
 import { getAllJobCards, getJobCardsBetween } from "@/lib/appwrite";
 import { DateRange } from "react-day-picker";
-import { createDateExpandedObj } from "@/lib/helper";
+import { createDateExpandedObj, createJobCardObjReport } from "@/lib/helper";
 import { JobCard } from "@/lib/definitions";
+import Decimal from "decimal.js";
 
 type Props = {};
 
@@ -24,6 +25,7 @@ export default function Biller({}: Props) {
   const [numberOfCarsInProgress, setNumberOfCarsInProgress] = useState(0);
   const [completedJobCars, setCompletedJobCars] = useState(0);
   const [currentJobCards, setCurrentJobCards] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
   useEffect(() => {
     const getUser = () => {
@@ -34,7 +36,7 @@ export default function Biller({}: Props) {
       setName(parsedToken.name);
     };
     const getJobCardsForTimeline = async () => {
-      const todaysDate = await createDateExpandedObj(new Date());
+      const todaysDate: any = await createDateExpandedObj(new Date());
 
       // setLoading((prev) => true);
       const from = new Date(
@@ -59,6 +61,7 @@ export default function Biller({}: Props) {
       setTotalNumberOfCars(jobcards.total);
       setNumberOfCarsInProgress(onGoingJobCards.length);
       setCompletedJobCars(completedJobCards.length);
+      setTotalRevenue(await getTotalRevenue(completedJobCards));
 
       // return filteredJobCards;
     };
@@ -68,6 +71,44 @@ export default function Biller({}: Props) {
 
       console.log("THESE ARE THE CURRENT JOB CARDS - ", allJobCards);
       setCurrentJobCards(allJobCards.documents);
+    };
+
+    const getTotalRevenue = async (jobCards: JobCard[]) => {
+      let totalRevenue = new Decimal(0);
+      await Promise.all(
+        jobCards.map(async (jobCard: JobCard) => {
+          let jobCardParts = new Decimal(0);
+          let jobCardLabour = new Decimal(0);
+          let jobCardRevenue = new Decimal(0);
+
+          const jobCardTotals = await createJobCardObjReport(jobCard);
+
+          jobCardParts = jobCardParts.add(
+            new Decimal(Number(jobCardTotals.partsSubtotal))
+          );
+
+          jobCardLabour = jobCardLabour.add(
+            new Decimal(Number(jobCardTotals.labourSubtotal))
+          );
+
+          jobCardParts = jobCardParts.minus(
+            new Decimal(Number(jobCardTotals.partsDiscount))
+          );
+
+          jobCardLabour = jobCardLabour.minus(
+            new Decimal(Number(jobCardTotals.labourDiscount))
+          );
+
+          jobCardRevenue = jobCardRevenue.add(jobCardParts);
+          jobCardRevenue = jobCardRevenue.add(jobCardLabour);
+
+          totalRevenue = totalRevenue.add(jobCardRevenue);
+        })
+      );
+
+      console.log("TOTAL REVENUE", Number(totalRevenue));
+
+      return Number(totalRevenue);
     };
 
     getUser();
@@ -86,7 +127,7 @@ export default function Biller({}: Props) {
             <div className="font-medium">T3, Mira Road</div>
           </div>
           <div className="flex flex-row space-x-8 mt-16 w-full justify-center">
-            <DisplayCard
+            {/* <DisplayCard
               icon={<CarFront />}
               desc={"Cars so far this month"}
               value={totalNumberOfCars}
@@ -100,6 +141,16 @@ export default function Biller({}: Props) {
               icon={<ListChecks />}
               desc={"Completed"}
               value={completedJobCars}
+            /> */}
+            <DisplayAdvisorJobCards
+              completedCars={completedJobCars}
+              totalCars={totalNumberOfCars}
+              advisorEmail={"Complete Garage"}
+            />
+            <DisplayCard
+              icon={<IndianRupee />}
+              desc={"Revenue So far"}
+              value={totalRevenue}
             />
           </div>
           <div className="flex flex-col mt-16">

@@ -58,6 +58,10 @@ export default function Sidebar({ home }: any) {
     // setIsLoggingOut((prev) => false);
   };
 
+  const handleNavigation = (path: string) => {
+    router.push(path);
+  };
+
   return (
     <>
       <div className="sm:flex lg:hidden z-10 absolute top-5 right-5">
@@ -205,22 +209,30 @@ export default function Sidebar({ home }: any) {
         <div className="flex flex-col h-full justify-between">
           <div className="flex flex-col space-y-5">
             <HoverCard>
-              <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                <Link href={home}>
+              <HoverCardTrigger asChild>
+                <div
+                  className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                  onClick={() => handleNavigation(home)}
+                >
                   <House />
-                </Link>
+                </div>
               </HoverCardTrigger>
-              <HoverCardContent className="ml-10 -mt-5">Home</HoverCardContent>
+              <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
+                Home
+              </HoverCardContent>
             </HoverCard>
 
             {(home == "/parts" || home == "/biller") && (
               <HoverCard>
-                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                  <Link href={`${home}/parts-inventory`}>
+                <HoverCardTrigger asChild>
+                  <div
+                    className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                    onClick={() => handleNavigation(`${home}/parts-inventory`)}
+                  >
                     <ClipboardList />
-                  </Link>
+                  </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="ml-10 -mt-5">
+                <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                   Parts Inventory
                 </HoverCardContent>
               </HoverCard>
@@ -229,53 +241,72 @@ export default function Sidebar({ home }: any) {
             {home == "/admin" && (
               <>
                 <HoverCard>
-                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                    <Link href={`${home}/manage-jobcards`}>
+                  <HoverCardTrigger asChild>
+                    <div
+                      className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                      onClick={() =>
+                        handleNavigation(`${home}/manage-jobcards`)
+                      }
+                    >
                       <ClipboardList />
-                    </Link>
+                    </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="ml-10 -mt-5">
+                  <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                     Manage Jobcards
                   </HoverCardContent>
                 </HoverCard>
 
                 <HoverCard>
-                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                    <Link href={`${home}/reports`}>
+                  <HoverCardTrigger asChild>
+                    <div
+                      className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                      onClick={() => handleNavigation(`${home}/reports`)}
+                    >
                       <Download />
-                    </Link>
+                    </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="ml-10 -mt-5">
+                  <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                     Download Reports
                   </HoverCardContent>
                 </HoverCard>
                 <HoverCard>
-                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                    <Link href={`${home}/add-car`}>
+                  <HoverCardTrigger asChild>
+                    <div
+                      className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                      onClick={() => handleNavigation(`${home}/add-car`)}
+                    >
                       <CarFront />
-                    </Link>
+                    </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="ml-10 -mt-5">
+                  <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                     Add Car Model
                   </HoverCardContent>
                 </HoverCard>
                 <HoverCard>
-                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                    <Link href={`${home}/add-insuranceProvider`}>
+                  <HoverCardTrigger asChild>
+                    <div
+                      className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                      onClick={() =>
+                        handleNavigation(`${home}/add-insuranceProvider`)
+                      }
+                    >
                       <UmbrellaIcon />
-                    </Link>
+                    </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="ml-10 -mt-5">
+                  <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                     Add Insurance Provider
                   </HoverCardContent>
                 </HoverCard>
                 <HoverCard>
-                  <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                    <Link href={`${home}/viewChanges`}>
+                  <HoverCardTrigger asChild>
+                    <div
+                      className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                      onClick={() => handleNavigation(`${home}/viewChanges`)}
+                    >
                       <HistoryIcon />
-                    </Link>
+                    </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="ml-10 -mt-5">
+                  <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                     View Change History
                   </HoverCardContent>
                 </HoverCard>
@@ -284,54 +315,60 @@ export default function Sidebar({ home }: any) {
 
             {home == "/biller" && (
               <HoverCard>
-                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                  <Link href={`${home}/labour-inventory`}>
+                <HoverCardTrigger asChild>
+                  <div
+                    className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                    onClick={() => handleNavigation(`${home}/labour-inventory`)}
+                  >
                     <UserRoundCog />
-                  </Link>
+                  </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="ml-10 -mt-5">
+                <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                   Labour Inventory
                 </HoverCardContent>
               </HoverCard>
             )}
             {home == "/security" && (
               <HoverCard>
-                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                  <Link href={`${home}/addCar`}>
+                <HoverCardTrigger asChild>
+                  <div
+                    className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                    onClick={() => handleNavigation(`${home}/addCar`)}
+                  >
                     <Car />
-                  </Link>
+                  </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="ml-10 -mt-5">
+                <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                   Add Car
                 </HoverCardContent>
               </HoverCard>
             )}
             {home == "/parts" && (
               <HoverCard>
-                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                  <Link
-                    className="border-2 rounded-md shadow-md p-3"
-                    href={`${home}/addParts`}
+                <HoverCardTrigger asChild>
+                  <div
+                    className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                    onClick={() => handleNavigation(`${home}/addParts`)}
                   >
                     <PlusIcon />
-                  </Link>
+                  </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="ml-10 -mt-5">
+                <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                   Add Parts
                 </HoverCardContent>
               </HoverCard>
             )}
             {home == "/biller" && (
               <HoverCard>
-                <HoverCardTrigger className="border-2 rounded-md shadow-md p-3">
-                  <Link
-                    className="border-2 rounded-md shadow-md p-3"
-                    href={`${home}/addLabour`}
+                <HoverCardTrigger asChild>
+                  <div
+                    className="border-2 rounded-md shadow-md p-3 cursor-pointer"
+                    onClick={() => handleNavigation(`${home}/addLabour`)}
                   >
                     <PlusIcon />
-                  </Link>
+                  </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="ml-10 -mt-5">
+                <HoverCardContent className="ml-10 -mt-5 font-semibold w-fit">
                   Add Labour
                 </HoverCardContent>
               </HoverCard>

@@ -467,8 +467,8 @@ export const tempCarsColumns: ColumnDef<TempCar>[] = [
         case "admin":
           return (
             <div>
-              {purposeOfVisitAndAdvisors.map((pov: any) => (
-                <div className="flex items-center space-x-8">
+              {purposeOfVisitAndAdvisors.map((pov: any, index: number) => (
+                <div className="flex items-center space-x-8" key={index}>
                   <div key={pov.purposeOfVisitCode} className="mb-4">
                     <h3 className="text-lg font-semibold">{pov.description}</h3>
                     {pov.open === false ? (

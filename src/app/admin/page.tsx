@@ -20,7 +20,7 @@ import {
 } from "@/lib/definitions";
 import CustomerSplit from "@/components/graphs/CustomerSplit";
 import RevenueSplit from "@/components/graphs/RevenueSplit";
-import { CurrentCarsPie } from "@/components/graphs/CurrentCarsPie";
+// import { CurrentCarsPie } from "@/components/graphs/CurrentCarsPie";
 import { InsuranceCasesBar } from "@/components/graphs/InsuranceCasesBar";
 import { NightStockNew } from "@/components/graphs/NightStockNew";
 import {
@@ -363,7 +363,11 @@ export default function Admin({}: Props) {
                   />
                 </div>
                 <div className="">
-                  <InsuranceCasesPie
+                  {/* <InsuranceCasesPie
+                    jobCards={jobCards}
+                    currentSelectedTimeline={currentSelectedTimeline}
+                  /> */}
+                  <InsuranceCasesBar
                     jobCards={jobCards}
                     currentSelectedTimeline={currentSelectedTimeline}
                   />

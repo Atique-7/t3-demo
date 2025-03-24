@@ -41,6 +41,7 @@ import { JobCardsDataTable } from "@/components/data-tables/job-cards-data-table
 import { jobCardColumns } from "@/lib/column-definitions";
 import { Switch } from "@/components/ui/switch";
 import { ChartLineIcon, TablePropertiesIcon } from "lucide-react";
+import { InsuranceCasesPie } from "@/components/graphs/NewInsurancePie";
 
 type Props = {};
 
@@ -354,14 +355,15 @@ export default function Admin({}: Props) {
                     currentSelectedTimeline={currentSelectedTimeline}
                   />
                 </div>
+
                 <div className="flex flex-col space-y-5 justify-center items-center w-full">
                   <ServiceAdvisorPerformance
                     jobCards={jobCards}
                     currentSelectedTimeline={currentSelectedTimeline}
                   />
                 </div>
-                <div className="w-[90%]">
-                  <InsuranceCasesBar
+                <div className="">
+                  <InsuranceCasesPie
                     jobCards={jobCards}
                     currentSelectedTimeline={currentSelectedTimeline}
                   />

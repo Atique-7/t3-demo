@@ -608,27 +608,7 @@ export default function jobCard({
   };
 
   const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    // await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     jobCard,
-    //     car,
-    //   }),
-    // }).then((result: any) => {
-    //   // Set a short timeout before refreshing the page
-    //   // setTimeout(() => {
-    //   //   window.location.reload();
-    //   // }, 1000);
-
-    //   console.log("RESULT", result);
-
-    //   result.json().then((invoices: any) => {
-    //     invoices.map((invoice: any) => {
-    //       openInNewTab(invoice);
-    //     });
-    //   });
-    // });
-
+    console.log("Generating Jobcard");
     try {
       const response = await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
         method: "POST",
@@ -647,18 +627,14 @@ export default function jobCard({
 
       // Convert response to blob (PDF file)
       const blob = await response.blob();
+
+      console.log("blob", blob);
       const url = URL.createObjectURL(blob);
+
+      console.log("PDF URL", url);
 
       // Open in new tab
       window.open(url, "_blank");
-
-      // If you want to trigger a download instead of opening:
-      // const a = document.createElement("a");
-      // a.href = url;
-      // a.download = "jobCard.pdf"; // Change filename as needed
-      // document.body.appendChild(a);
-      // a.click();
-      // document.body.removeChild(a);
     } catch (error) {
       console.error("Error downloading PDF:", error);
     }
@@ -760,7 +736,7 @@ export default function jobCard({
                   JobCardPDF
                 </Button>
               </div>
-              {currentJobCardStatus! > 2 && !disable && (
+              {currentJobCardStatus! > 2 && (
                 <div>
                   {isInsurance ? (
                     <>

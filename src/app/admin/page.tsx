@@ -41,7 +41,7 @@ import { JobCardsDataTable } from "@/components/data-tables/job-cards-data-table
 import { jobCardColumns } from "@/lib/column-definitions";
 import { Switch } from "@/components/ui/switch";
 import { ChartLineIcon, TablePropertiesIcon } from "lucide-react";
-import { InsuranceCasesPie } from "@/components/graphs/NewInsurancePie";
+// import { InsuranceCasesPie } from "@/components/graphs/NewInsurancePie";
 
 type Props = {};
 

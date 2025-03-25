@@ -197,7 +197,15 @@ export default function Service({}: Props) {
         (obj: any) => obj.email == parsedToken.email
       );
 
-      setServiceAdvisorStats(selectedStat);
+      setServiceAdvisorStats(
+        selectedStat || {
+          email: parsedToken.email,
+          numberOfJobCards: 0,
+          completedJobCards: 0,
+          incompleteJobCards: 0,
+          totalJobCardAmt: 0,
+        }
+      );
 
       console.log(
         "SERVICE ADVISOR STAT",
@@ -238,7 +246,7 @@ export default function Service({}: Props) {
               value={completedJobCars}
             /> */}
             <DisplayAdvisorJobCards
-              completedCars={serviceAdvisorStats.completedJobCards}
+              completedCars={serviceAdvisorStats.completedJobCards ?? 0}
               totalCars={serviceAdvisorStats.numberOfJobCards}
               advisorEmail={serviceAdvisorStats.email}
             />

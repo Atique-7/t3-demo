@@ -19,6 +19,7 @@ import { JobCard } from "./definitions";
 import { toast } from "sonner";
 import { ObjectType } from "@/history/history-recorder";
 import { BaseRepository } from "./BaseRepo";
+import { pdf } from "@react-pdf/renderer";
 
 export const config = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -36,6 +37,7 @@ export const config = {
   deletedJobCardsCollectionId: "67d7de83001e7cc6f569",
   invoiceStorageBucketId: "67d7d77b000b20e7b15a",
   imageStorageBucketId: "67d7d791000f4f810abf",
+  pdfStorageBucketId: "67e2a0ba00251bc01769",
 };
 
 export let client: any;
@@ -536,6 +538,35 @@ export const uploadImage = async (file: File) => {
 //     return null;
 //   }
 // };
+
+export const uploadPDF = async (buffer: Buffer, fileName = "document.pdf") => {
+  try {
+    const blob = new Blob([buffer], { type: "application/pdf" });
+
+    // Create a File object (if needed)
+    const file = new File([blob], fileName, { type: "application/pdf" });
+
+    const result = await storage.createFile(
+      config.pdfStorageBucketId, // Your Appwrite bucket ID
+      ID.unique(), // Generate a unique file ID
+      file
+    );
+
+    // Generate the file download URL
+    const downloadUrl = storage.getFileView(
+      config.pdfStorageBucketId,
+      result.$id
+    ).href;
+
+    return {
+      id: result.$id,
+      downloadUrl: downloadUrl.toString(),
+    };
+  } catch (error: any) {
+    console.error("UPLOAD ERROR:", error.message);
+    return null;
+  }
+};
 
 export const getImageUrl = async (id: string) => {
   try {

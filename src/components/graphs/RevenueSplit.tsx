@@ -119,46 +119,6 @@ export default function RevenueSplit({
         })
       );
 
-      // await Promise.all(
-      //   jobCards.map(async (jobCard: JobCard) => {
-      //     let jobCardRevenue = new Decimal(0);
-
-      //     const jobCardTotals = await createJobCardObjReport(jobCard);
-
-      //     jobCardRevenue = jobCardRevenue.add(
-      //       new Decimal(Number(jobCardTotals.partsSubtotal))
-      //     );
-      //     jobCardRevenue = jobCardRevenue.add(
-      //       new Decimal(Number(jobCardTotals.labourSubtotal))
-      //     );
-
-      //     jobCardRevenue = jobCardRevenue.minus(
-      //       new Decimal(Number(jobCardTotals.partsDiscount))
-      //     );
-      //     jobCardRevenue = jobCardRevenue.minus(
-      //       new Decimal(Number(jobCardTotals.labourDiscount))
-      //     );
-
-      //     if (!tempReturnObj[jobCard.purposeOfVisit]) {
-      //       tempReturnObj[jobCard.purposeOfVisit] = {
-      //         revenue: 0,
-      //         fill: `var(--color-${jobCard.purposeOfVisit
-      //           .replace(/\s+/g, "")
-      //           .toLowerCase()})`,
-      //       };
-      //     } else {
-      //       tempReturnObj[jobCard.purposeOfVisit].revenue = Number(
-      //         new Decimal(tempReturnObj[jobCard.purposeOfVisit].revenue).add(
-      //           jobCardRevenue
-      //         )
-      //       );
-      //     }
-
-      //     totalRevenue = totalRevenue.add(jobCardRevenue);
-      //     console.log("totalRevenue", Number(totalRevenue));
-      //   })
-      // );
-
       console.log("tempReturnObj", tempReturnObj);
 
       // Create the formatted dataset
@@ -218,7 +178,7 @@ export default function RevenueSplit({
                           y={viewBox.cy}
                           className="fill-foreground text-xl font-bold"
                         >
-                          &#8377;{Math.round(total).toLocaleString()}
+                          &#8377;{Math.round(total).toLocaleString("en-IN")}
                         </tspan>
                       </text>
                     );

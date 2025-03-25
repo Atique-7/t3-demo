@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import PrimaryButton from "@/components/PrimaryButton";
 import { JobCardsDataTable } from "@/components/data-tables/job-cards-data-table";
-import DisplayCard from "@/components/DisplayCard";
+import DisplayCard, { DisplayAdvisorJobCards } from "@/components/DisplayCard";
 import PartsPageSkeleton from "@/components/skeletons/PartsPageSkeleton";
-import { CarFront, Wrench, ListChecks } from "lucide-react";
+import { CarFront, Wrench, ListChecks, IndianRupee } from "lucide-react";
 import { tempCarsColumns } from "@/lib/column-definitions";
 import {
   getAllJobCards,
@@ -30,6 +30,7 @@ import {
   convertStringsToArray,
   createDateExpandedObj,
   purposeOfVisits,
+  roundToTwoDecimals,
 } from "@/lib/helper";
 
 type Props = {};
@@ -46,6 +47,14 @@ export default function Service({}: Props) {
   const [currentJobCards, setCurrentJobCards] = useState([]);
   const [tempCars, setTempCars] = useState<TempCar[]>([]);
 
+  const [serviceAdvisorStats, setServiceAdvisorStats] = useState({
+    email: "",
+    numberOfJobCards: 0,
+    completedJobCards: 0,
+    incompleteJobCards: 0,
+    totalJobCardAmt: 0,
+  });
+
   const [servicePOV, setServicePOV] = useState<string[]>([]);
 
   useEffect(() => {
@@ -55,7 +64,7 @@ export default function Service({}: Props) {
       const token = getCookie("user");
 
       const parsedToken = JSON.parse(String(token));
-      console.log(parsedToken);
+      console.log("TOKEN", parsedToken);
 
       setUser(parsedToken);
 
@@ -64,17 +73,13 @@ export default function Service({}: Props) {
       if (parsedToken.labels[0] == "admin") {
         foundObjs = purposeOfVisits;
       } else {
-        foundObjs = purposeOfVisits.filter(
-          (pov) =>
-            pov.code == parsedToken.labels[2] ||
-            pov.code == parsedToken.labels[3]
+        const advisorRoles: number[] = JSON.parse(
+          parsedToken.prefs.advisorRoleId
+        );
+        foundObjs = purposeOfVisits.filter((pov) =>
+          advisorRoles.includes(pov.code)
         );
       }
-
-      // let foundObjs = purposeOfVisits.filter(
-      //   (pov) =>
-      //     pov.code == parsedToken.labels[2] || pov.code == parsedToken.labels[3]
-      // );
 
       foundObjs.map((pov) => povArr.push(pov.description));
 
@@ -138,6 +143,8 @@ export default function Service({}: Props) {
         (jobCard: JobCard) => jobCard.jobCardStatus >= 6
       );
 
+      advisorStats(jobcards.documents);
+
       setTotalNumberOfCars(jobcards.total);
       setNumberOfCarsInProgress(onGoingJobCards.length);
       setCompletedJobCars(completedJobCards.length);
@@ -149,6 +156,53 @@ export default function Service({}: Props) {
       const allJobCards = await getAllJobCards();
       console.log("THESE ARE THE CURRENT JOB CARDS - ", allJobCards);
       setCurrentJobCards(allJobCards.documents);
+    };
+
+    const advisorStats = async (jobCards: JobCard[]) => {
+      let serviceAdvisors: any = [];
+
+      jobCards.forEach((jobCard: JobCard) => {
+        const index = serviceAdvisors.findIndex(
+          (advisor: any) => advisor.email === jobCard.serviceAdvisorID
+        );
+        if (index === -1) {
+          serviceAdvisors.push({
+            email: jobCard.serviceAdvisorID,
+            numberOfJobCards: 1,
+            completedJobCards: jobCard.jobCardStatus >= 6 ? 1 : 0,
+            incompleteJobCards: jobCard.jobCardStatus >= 6 ? 0 : 1,
+            totalJobCardAmt: jobCard.amount,
+          });
+        } else {
+          serviceAdvisors[index].numberOfJobCards += 1;
+          if (jobCard.jobCardStatus >= 6) {
+            serviceAdvisors[index].completedJobCards += 1;
+            serviceAdvisors[index].totalJobCardAmt += jobCard.amount;
+          } else {
+            serviceAdvisors[index].incompleteJobCards += 1;
+          }
+        }
+      });
+
+      serviceAdvisors: [] = serviceAdvisors.map((advisor: any) => ({
+        ...advisor,
+        totalJobCardAmt: roundToTwoDecimals(advisor.totalJobCardAmt),
+      }));
+
+      const token = getCookie("user");
+
+      const parsedToken = JSON.parse(String(token));
+
+      const selectedStat = serviceAdvisors.find(
+        (obj: any) => obj.email == parsedToken.email
+      );
+
+      setServiceAdvisorStats(selectedStat);
+
+      console.log(
+        "SERVICE ADVISOR STAT",
+        serviceAdvisors.find((obj: any) => obj.email == parsedToken.email)
+      );
     };
 
     getUser();
@@ -168,7 +222,7 @@ export default function Service({}: Props) {
             <div className="font-medium">T3, Mira Road</div>
           </div>
           <div className="hidden lg:flex flex-row space-x-8 mt-16 w-full justify-center lg:justify-normal">
-            <DisplayCard
+            {/* <DisplayCard
               icon={<CarFront />}
               desc={"Cars so far this month"}
               value={totalNumberOfCars}
@@ -182,6 +236,16 @@ export default function Service({}: Props) {
               icon={<ListChecks />}
               desc={"Completed"}
               value={completedJobCars}
+            /> */}
+            <DisplayAdvisorJobCards
+              completedCars={serviceAdvisorStats.completedJobCards}
+              totalCars={serviceAdvisorStats.numberOfJobCards}
+              advisorEmail={serviceAdvisorStats.email}
+            />
+            <DisplayCard
+              icon={<IndianRupee />}
+              desc={"Revenue So far"}
+              value={serviceAdvisorStats.totalJobCardAmt}
             />
           </div>
           <div className="flex lg:hidden w-full justify-center mt-10">
@@ -189,28 +253,10 @@ export default function Service({}: Props) {
               <CarouselContent>
                 <CarouselItem>
                   <div className="p-1">
-                    <DisplayCard
-                      icon={<CarFront />}
-                      desc={"Cars so far this month"}
-                      value={totalNumberOfCars}
-                    />
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="p-1">
-                    <DisplayCard
-                      icon={<Wrench />}
-                      desc={"In Progress"}
-                      value={numberOfCarsInProgress}
-                    />
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="p-1">
-                    <DisplayCard
-                      icon={<ListChecks />}
-                      desc={"Completed"}
-                      value={completedJobCars}
+                    <DisplayAdvisorJobCards
+                      completedCars={serviceAdvisorStats.completedJobCards}
+                      totalCars={serviceAdvisorStats.numberOfJobCards}
+                      advisorEmail={serviceAdvisorStats.email}
                     />
                   </div>
                 </CarouselItem>

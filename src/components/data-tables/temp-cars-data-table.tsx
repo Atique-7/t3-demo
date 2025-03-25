@@ -109,6 +109,8 @@ export function TempCarsDataTable<TData, TValue>({
       povMap[jobCardId] = pov || `JobCard: ${jobCardId}`;
     }
 
+    console.log("POVS", povMap);
+
     setJobCardPovs(povMap);
     setIsLoadingPovs(false);
   };
@@ -173,25 +175,6 @@ export function TempCarsDataTable<TData, TValue>({
   const parsedToken = JSON.parse(String(token));
   const userAccess = parsedToken.labels[0];
 
-  // const deleteJobCard = async (tempCar: any) => {
-  //   const tempCarObj: TempCar = JSON.parse(tempCar);
-  //   console.log(tempCarObj);
-
-  //   if (tempCarObj.jobCardId) {
-  //     const invoices = await getInvoicesByJobCardId(tempCarObj.jobCardId);
-  //     await Promise.all(
-  //       invoices.documents.map(async (invoice: Invoice) => {
-  //         const result = await deleteInvoiceById(invoice.$id);
-  //         console.log(result);
-  //       })
-  //     );
-
-  //     const deletedJobCard = await deleteJobCardById(tempCarObj.jobCardId);
-  //     const deletedTempCar = await deleteTempCarById(tempCarObj.$id);
-  //   }
-  //   setDeletingJobCard("");
-  // };
-
   const deleteTempCar = async (tempCar: any) => {
     const tempCarObj: TempCar = JSON.parse(tempCar);
     const result = await deleteTempCarById(tempCarObj.$id);
@@ -209,38 +192,43 @@ export function TempCarsDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex flex-col items-center py-4 justify-between space-y-5">
-        <Input
-          placeholder="Filter Cars"
-          value={
-            (table.getColumn("carNumber")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("carNumber")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="w-full">
-          {povCategories && (
-            <Select
-              onValueChange={(value) => {
-                table
-                  .getColumn("purposeOfVisitAndAdvisors") // Filter column for purposeOfVisitAndAdvisors
-                  ?.setFilterValue(value);
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Purpose of Visit" />
-              </SelectTrigger>
-              <SelectContent>
-                {povCategories.map((pov, index) => (
-                  <SelectItem key={index} value={pov}>
-                    {pov}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+      <div className="flex flex-col items-start py-4 justify-between space-y-5">
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <Input
+              placeholder="Search by Car Number"
+              value={
+                (table.getColumn("carNumber")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) =>
+                table.getColumn("carNumber")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+          </div>
+
+          <div className="w-[30%]">
+            {povCategories && (
+              <Select
+                onValueChange={(value) => {
+                  table
+                    .getColumn("purposeOfVisitAndAdvisors") // Filter column for purposeOfVisitAndAdvisors
+                    ?.setFilterValue(value);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Purpose of Visit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {povCategories.map((pov, index) => (
+                    <SelectItem key={index} value={pov}>
+                      {pov}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         </div>
       </div>
       <div className="rounded-md border">

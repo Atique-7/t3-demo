@@ -47,6 +47,7 @@ export interface JobCard {
   customerAddress?: string;
   customerEmail?: string;
   parts: string[];
+  images: string[];
   labour: string[];
   observationRemarks: string;
   partsTotalPreTax: number;
@@ -62,6 +63,7 @@ export interface JobCard {
   purposeOfVisit: string;
   totalTax?: number;
   gstin?: string;
+  jobCardPDF?: string;
   placeOfSupply?: string;
   // invoiceDate?: string;
   totalRoundedOffAmount: number;

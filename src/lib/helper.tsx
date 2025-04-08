@@ -1,5 +1,16 @@
+const useDev = true;
+
+let apiUrl: string;
+
+if (useDev) {
+  apiUrl = "http://localhost:3000";
+} else {
+  apiUrl = "https://t3-next-dev.vercel.app";
+}
+
 import Decimal from "decimal.js";
 import {
+  Car,
   CurrentLabour,
   CurrentPart,
   DateExpandedObj,
@@ -8,6 +19,7 @@ import {
   Labour,
   Part,
   TaxObj,
+  TempCar,
   UserType,
 } from "./definitions";
 import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
@@ -2647,3 +2659,34 @@ export function convertToStrings<T>(array: T[]): string[] {
 export function convertStringsToArray(array: string[] | undefined): any {
   return array?.map((item) => JSON.parse(item));
 }
+
+export const generateJobCardPDF = async ({
+  jobCard,
+  car,
+}: {
+  jobCard: JobCard;
+  car: Car | TempCar;
+}) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/createJobCard`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jobCard,
+        car,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to generate PDF");
+    }
+
+    const responseJson = await response.json();
+
+    openInNewTab(responseJson[0]);
+  } catch (error) {
+    console.error("Error downloading PDF:", error);
+  }
+};

@@ -30,6 +30,7 @@ import {
   calcAllAmts,
   calculateJobCardAmt,
   createTaxObj,
+  generateJobCardPDF,
   InsuranceinvoiceTypes,
   invoiceTypes,
   jobCardStatusKey,
@@ -84,10 +85,11 @@ import {
 } from "@/components/ui/select";
 import CarHistory from "@/components/CarHistory";
 import { set } from "date-fns";
+import TriggerWhatsappDemo from "@/components/TriggerWhatsappDemo";
 
 // Define the structure for the Car object
 
-const useDev = false;
+const useDev = true;
 
 let apiUrl: string;
 
@@ -133,7 +135,7 @@ export default function jobCard({
 
   const [isEdited, setIsEdited] = useState(false);
 
-  const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>();
+  const [jobCardInvoices, setJobCardInvoices] = useState<Invoice[]>([]);
   const [invoiceSeries, setInvoiceSeries] = useState("");
 
   const [partsTotal, setPartsTotal] = useState<number>();
@@ -418,7 +420,6 @@ export default function jobCard({
 
   const generateQuote = async () => {
     setButtonLoading((prev) => true);
-    await saveCurrentPartsAndLbour(3);
 
     console.log("JOB CARD OBJ = ", jobCard);
 
@@ -433,16 +434,15 @@ export default function jobCard({
         invoiceSeries,
       }),
     }).then((result: any) => {
-      // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-
-      result.json().then((invoices: any) => {
+      result.json().then(async (invoices: any) => {
         console.log(invoices);
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
+        setTimeout(async () => {
+          await saveCurrentPartsAndLbour(3);
+          window.location.reload();
+        }, 1000);
       });
 
       setButtonLoading((prev) => false);
@@ -454,7 +454,6 @@ export default function jobCard({
 
   const generateProFormaInvoice = async () => {
     setButtonLoading((prev) => true);
-    await saveCurrentPartsAndLbour(4);
 
     await fetch(`${apiUrl}${pathname}/invoice`, {
       method: "POST",
@@ -468,14 +467,15 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
 
       result.json().then((invoices: any) => {
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
+        setTimeout(async () => {
+          await saveCurrentPartsAndLbour(4);
+          window.location.reload();
+        }, 1000);
       });
 
       setButtonLoading((prev) => false);
@@ -487,7 +487,6 @@ export default function jobCard({
 
   const generateTaxInvoice = async () => {
     setButtonLoading((prev) => true);
-    await saveCurrentPartsAndLbour(5);
 
     await fetch(`${apiUrl}${pathname}/invoice`, {
       method: "POST",
@@ -501,14 +500,15 @@ export default function jobCard({
       }),
     }).then((result: any) => {
       // Set a short timeout before refreshing the page
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
 
       result.json().then((invoices: any) => {
         invoices.map((invoice: any) => {
           openInNewTab(invoice.invoiceUrl);
         });
+        setTimeout(async () => {
+          await saveCurrentPartsAndLbour(5);
+          window.location.reload();
+        }, 1000);
       });
 
       setButtonLoading((prev) => false);
@@ -520,7 +520,6 @@ export default function jobCard({
 
   const generateGatePass = async () => {
     setButtonLoading((prev) => true);
-    await saveCurrentPartsAndLbour(6);
 
     await fetch(`${apiUrl}${pathname}/gatePass`, {
       method: "POST",
@@ -534,12 +533,13 @@ export default function jobCard({
     }).then((result: any) => {
       // Disable the page, this happens automatically at refresh but its a precaution.
       setIsDisabled(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
 
       result.json().then((invoice: any) => {
         openInNewTab(invoice);
+        setTimeout(async () => {
+          await saveCurrentPartsAndLbour(6);
+          window.location.reload();
+        }, 1000);
       });
 
       setButtonLoading((prev) => false);
@@ -607,37 +607,40 @@ export default function jobCard({
     }
   };
 
-  const generateJobCardPDF = async ({ jobCard, car }: any) => {
-    console.log("Generating Jobcard");
-    try {
-      const response = await fetch(`${apiUrl}${pathname}/jobCardPDF`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          jobCard,
-          car,
-        }),
-      });
+  // const generateJobCardPDF = async ({ jobCard, car }: any) => {
+  //   console.log("Generating Jobcard");
+  //   try {
+  //     const response = await fetch(`${apiUrl}/api/createJobCard`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         jobCard,
+  //         car,
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Failed to generate PDF");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to generate PDF");
+  //     }
 
-      // Convert response to blob (PDF file)
-      const blob = await response.blob();
+  //     const responseJson = await response.json();
 
-      console.log("blob", blob);
-      const url = URL.createObjectURL(blob);
+  //     openInNewTab(responseJson[0]);
+  //   } catch (error) {
+  //     console.error("Error downloading PDF:", error);
+  //   }
+  // };
 
-      console.log("PDF URL", url);
-
-      // Open in new tab
-      window.open(url, "_blank");
-    } catch (error) {
-      console.error("Error downloading PDF:", error);
+  const handleJobCardPdf = () => {
+    if (jobCard?.jobCardPDF != "jobCardPdfURL") {
+      console.log("EXIXTS PDF", jobCard?.jobCardPDF);
+      openInNewTab(jobCard?.jobCardPDF!);
+    } else {
+      generateJobCardPDF({ jobCard: jobCard!, car: car! });
     }
+    // generateJobCardPDF({ jobCard: jobCard!, car: car! });
   };
 
   const handleInvoicePDF = (selectedValue: string) => {
@@ -731,7 +734,7 @@ export default function jobCard({
                   variant="outline"
                   className="px-8 py-2 border border-red-500 text-red-500"
                   size="lg"
-                  onClick={() => generateJobCardPDF({ jobCard, car })}
+                  onClick={() => handleJobCardPdf()}
                 >
                   JobCardPDF
                 </Button>
@@ -918,17 +921,20 @@ export default function jobCard({
           </div>
           <div>
             <div>
-              <div>
-                <span className="font-semibold text-3xl">
-                  {jobCard.carNumber}
-                </span>
-                <span className="font-medium ml-2 text-2xl text-gray-700">{`(${car.carMake} ${car.carModel})`}</span>
-              </div>
-              <div className="font-medium text-gray-500">
-                <div>#JobCardNumber : {jobCard.jobCardNumber}</div>
-              </div>
+              <span className="font-semibold text-3xl">
+                {jobCard.carNumber}
+              </span>
+              <span className="font-medium ml-2 text-2xl text-gray-700">{`(${car.carMake} ${car.carModel})`}</span>
+            </div>
+            <div className="font-medium text-gray-500">
+              <div>#JobCardNumber : {jobCard.jobCardNumber}</div>
             </div>
           </div>
+          <TriggerWhatsappDemo
+            car={car}
+            jobCard={jobCard}
+            jobCardInvoices={jobCardInvoices!}
+          />
           <div className="flex flex-row space-x-8">
             <div className="flex flex-col space-y-5">
               <DetailsCard

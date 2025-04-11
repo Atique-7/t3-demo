@@ -63,7 +63,7 @@ export const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/ztq7tvia1",
 });
 
-const useDev = false;
+const useDev = true;
 
 let apiUrl: string;
 
@@ -1205,6 +1205,23 @@ export const updateJobCardGSTDetails = async (id: string, gstin?: string) => {
     );
     await baseRepo.updateDocumentById(id, {
       gstin,
+    });
+
+    return true;
+  } catch (error: any) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+export const updateJobCardPDF = async (id: string, jobCardPDF?: string) => {
+  try {
+    const baseRepo: BaseRepository = new BaseRepository(
+      config.jobCardsCollectionId,
+      ObjectType.JOB_CARD
+    );
+    await baseRepo.updateDocumentById(id, {
+      jobCardPDF,
     });
 
     return true;

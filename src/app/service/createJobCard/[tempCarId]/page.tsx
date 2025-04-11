@@ -6,7 +6,7 @@ import {
   getCarByCarNumber,
   getTempCarById,
 } from "@/lib/appwrite";
-import { ImageObj, TempCar } from "@/lib/definitions";
+import { ImageObj, JobCard, TempCar } from "@/lib/definitions";
 import React, { useEffect, useState } from "react";
 import ImageCard from "@/components/ImageCard";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import AddDiagnosis from "@/components/AddDiagnosis";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   convertStringsToArray,
+  generateJobCardPDF,
   objToStringArr,
   openInNewTab,
 } from "@/lib/helper";
@@ -25,6 +26,7 @@ import loader from "../../../../../public/assets/t3-loader.gif";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import { set } from "date-fns";
+import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 
 type Props = {};
 
@@ -126,7 +128,7 @@ export default function CreateJobCard({
 
     if (currTempCar) {
       try {
-        let newJobCard = await createJobCard(
+        let newJobCard: JobCard = await createJobCard(
           currTempCar.$id,
           currTempCar.carNumber,
           carImages,
@@ -142,6 +144,8 @@ export default function CreateJobCard({
           "jobCardPdfURL"
         );
         if (newJobCard) {
+          console.log("CREATED JOB CARD = ", newJobCard);
+          generateJobCardPDF({ jobCard: newJobCard, car: currTempCar });
           toast("Job Card has been Created \u2705");
           setTimeout(() => {
             router.push("/service");

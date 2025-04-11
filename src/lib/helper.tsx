@@ -1,5 +1,16 @@
+const useDev = true;
+
+let apiUrl: string;
+
+if (useDev) {
+  apiUrl = "http://localhost:3000";
+} else {
+  apiUrl = "https://t3-next-dev.vercel.app";
+}
+
 import Decimal from "decimal.js";
 import {
+  Car,
   CurrentLabour,
   CurrentPart,
   DateExpandedObj,
@@ -8,20 +19,29 @@ import {
   Labour,
   Part,
   TaxObj,
+  TempCar,
   UserType,
 } from "./definitions";
 import jobCard from "@/app/biller/jobCard/[jobCardId]/page";
 
 export const jobCardStatusKey = [
   { code: 999, description: "All" },
-  { code: 0, description: "Job Card Created" },
-  { code: 1, description: "Parts Added" },
-  { code: 2, description: "Labour Added" },
-  { code: 3, description: "Quote Generated" },
-  { code: 4, description: "Pro-Forma Invoice Generated" },
-  { code: 5, description: "Tax Invoice Generated" },
-  { code: 6, description: "Gate Pass Generated" },
-  { code: 7, description: "Car Exited" },
+  { code: 0, description: "Job Card Created", key: "job-card-created" },
+  { code: 1, description: "Parts Added", key: "parts-added" },
+  { code: 2, description: "Labour Added", key: "labour-added" },
+  { code: 3, description: "Quote Generated", key: "quote-generated" },
+  {
+    code: 4,
+    description: "Pro-Forma Invoice Generated",
+    key: "pro-forma-invoice-generated",
+  },
+  {
+    code: 5,
+    description: "Tax Invoice Generated",
+    key: "tax-invoice-generated",
+  },
+  { code: 6, description: "Gate Pass Generated", key: "gate-pass-generated" },
+  { code: 7, description: "Car Exited", key: "car-exited" },
 ];
 
 export const carMakes = [
@@ -2639,3 +2659,34 @@ export function convertToStrings<T>(array: T[]): string[] {
 export function convertStringsToArray(array: string[] | undefined): any {
   return array?.map((item) => JSON.parse(item));
 }
+
+export const generateJobCardPDF = async ({
+  jobCard,
+  car,
+}: {
+  jobCard: JobCard;
+  car: Car | TempCar;
+}) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/createJobCard`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jobCard,
+        car,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to generate PDF");
+    }
+
+    const responseJson = await response.json();
+
+    openInNewTab(responseJson[0]);
+  } catch (error) {
+    console.error("Error downloading PDF:", error);
+  }
+};

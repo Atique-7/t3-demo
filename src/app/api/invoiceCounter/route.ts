@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Client, Databases, Query } from "node-appwrite";
+import { config } from "@/lib/appwrite";
 
 // Initialize Appwrite Client
 const client = new Client();
@@ -7,7 +8,7 @@ const databases = new Databases(client);
 
 client
   .setEndpoint("https://cloud.appwrite.io/v1") 
-  .setProject("67cbecaa002877aff9d1") 
+  .setProject(config.projectId) 
   .setKey("standard_6c561ebb631cc7217e78905352cb1deb1e9279eb71678973ae0f1aff1cd1331fadcd650b6ad827adf01a2926d05c153db447f9926cd4da448ab129086ca45b836f90f8bacc3e1097c689b07971c05ed0fb9e697c3e58c21196edfad50e25f2644d26824d832e608bc8e69bfbd1df5918fe70a5f480abf4ca255ade07f2600703"); 
 
   export async function POST(req: NextRequest, res:NextResponse) {
@@ -26,8 +27,8 @@ client
 
     // Step 1: Fetch existing invoices for the job card
     const existingInvoices = await databases.listDocuments(
-      "67cbf28e001bd9202750",
-      "67d7de6300233b0a014f",
+      config.databaseId,
+      config.invoicesCollectionId
       [Query.equal("jobCardId", jobCardId), Query.equal("invoiceSeries", series)]
     );
 
@@ -49,15 +50,15 @@ client
 
     try {
       globalCounter = await databases.getDocument(
-        "67cbf28e001bd9202750",
-        "67d7de6e002d1723d043",
+        config.databaseId,
+        config.atomicCounterCollectionId,
         counterId
       );
     } catch (error) {
       // Initialize the counter if it doesn't exist
       globalCounter = await databases.createDocument(
-        "67cbf28e001bd9202750",
-        "67d7de6e002d1723d043",
+        config.databaseId,
+        config.atomicCounterCollectionId,
         counterId,
         { series, currentNumber: 1000 }
       );
@@ -80,8 +81,8 @@ client
     // Step 4: Update the global counter if a new number is used
     if (invoiceNumber > globalCounter.currentNumber) {
       await databases.updateDocument(
-        "67cbf28e001bd9202750",
-        "67d7de6e002d1723d043",
+        config.databaseId,
+        config.atomicCounterCollectionId,
         counterId,
         { currentNumber: invoiceNumber }
       );

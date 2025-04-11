@@ -38,6 +38,8 @@ export const config = {
   invoiceStorageBucketId: "67d7d77b000b20e7b15a",
   imageStorageBucketId: "67d7d791000f4f810abf",
   pdfStorageBucketId: "67e2a0ba00251bc01769",
+  fetchUserInfoFunctionId: "67d7dbc2002b45a542bc",
+  atomicCounterCollectionId: "67d7de6e002d1723d043",
 };
 
 export let client: any;
@@ -300,7 +302,9 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const listAllUsers = async () => {
-  const response = await functions.createExecution("67d7dbc2002b45a542bc");
+  const response = await functions.createExecution(
+    config.fetchUserInfoFunctionId
+  );
   const obj = JSON.parse(response.responseBody);
   const users = obj.users.users;
   return users;

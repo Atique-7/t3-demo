@@ -202,7 +202,7 @@ export default function jobCard({
       const jobCardObj: JobCard = await getJobCardById(params.jobCardId);
       console.log("This is the Job Card - ", jobCardObj);
 
-      setCustomerGST(jobCardObj.gstin);
+      setCustomerGST(jobCardObj.gstin ?? "");
       setObservationRemarks(jobCardObj.observationRemarks);
       setCustomerName(jobCardObj.customerName);
       setCustomerAddress(jobCardObj.customerAddress);

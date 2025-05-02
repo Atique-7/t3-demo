@@ -28,7 +28,7 @@ client
     // Step 1: Fetch existing invoices for the job card
     const existingInvoices = await databases.listDocuments(
       config.databaseId,
-      config.invoicesCollectionId
+      config.invoicesCollectionId,
       [Query.equal("jobCardId", jobCardId), Query.equal("invoiceSeries", series)]
     );
 

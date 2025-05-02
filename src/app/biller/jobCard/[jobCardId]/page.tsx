@@ -636,7 +636,7 @@ export default function jobCard({
   const handleJobCardPdf = () => {
     if (jobCard?.jobCardPDF != "jobCardPdfURL") {
       console.log("EXIXTS PDF", jobCard?.jobCardPDF);
-      openInNewTab(jobCard?.jobCardPDF!);
+      openInNewTab(jobCard?.jobCardPDF || "");
     } else {
       generateJobCardPDF({ jobCard: jobCard!, car: car! });
     }
